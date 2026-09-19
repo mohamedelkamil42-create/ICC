@@ -18,14 +18,57 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <script>
-      // Filter benign Vite development WebSocket logs that trigger false-positive error notifications
+      // Suppress benign Vite development WebSocket/HMR disconnect logs (HMR is disabled by platform design in AI Studio)
+      const isBenignViteLog = (args) => {
+        return args.some(arg => {
+          if (typeof arg === 'string') {
+            return arg.includes('[vite]') || arg.includes('websocket') || arg.includes('WebSocket') || arg.includes('failed to connect');
+          }
+          if (arg && typeof arg.message === 'string') {
+            return arg.message.includes('[vite]') || arg.message.includes('websocket');
+          }
+          return false;
+        });
+      };
+
       const _origConsoleError = console.error;
       console.error = function (...args) {
-        if (args.length > 0 && typeof args[0] === 'string' && (args[0].includes('[vite]') || args[0].includes('websocket') || args[0].includes('WebSocket'))) {
-          return;
-        }
+        if (isBenignViteLog(args)) return;
         _origConsoleError.apply(console, args);
       };
+
+      const _origConsoleWarn = console.warn;
+      console.warn = function (...args) {
+        if (isBenignViteLog(args)) return;
+        _origConsoleWarn.apply(console, args);
+      };
+
+      const _origConsoleLog = console.log;
+      console.log = function (...args) {
+        if (isBenignViteLog(args)) return;
+        _origConsoleLog.apply(console, args);
+      };
+
+      const _origConsoleDebug = console.debug;
+      console.debug = function (...args) {
+        if (isBenignViteLog(args)) return;
+        _origConsoleDebug.apply(console, args);
+      };
+
+      window.addEventListener('error', function (e) {
+        if (e && e.message && (e.message.includes('[vite]') || e.message.includes('websocket'))) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      });
+
+      window.addEventListener('unhandledrejection', function (e) {
+        if (e && e.reason && typeof e.reason.message === 'string' && (e.reason.message.includes('[vite]') || e.reason.message.includes('websocket'))) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      });
+
       window.$RefreshReg$ = () => {};
       window.$RefreshSig$ = () => (type) => type;
       window.__vite_plugin_react_preamble_installed__ = true;

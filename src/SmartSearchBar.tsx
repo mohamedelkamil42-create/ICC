@@ -21,6 +21,7 @@ import {
   SearchResultItem, 
   SearchCategory 
 } from './searchUtils';
+import { playNaturalEnglishAudio } from './audioUtils';
 
 interface SmartSearchBarProps {
   libraryData: DrawerItem[];
@@ -148,10 +149,19 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
       const data = await res.json();
       setAiAnswer(data.answer || null);
     } catch (err) {
-      console.warn('AI search error:', err);
-      setAiAnswer(isRTL 
-        ? 'تعذر الوصول لخدمة الذكاء الاصطناعي حالياً، يرجى مراجعة نتائج الوثائق والمصطلحات المباشرة أدناه.' 
-        : 'Smart search is temporarily unavailable. Please check the direct document and term results below.');
+      console.warn('AI search fallback:', err);
+      // Smart offline fallback for static GitHub Pages hosting
+      const topMatches = results.slice(0, 3);
+      if (topMatches.length > 0) {
+        const summary = isRTL
+          ? `(إفادة قانونية مستخلصة من وثائق المرجع):\nاستناداً إلى نصوص المحكمة الجنائية الدولية المفهرسة، يرتبط هذا الموضوع بـ:\n${topMatches.map(m => `• ${m.title}${m.contentSnippet ? ` — ${m.contentSnippet.slice(0, 120)}...` : ''}`).join('\n')}`
+          : `(Legal guidance extracted from reference texts):\nBased on indexed ICC documents, this relates to:\n${topMatches.map(m => `• ${m.title}${m.contentSnippet ? ` — ${m.contentSnippet.slice(0, 120)}...` : ''}`).join('\n')}`;
+        setAiAnswer(summary);
+      } else {
+        setAiAnswer(isRTL 
+          ? 'تعذر الاتصال بخادم الذكاء الاصطناعي حالياً، يرجى مراجعة نتائج الوثائق والمصطلحات المباشرة أدناه.' 
+          : 'AI server endpoint is currently unreachable. Please check the direct document and term results below.');
+      }
     } finally {
       setIsLoadingAi(false);
     }
@@ -160,29 +170,13 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
   // Play audio pronunciation for terms
   const handlePlayTermAudio = (enText: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!('speechSynthesis' in window)) return;
-    
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(enText);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.95;
+    if (playingTerm === enText) return;
 
-    const voices = window.speechSynthesis.getVoices();
-    const englishVoice = voices.find(v => 
-      v.lang.startsWith('en') && 
-      (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha'))
-    ) || voices.find(v => v.lang.startsWith('en'));
-
-    if (englishVoice) {
-      utterance.voice = englishVoice;
-    }
-
-    utterance.onstart = () => setPlayingTerm(enText);
-    utterance.onend = () => setPlayingTerm(null);
-    utterance.onerror = () => setPlayingTerm(null);
-
-    setPlayingTerm(enText);
-    window.speechSynthesis.speak(utterance);
+    playNaturalEnglishAudio(enText, {
+      onStart: () => setPlayingTerm(enText),
+      onEnd: () => setPlayingTerm(null),
+      onError: () => setPlayingTerm(null)
+    });
   };
 
   const handleSelectResult = (item: SearchResultItem) => {

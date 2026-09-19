@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Volume2, Loader2, X } from 'lucide-react';
+import glossaryDataRaw from './glossaryData.json';
+import { playNaturalEnglishAudio } from './audioUtils';
 
 interface TranslatableTextProps {
   text: string;
@@ -12,6 +14,33 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
   const [translation, setTranslation] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  // Fast offline dictionary map from the 1,000+ ICC glossary terms for GitHub Pages & offline use
+  const offlineDict = useMemo(() => {
+    const dict = new Map<string, string>();
+    try {
+      const sections = glossaryDataRaw as any[];
+      for (const sec of sections) {
+        if (Array.isArray(sec?.terms)) {
+          for (const item of sec.terms) {
+            if (item?.en && item?.ar) {
+              dict.set(item.en.trim().toLowerCase(), item.ar.trim());
+              // Index individual words inside multi-word legal terms
+              const words = item.en.trim().toLowerCase().split(/\s+/);
+              for (const w of words) {
+                if (w.length > 3 && !dict.has(w)) {
+                  dict.set(w, item.ar.trim());
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch {
+      // Ignore if parsing fails
+    }
+    return dict;
+  }, []);
 
   // Auto-close popover on outside click
   useEffect(() => {
@@ -55,6 +84,14 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
     setLoading(true);
     setError(false);
 
+    // Check offline dictionary first (instant & works on GitHub Pages)
+    const localMatch = offlineDict.get(cleanWord.toLowerCase());
+    if (localMatch) {
+      setTranslation(localMatch);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch('/api/translate', {
         method: 'POST',
@@ -63,26 +100,34 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
         body: JSON.stringify({ word: cleanWord, context: text.substring(0, 150) })
       });
       
+      if (!response.ok) {
+        throw new Error('Translation endpoint unavailable');
+      }
+
       const data = await response.json();
       if (data.translation) {
         setTranslation(data.translation);
       } else {
         setError(true);
       }
-    } catch (err) {
+    } catch {
       setError(true);
     } finally {
       setLoading(false);
     }
   };
 
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
   const playAudio = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!selectedWord?.word) return;
-    const utterance = new SpeechSynthesisUtterance(selectedWord.word);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.9; // Slightly slower for clarity
-    window.speechSynthesis.speak(utterance);
+    if (!selectedWord?.word || isPlayingAudio) return;
+
+    playNaturalEnglishAudio(selectedWord.word, {
+      onStart: () => setIsPlayingAudio(true),
+      onEnd: () => setIsPlayingAudio(false),
+      onError: () => setIsPlayingAudio(false)
+    });
   };
 
   // If Arabic, just render text

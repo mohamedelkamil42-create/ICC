@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Volume2 } from 'lucide-react';
+import { playNaturalEnglishAudio } from './audioUtils';
 
 interface GlossaryTermCardProps {
   ar: string;
@@ -11,41 +12,16 @@ export const GlossaryTermCard: React.FC<GlossaryTermCardProps> = ({ ar, en, isRT
   const [isFlipped, setIsFlipped] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Pre-load voices on component mount
-  useEffect(() => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.getVoices();
-    }
-  }, []);
-
   const playAudio = (e: React.MouseEvent) => {
     e.stopPropagation();
     
     if (isPlaying) return;
 
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(en);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.95;
-      
-      const voices = window.speechSynthesis.getVoices();
-      const englishVoice = voices.find(v => 
-        (v.lang === 'en-US' || v.lang.startsWith('en')) && 
-        (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Enhanced'))
-      ) || voices.find(v => v.lang.startsWith('en'));
-
-      if (englishVoice) {
-        utterance.voice = englishVoice;
-      }
-
-      utterance.onstart = () => setIsPlaying(true);
-      utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = () => setIsPlaying(false);
-
-      setIsPlaying(true);
-      window.speechSynthesis.speak(utterance);
-    }
+    playNaturalEnglishAudio(en, {
+      onStart: () => setIsPlaying(true),
+      onEnd: () => setIsPlaying(false),
+      onError: () => setIsPlaying(false)
+    });
   };
 
   return (

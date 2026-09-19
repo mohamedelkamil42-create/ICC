@@ -1,3 +1,7 @@
+// Ensure tsx injected globals do not break Vite plugins (e.g. vite-plugin-pwa)
+delete (globalThis as any).__dirname;
+delete (globalThis as any).__filename;
+
 import express from 'express';
 import path from 'path';
 import { GoogleGenAI } from '@google/genai';
@@ -99,30 +103,30 @@ Instructions:
   // In-memory cache for audio to provide instant responses on repeated requests
   const ttsCache = new Map<string, { audio: string; mimeType: string }>();
 
-  // TTS endpoint using Gemini
+  // TTS endpoint using Gemini with Natural Voice fallback
   app.post('/api/tts', async (req, res) => {
-    try {
-      const { text } = req.body;
-      if (!text || typeof text !== 'string') {
-        return res.status(400).json({ error: 'Text is required' });
-      }
+    const { text } = req.body || {};
+    if (!text || typeof text !== 'string') {
+      return res.status(400).json({ error: 'Text is required' });
+    }
 
-      const cacheKey = text.trim().toLowerCase();
-      if (ttsCache.has(cacheKey)) {
-        return res.json(ttsCache.get(cacheKey));
-      }
-      
+    const cleanText = text.trim();
+    const cacheKey = cleanText.toLowerCase();
+
+    if (ttsCache.has(cacheKey)) {
+      return res.json(ttsCache.get(cacheKey));
+    }
+
+    try {
       if (!process.env.GEMINI_API_KEY) {
-        return res.status(500).json({ error: 'Missing GEMINI_API_KEY environment variable' });
+        throw new Error('Missing GEMINI_API_KEY');
       }
 
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       
-      // We will use gemini-3.1-flash-tts-preview with Modality.AUDIO
-      // For type safety with custom imports, using as any if needed, but the SKILL shows the exact shape
       const response = await (ai.models as any).generateContent({
         model: "gemini-3.1-flash-tts-preview",
-        contents: [{ parts: [{ text }] }],
+        contents: [{ parts: [{ text: cleanText }] }],
         config: {
           responseModalities: ["AUDIO"],
           speechConfig: {
@@ -140,30 +144,38 @@ Instructions:
       if (base64Audio) {
         const payload = { audio: base64Audio, mimeType };
         ttsCache.set(cacheKey, payload);
-        res.json(payload);
-      } else {
-        res.json({ audio: null, fallback: true });
+        return res.json(payload);
       }
+      throw new Error('Gemini audio empty');
     } catch (error: any) {
-      const isQuota = error?.status === 429 || 
-                      String(error?.message || '').includes('429') || 
-                      String(error?.message || '').includes('quota') ||
-                      String(error?.message || '').includes('RESOURCE_EXHAUSTED');
-      
-      if (isQuota) {
-        console.warn('TTS quota reached for Gemini free tier (10/day limit). Client will use instant native speech synthesis.');
-        return res.json({ audio: null, quotaExceeded: true, fallback: true });
+      // Automatic fallback to Google Natural Human Voice
+      try {
+        const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(cleanText)}`;
+        const gRes = await fetch(googleUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+        });
+        if (gRes.ok) {
+          const buf = Buffer.from(await gRes.arrayBuffer());
+          const payload = { audio: buf.toString('base64'), mimeType: 'audio/mp3' };
+          ttsCache.set(cacheKey, payload);
+          return res.json(payload);
+        }
+      } catch (gErr) {
+        console.warn('Natural voice fallback error:', gErr);
       }
 
-      console.warn('TTS unavailable:', error instanceof Error ? error.message : String(error));
       res.json({ audio: null, fallback: true });
     }
   });
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
+    const isHmrDisabled = process.env.DISABLE_HMR === 'true';
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: isHmrDisabled ? false : undefined,
+      },
       appType: "spa",
     });
     app.use(vite.middlewares);
