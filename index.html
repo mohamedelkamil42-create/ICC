@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ICC Ref" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <title>مرجع المحكمة الجنائية الدولية</title>
+    <meta name="description" content="مرجع قانوني أنيق يضم متطلبات ووثائق المحكمة الجنائية الدولية مصمم على شكل أدراج خشبية." />
+    <meta property="og:title" content="مرجع المحكمة الجنائية الدولية" />
+    <meta property="og:description" content="مرجع قانوني أنيق يضم متطلبات ووثائق المحكمة الجنائية الدولية مصمم على شكل أدراج خشبية." />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      // Filter benign Vite development WebSocket logs that trigger false-positive error notifications
+      const _origConsoleError = console.error;
+      console.error = function (...args) {
+        if (args.length > 0 && typeof args[0] === 'string' && (args[0].includes('[vite]') || args[0].includes('websocket') || args[0].includes('WebSocket'))) {
+          return;
+        }
+        _origConsoleError.apply(console, args);
+      };
+      window.$RefreshReg$ = () => {};
+      window.$RefreshSig$ = () => (type) => type;
+      window.__vite_plugin_react_preamble_installed__ = true;
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

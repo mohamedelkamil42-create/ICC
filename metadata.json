@@ -1,0 +1,6 @@
+{
+  "name": "مرجع المحكمة الجنائية الدولية",
+  "description": "مرجع قانوني أنيق يضم متطلبات ووثائق المحكمة الجنائية الدولية مصمم على شكل أدراج خشبية.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

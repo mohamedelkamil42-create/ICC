@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Cairo", sans-serif;
+}
+
+body {
+  background-color: #fafafa;
+  font-family: var(--font-sans);
+  color: #171717;
+}
