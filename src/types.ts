@@ -1,13 +1,8 @@
-export type ItemType = 'content' | 'folder' | 'glossary';
+export type ItemType = 'folder' | 'content' | 'glossary';
 
 export interface GlossaryTerm {
   ar: string;
   en: string;
-}
-
-export interface GlossarySection {
-  title: string;
-  terms: GlossaryTerm[];
 }
 
 export interface DrawerItem {
@@ -18,3 +13,5 @@ export interface DrawerItem {
   children?: DrawerItem[];
   terms?: GlossaryTerm[];
 }
+
+export type Language = 'ar' | 'en';

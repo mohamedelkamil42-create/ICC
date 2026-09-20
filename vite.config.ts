@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({ command }) => {
   return {
+    // Relative base for build (GitHub Pages / Vercel compatibility), absolute for dev
     base: command === 'build' ? './' : '/',
     plugins: [
       react(), 
@@ -14,39 +15,19 @@ export default defineConfig(({ command }) => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg'],
         manifest: {
-          id: '/',
           name: 'مرجع المحكمة الجنائية الدولية',
           short_name: 'ICC Ref',
-          description: 'مرجع قانوني أنيق يضم متطلبات ووثائق المحكمة الجنائية الدولية مصمم على شكل أدراج خشبية.',
+          description: 'مرجع قانوني أنيق يضم متطلبات ووثائق المحكمة الجنائية الدولية.',
           theme_color: '#ffffff',
           background_color: '#fafafa',
           display: 'standalone',
-          start_url: '/',
-          scope: '/',
           icons: [
-            {
-              src: '/pwa-192x192.png',
-              sizes: '192x192',
-              type: 'image/png',
-              purpose: 'any',
-            },
-            {
-              src: '/pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any',
-            },
-            {
-              src: '/pwa-maskable-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'maskable',
-            },
+            { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+            { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' }
           ],
         },
         devOptions: {
           enabled: false,
-          type: 'module',
         },
       })
     ],
@@ -56,14 +37,14 @@ export default defineConfig(({ command }) => {
       },
     },
     server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      port: 3000,
+      host: '0.0.0.0',
       hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
     build: {
       chunkSizeWarningLimit: 1500,
+      outDir: 'dist',
     },
   };
 });
