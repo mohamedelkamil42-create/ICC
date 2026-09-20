@@ -3,11 +3,15 @@
 let currentAudio: HTMLAudioElement | null = null;
 
 // Preload available voices for speech synthesis fallback
-if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-  window.speechSynthesis.onvoiceschanged = () => {
+const loadVoices = () => {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     window.speechSynthesis.getVoices();
-  };
-  window.speechSynthesis.getVoices();
+  }
+};
+
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
 }
 
 export function stopNaturalSpeech() {
@@ -97,7 +101,7 @@ export async function playNaturalEnglishAudio(
 
   if (!isPlaying) return stop;
 
-  // 2. Try direct Google Natural Voice stream (works on GitHub Pages)
+  // 2. Try direct Google Natural Voice stream (works on GitHub Pages if no CORS restriction)
   try {
     const directUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(cleanText)}`;
     const success = await tryPlayAudio(directUrl);
@@ -114,24 +118,31 @@ export async function playNaturalEnglishAudio(
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = 'en-US';
-      utterance.rate = 0.93;
+      utterance.rate = 0.95;
       utterance.pitch = 1.0;
 
-      const voices = window.speechSynthesis.getVoices();
-      // Select most natural human voice
+      let voices = window.speechSynthesis.getVoices();
+      
+      // If voices aren't loaded, try once more after a tiny delay
+      if (voices.length === 0) {
+        await new Promise(r => setTimeout(r, 50));
+        voices = window.speechSynthesis.getVoices();
+      }
+
+      // Select most natural human voice - prioritizing high quality neural voices
       const naturalVoice = voices.find(v => 
         v.lang.startsWith('en') && 
         (v.name.includes('Natural') || 
          v.name.includes('Neural') || 
+         v.name.includes('Premium') ||
          v.name.includes('Google') || 
          v.name.includes('Online') || 
          v.name.includes('Samantha') || 
          v.name.includes('Jenny') || 
          v.name.includes('Aria') || 
-         v.name.includes('Karen') || 
-         v.name.includes('Daniel') || 
-         v.name.includes('Serena'))
-      ) || voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang.startsWith('en'));
+         v.name.includes('Guy') || 
+         v.name.includes('Sara'))
+      ) || voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) || voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang.startsWith('en'));
 
       if (naturalVoice) {
         utterance.voice = naturalVoice;
