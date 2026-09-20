@@ -53,12 +53,12 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)} className="w-full max-w-xs h-10 px-4 bg-white border border-neutral-200 rounded-full shadow-sm flex items-center justify-between text-neutral-500 hover:border-neutral-400 transition-all">
-        <div className="flex items-center gap-2">
-          <Search size={16} />
-          <span className="text-xs font-medium">{t.trigger}</span>
+      <button onClick={() => setIsOpen(true)} className={`w-full max-w-[180px] sm:max-w-xs h-9 px-3 bg-neutral-50 border border-neutral-200 rounded-full shadow-sm flex items-center justify-between text-neutral-500 hover:border-neutral-400 hover:bg-white transition-all group ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
+        <div className={`flex items-center gap-2 overflow-hidden ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
+          <Search size={14} className="shrink-0 group-hover:text-black transition-colors" />
+          <span className="text-[11px] font-medium truncate">{t.trigger}</span>
         </div>
-        <Sparkles size={14} className="text-neutral-300" />
+        <Sparkles size={12} className="text-neutral-300 shrink-0" />
       </button>
 
       <AnimatePresence>

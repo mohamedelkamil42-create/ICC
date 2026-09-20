@@ -55,12 +55,13 @@ export default function App() {
     <div className="min-h-screen bg-[#fafafa] text-neutral-900 selection:bg-neutral-200">
       
       {/* Navbar */}
-      <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-200 px-4 py-3 flex items-center justify-between">
+      <nav className={`sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-100 px-4 py-2.5 flex items-center justify-between ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
         <SmartSearchBar libraryData={data} language={language} onNavigateToItem={(p, id) => { setPath(p); setOpenId(id); }} />
-        <div className="flex items-center gap-2">
+        
+        <div className={`flex items-center gap-2 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
           <PWAInstallButton language={language} />
-          <button onClick={toggleLang} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-200 text-xs font-bold hover:bg-neutral-50 transition active:scale-95">
-            <Globe size={14} />
+          <button onClick={toggleLang} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-200 text-[11px] font-black uppercase tracking-tight hover:bg-neutral-50 transition-all active:scale-95">
+            <Globe size={13} className="text-neutral-400" />
             <span>{language === 'ar' ? 'English' : 'العربية'}</span>
           </button>
         </div>
@@ -79,15 +80,24 @@ export default function App() {
       <main className="max-w-4xl mx-auto px-4 pb-20">
         
         {/* Breadcrumb / Back */}
-        <div className="flex items-center mb-6 min-h-[40px]">
+        <div className={`flex items-center mb-6 min-h-[40px] ${isRTL ? 'justify-start' : 'justify-end'}`}>
           <AnimatePresence mode="wait">
             {currentFolder ? (
-              <motion.button key="back" initial={{ opacity: 0, x: isRTL ? -10 : 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: isRTL ? -10 : 10 }} onClick={handleBack} className="flex items-center gap-2 text-sm font-bold bg-white border border-neutral-200 px-4 py-2 rounded-full shadow-sm hover:shadow transition-all active:scale-95">
-                {isRTL ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}
+              <motion.button 
+                key="back" 
+                initial={{ opacity: 0, x: isRTL ? 10 : -10 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: isRTL ? 10 : -10 }} 
+                onClick={handleBack} 
+                className={`flex items-center gap-2 text-xs font-black uppercase tracking-wider bg-white border border-neutral-200 px-5 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all active:scale-95 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}
+              >
+                {isRTL ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
                 <span>{t.back}</span>
               </motion.button>
             ) : (
-              <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-neutral-400 font-bold text-xs uppercase tracking-widest px-4">{t.main}</motion.div>
+              <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`text-neutral-400 font-black text-[10px] uppercase tracking-[0.2em] px-4 w-full ${isRTL ? 'text-right' : 'text-left'}`}>
+                {t.main}
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
@@ -108,13 +118,13 @@ export default function App() {
                 >
                   <button
                     onClick={() => handleItemClick(item)}
-                    className={`w-full flex items-center justify-between p-4 bg-black text-white rounded-2xl shadow-lg shadow-black/5 hover:scale-[1.02] active:scale-95 transition-all text-right group ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}
+                    className={`w-full flex items-center justify-between p-4 bg-black text-white rounded-2xl shadow-lg shadow-black/5 hover:scale-[1.02] active:scale-95 transition-all group ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className={`flex items-center gap-3 min-w-0 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
                       <div className="w-10 h-10 shrink-0 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-white/20 transition-colors">
                         {item.type === 'folder' ? <Folder size={20} /> : <FileText size={20} />}
                       </div>
-                      <span className="font-bold text-sm sm:text-base truncate leading-tight">{item.title}</span>
+                      <span className={`font-bold text-sm sm:text-base truncate leading-tight ${isRTL ? 'text-right' : 'text-left'}`}>{item.title}</span>
                     </div>
                     {item.type === 'folder' ? (isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />) : <div className="text-[10px] font-black uppercase bg-white/10 px-2 py-1 rounded-md">{isOpen ? 'Close' : 'Open'}</div>}
                   </button>
@@ -122,7 +132,7 @@ export default function App() {
                   <AnimatePresence>
                     {isOpen && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden bg-white border border-neutral-200 rounded-3xl p-6 md:p-8 shadow-sm">
-                        <h3 className="text-xl font-black mb-4 border-b pb-4">{item.title}</h3>
+                        <h3 className={`text-xl font-black mb-4 border-b pb-4 ${isRTL ? 'text-right' : 'text-left'}`}>{item.title}</h3>
                         {item.type === 'content' && <TranslatableText text={item.content || ''} isEnglish={language === 'en'} />}
                         {item.type === 'glossary' && item.terms && (
                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">

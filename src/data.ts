@@ -32,22 +32,52 @@ export const libraryDataAr: DrawerItem[] = [
   },
   {
     id: '4',
-    title: 'قانون العقوبات والجرائم',
+    title: 'الجرائم الداخلة في اختصاص المحكمة',
     type: 'folder',
     children: [
-      { id: '4-1', title: 'الإبادة الجماعية', type: 'content', content: 'أي فعل من الأفعال المحددة المرتكبة بقصد إهلاك جماعة قومية أو إثنية أو عرقية أو دينية.' },
+      { id: '4-1', title: 'جريمة الإبادة الجماعية', type: 'content', content: 'أي فعل من الأفعال المحددة المرتكبة بقصد إهلاك جماعة قومية أو إثنية أو عرقية أو دينية إهلاكاً كلياً أو جزئياً.' },
       { id: '4-2', title: 'الجرائم ضد الإنسانية', type: 'content', content: 'أي فعل من الأفعال المحددة المرتكبة في إطار هجوم واسع النطاق أو منهجي موجه ضد أية مجموعة من السكان المدنيين.' },
-      { id: '4-3', title: 'جرائم الحرب', type: 'content', content: 'الانتهاكات الجسيمة لاتفاقيات جنيف وغيرها من الانتهاكات الخطيرة للقوانين والأعراف السارية على المنازعات المسلحة.' }
+      { id: '4-3', title: 'جرائم الحرب', type: 'content', content: 'الانتهاكات الجسيمة لاتفاقيات جنيف وغيرها من الانتهاكات الخطيرة للقوانين والأعراف السارية على المنازعات المسلحة.' },
+      { id: '4-4', title: 'جريمة العدوان', type: 'content', content: 'قيام شخص في وضع يتيح له التحكم في العمل السياسي أو العسكري للدولة أو توجيهه، بالتخطيط لعمل عدواني أو إعداده أو بدئه أو تنفيذه.' }
     ]
   },
   {
     id: '5',
-    title: 'شروط التسجيل كمحامي',
-    type: 'content',
-    content: 'للتسجيل في قائمة المحامين، يجب إثبات الكفاءة العالية في القانون الجنائي أو القانون الدولي، وإجادة إحدى لغات العمل بالمحكمة (الإنجليزية أو الفرنسية)، والتمتع بسجل مهني نظيف.'
+    title: 'قواعد القانون الدولي العام والتكميلي',
+    type: 'folder',
+    children: [
+      { id: '5-1', title: 'القانون الدولي الإنساني', type: 'content', content: 'مجموعة القواعد التي تسعى، لأسباب إنسانية، إلى الحد من آثار النزاعات المسلحة.' },
+      { id: '5-2', title: 'القانون الدولي لحقوق الإنسان', type: 'content', content: 'القواعد الدولية التي تهدف إلى تعزيز وحماية حقوق الإنسان والحريات الأساسية.' },
+      { id: '5-3', title: 'المباديء العامة للقانون', type: 'content', content: 'المبادئ القانونية الأساسية المعترف بها في النظم القانونية الوطنية حول العالم.' }
+    ]
+  },
+  {
+    id: '6',
+    title: 'السوابق القضائية والاجتهادات',
+    type: 'folder',
+    children: [
+      { id: '6-1', title: 'احكام وسوابق المحكمة الجنائية الدولية', type: 'content', content: 'القرارات والأحكام الصادرة عن المحكمة الجنائية الدولية في القضايا والمواقف المختلفة.' },
+      { id: '6-2', title: 'سوابق المحكمة الجنائية الدولية الخاصة', type: 'content', content: 'الاجتهادات القضائية الصادرة عن المحاكم الجنائية الدولية المؤقتة (مثل محكمة يوغوسلافيا ورواندا).' }
+    ]
+  },
+  {
+    id: '7',
+    title: 'شروط التسجيل كمحامي المحكمة',
+    type: 'folder',
+    children: [
+      { id: '7-1', title: 'متطلبات الكفاءة المهنية', type: 'content', content: 'إثبات خبرة لا تقل عن 10 سنوات في القانون الجنائي أو الدولي، والتمتع بسيرة مهنية ممتازة.' },
+      { id: '7-2', title: 'إتقان لغات العمل', type: 'content', content: 'إجادة تامة لإحدى لغات العمل بالمحكمة (الإنجليزية أو الفرنسية) قراءة وكتابة ونطقاً.' },
+      { id: '7-3', title: 'إجراءات تقديم الطلب', type: 'content', content: 'تقديم النماذج الرسمية، شهادات القيد في النقابة، شهادة خلو من السوابق، وخطابات التوصية.' }
+    ]
   },
   {
     id: '8',
+    title: 'المراجع والمصادر القانونية',
+    type: 'content',
+    content: 'قائمة شاملة بأهم المراجع القانونية والكتب والمقالات والروابط الرسمية التي تدعم الباحثين والمحامين في عملهم أمام المحكمة.'
+  },
+  {
+    id: '9',
     title: 'قاموس المصطلحات (1000+ مصطلح)',
     type: 'folder',
     children: glossaryData.map((section, idx) => ({
@@ -88,22 +118,52 @@ export const libraryDataEn: DrawerItem[] = [
   },
   {
     id: '4',
-    title: 'Crimes & Jurisdiction',
+    title: 'Crimes within Court Jurisdiction',
     type: 'folder',
     children: [
-      { id: '4-1', title: 'Genocide', type: 'content', content: 'Acts committed with intent to destroy, in whole or in part, a national, ethnical, racial or religious group.' },
+      { id: '4-1', title: 'Crime of Genocide', type: 'content', content: 'Acts committed with intent to destroy, in whole or in part, a national, ethnical, racial or religious group.' },
       { id: '4-2', title: 'Crimes Against Humanity', type: 'content', content: 'Acts committed as part of a widespread or systematic attack directed against any civilian population.' },
-      { id: '4-3', title: 'War Crimes', type: 'content', content: 'Grave breaches of the Geneva Conventions and other serious violations of the laws and customs applicable in armed conflict.' }
+      { id: '4-3', title: 'War Crimes', type: 'content', content: 'Grave breaches of the Geneva Conventions and other serious violations of the laws and customs applicable in armed conflict.' },
+      { id: '4-4', title: 'Crime of Aggression', type: 'content', content: 'The use of armed force by a State against the sovereignty, territorial integrity or political independence of another State.' }
     ]
   },
   {
     id: '5',
-    title: 'Counsel Registration',
-    type: 'content',
-    content: 'To be admitted to the List of Counsel, one must demonstrate high competence in criminal or international law, fluency in a working language (English/French), and an unblemished record.'
+    title: 'Public International and Complementary Law',
+    type: 'folder',
+    children: [
+      { id: '5-1', title: 'International Humanitarian Law', type: 'content', content: 'A set of rules which seek, for humanitarian reasons, to limit the effects of armed conflict.' },
+      { id: '5-2', title: 'International Human Rights Law', type: 'content', content: 'International rules that aim to promote and protect human rights and fundamental freedoms.' },
+      { id: '5-3', title: 'General Principles of Law', type: 'content', content: 'Fundamental legal principles recognized across national legal systems worldwide.' }
+    ]
+  },
+  {
+    id: '6',
+    title: 'Case Law and Jurisprudence',
+    type: 'folder',
+    children: [
+      { id: '6-1', title: 'ICC Judgments and Jurisprudence', type: 'content', content: 'Decisions and judgments issued by the International Criminal Court in various cases and situations.' },
+      { id: '6-2', title: 'Ad Hoc Tribunals Jurisprudence', type: 'content', content: 'Legal precedents issued by temporary international criminal tribunals (e.g., ICTY, ICTR).' }
+    ]
+  },
+  {
+    id: '7',
+    title: 'ICC Counsel Registration',
+    type: 'folder',
+    children: [
+      { id: '7-1', title: 'Professional Competence Requirements', type: 'content', content: 'Evidence of at least 10 years of experience in criminal or international law, with an excellent professional record.' },
+      { id: '7-2', title: 'Working Languages Proficiency', type: 'content', content: 'Full proficiency in one of the Court’s working languages (English or French) in reading, writing, and speaking.' },
+      { id: '7-3', title: 'Application Procedures', type: 'content', content: 'Submission of official forms, bar certificates, criminal record checks, and recommendation letters.' }
+    ]
   },
   {
     id: '8',
+    title: 'Legal References and Sources',
+    type: 'content',
+    content: 'A comprehensive list of legal references, books, articles, and official links supporting researchers and counsel in their work before the Court.'
+  },
+  {
+    id: '9',
     title: 'Legal Glossary (1000+ Terms)',
     type: 'folder',
     children: glossaryData.map((section, idx) => ({
