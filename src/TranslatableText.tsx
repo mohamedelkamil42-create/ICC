@@ -136,7 +136,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
   }
 
   // If English, split text into words and wrap with spans
-  const words = text.split(/(\\s+|\\b)/).filter(Boolean);
+  const words = text.split(/(\s+|\b)/).filter(Boolean);
 
   return (
     <div className="relative text-neutral-800 text-lg leading-relaxed whitespace-pre-wrap" dir="ltr" onPointerUp={handlePointerUp}>
@@ -160,7 +160,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
       })}
 
       {/* Popover */}
-      {selectedWord && createPortal(
+      {selectedWord && selectedWord.rect && createPortal(
         <div 
           onClick={(e) => e.stopPropagation()}
           className="fixed z-[99999] bg-neutral-900 text-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] p-5 flex flex-col gap-4 w-[90vw] max-w-[360px] md:w-auto md:min-w-[260px] md:max-w-[420px] max-h-[85vh] overflow-y-auto border-2 border-neutral-700 animate-in fade-in zoom-in-95 duration-200"
