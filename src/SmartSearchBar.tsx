@@ -11,6 +11,53 @@ interface SmartSearchBarProps {
   onNavigateToItem: (parentPath: DrawerItem[], drawerId: string) => void;
 }
 
+interface SearchResultRowProps {
+  item: SearchResultItem;
+  onNavigate: (parentPath: DrawerItem[], id: string) => void;
+}
+
+const SearchResultRow: React.FC<SearchResultRowProps> = ({ item, onNavigate }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  return (
+    <div 
+      onClick={() => onNavigate(item.parentPath || [], item.drawerIdToOpen || item.id)} 
+      className="p-3 rounded-2xl hover:bg-neutral-50 cursor-pointer flex items-center justify-between group"
+    >
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-neutral-100 rounded-xl">
+          {item.type === 'glossary_term' ? <BookOpen size={18} /> : <FileText size={18} />}
+        </div>
+        <div>
+          <div className="text-sm font-bold">{item.title}</div>
+          {item.type === 'glossary_term' && (
+            <div className="text-[10px] text-neutral-400 uppercase font-bold" dir="ltr">
+              {item.enTerm}
+            </div>
+          )}
+        </div>
+      </div>
+      {item.type === 'glossary_term' && (
+        <button 
+          onClick={async (e) => { 
+            e.stopPropagation(); 
+            if (isPlaying) return;
+            setIsPlaying(true);
+            await playNaturalEnglishAudio(item.enTerm!, {
+              onEnd: () => setIsPlaying(false),
+              onError: () => setIsPlaying(false)
+            });
+          }} 
+          className="p-2 rounded-full hover:bg-neutral-200 transition-colors"
+          disabled={isPlaying}
+        >
+          {isPlaying ? <Loader2 size={16} className="animate-spin text-neutral-400" /> : <Volume2 size={16} />}
+        </button>
+      )}
+    </div>
+  );
+};
+
 export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, language, onNavigateToItem }) => {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -88,18 +135,14 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
                 )}
 
                 {results.map(item => (
-                  <div key={item.id} onClick={() => { onNavigateToItem(item.parentPath || [], item.drawerIdToOpen || item.id); setIsOpen(false); }} className="p-3 rounded-2xl hover:bg-neutral-50 cursor-pointer flex items-center justify-between group">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-neutral-100 rounded-xl">{item.type === 'glossary_term' ? <BookOpen size={18} /> : <FileText size={18} />}</div>
-                      <div>
-                        <div className="text-sm font-bold">{item.title}</div>
-                        {item.type === 'glossary_term' && <div className="text-[10px] text-neutral-400 uppercase font-bold" dir="ltr">{item.enTerm}</div>}
-                      </div>
-                    </div>
-                    {item.type === 'glossary_term' && (
-                      <button onClick={(e) => { e.stopPropagation(); playNaturalEnglishAudio(item.enTerm!); }} className="p-2 rounded-full hover:bg-neutral-200"><Volume2 size={16} /></button>
-                    )}
-                  </div>
+                  <SearchResultRow 
+                    key={item.id} 
+                    item={item} 
+                    onNavigate={(p, id) => {
+                      onNavigateToItem(p, id);
+                      setIsOpen(false);
+                    }}
+                  />
                 ))}
               </div>
             </motion.div>

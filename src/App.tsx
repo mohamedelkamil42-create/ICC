@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { libraryDataAr, libraryDataEn } from './data';
 import { DrawerItem } from './types';
@@ -7,11 +7,38 @@ import { PWAInstallButton } from './PWAInstallButton';
 import { TranslatableText } from './TranslatableText';
 import { GlossaryTermCard } from './GlossaryTermCard';
 import { SmartSearchBar } from './SmartSearchBar';
+import { prefetchAudio } from './audioUtils';
+import { useOnlineStatus } from './useOnlineStatus';
+import glossaryData from './glossaryData.json';
 
 export default function App() {
   const [language, setLanguage] = useState<'ar' | 'en'>('ar');
   const [path, setPath] = useState<DrawerItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
+  const isOnline = useOnlineStatus();
+  const mainRef = useRef<HTMLDivElement>(null);
+
+  // Smart scrolling effect
+  const scrollToRef = (targetOpenId?: string) => {
+    // Small delay to allow layout animations/DOM updates to start
+    setTimeout(() => {
+      if (targetOpenId) {
+        const element = document.getElementById(`item-${targetOpenId}`);
+        if (element) {
+          const yOffset = -80; // Account for sticky navbar height
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      } else {
+        // Scroll to top of main content for folder navigation
+        if (mainRef.current) {
+          const yOffset = -100;
+          const y = mainRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      }
+    }, 100);
+  };
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -26,14 +53,20 @@ export default function App() {
     if (item.type === 'folder') {
       setPath([...path, item]);
       setOpenId(null);
+      scrollToRef();
     } else {
-      setOpenId(openId === item.id ? null : item.id);
+      const willOpen = openId !== item.id;
+      setOpenId(willOpen ? item.id : null);
+      if (willOpen) {
+        scrollToRef(item.id);
+      }
     }
   };
 
   const handleBack = () => {
     setPath(path.slice(0, -1));
     setOpenId(null);
+    scrollToRef();
   };
 
   const toggleLang = () => {
@@ -56,9 +89,22 @@ export default function App() {
       
       {/* Navbar */}
       <nav className={`sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-100 px-4 py-2.5 flex items-center justify-between ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
-        <SmartSearchBar libraryData={data} language={language} onNavigateToItem={(p, id) => { setPath(p); setOpenId(id); }} />
+        <SmartSearchBar libraryData={data} language={language} onNavigateToItem={(p, id) => { 
+          setPath(p); 
+          setOpenId(id); 
+          scrollToRef(id);
+        }} />
         
         <div className={`flex items-center gap-2 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
+          {!isOnline && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }} 
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-neutral-100 text-neutral-500 text-[10px] font-black uppercase px-2 py-1 rounded-md"
+            >
+              {language === 'ar' ? 'وضع الأوفلاين' : 'Offline Mode'}
+            </motion.div>
+          )}
           <PWAInstallButton language={language} />
           <button onClick={toggleLang} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-200 text-[11px] font-black uppercase tracking-tight hover:bg-neutral-50 transition-all active:scale-95">
             <Globe size={13} className="text-neutral-400" />
@@ -77,7 +123,7 @@ export default function App() {
       </header>
 
       {/* Content */}
-      <main className="max-w-4xl mx-auto px-4 pb-20">
+      <main ref={mainRef} className="max-w-4xl mx-auto px-4 pb-20">
         
         {/* Breadcrumb / Back */}
         <div className={`flex items-center mb-6 min-h-[40px] ${isRTL ? 'justify-start' : 'justify-end'}`}>
@@ -110,6 +156,7 @@ export default function App() {
               return (
                 <motion.div 
                   key={item.id} 
+                  id={`item-${item.id}`}
                   layout
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}

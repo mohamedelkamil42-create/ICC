@@ -103,7 +103,7 @@ Instructions:
   // In-memory cache for audio to provide instant responses on repeated requests
   const ttsCache = new Map<string, { audio: string; mimeType: string }>();
 
-  // TTS endpoint using Gemini with Natural Voice fallback
+  // TTS endpoint using Gemini with Human-like voice
   app.post('/api/tts', async (req, res) => {
     const { text } = req.body || {};
     if (!text || typeof text !== 'string') {
@@ -122,22 +122,27 @@ Instructions:
         throw new Error('Missing GEMINI_API_KEY');
       }
 
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY,
+        httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
+      });
       
-      const response = await (ai.models as any).generateContent({
+      const response = await ai.models.generateContent({
         model: "gemini-3.1-flash-tts-preview",
-        contents: [{ parts: [{ text: cleanText }] }],
+        contents: [{ parts: [{ text: `Pronounce this legal term clearly and naturally: ${cleanText}` }] }],
         config: {
           responseModalities: ["AUDIO"],
           speechConfig: {
-              voiceConfig: {
-                prebuiltVoiceConfig: { voiceName: 'Kore' },
+            voiceConfig: {
+              prebuiltVoiceConfig: {
+                voiceName: "Aoede", // Aoede is generally more human/natural
               },
+            },
           },
         },
       });
 
-      const part = response.candidates?.[0]?.content?.parts?.[0];
+      const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
       const base64Audio = part?.inlineData?.data;
       const mimeType = part?.inlineData?.mimeType || 'audio/wav';
       
@@ -146,24 +151,36 @@ Instructions:
         ttsCache.set(cacheKey, payload);
         return res.json(payload);
       }
-      throw new Error('Gemini audio empty');
+      throw new Error('Gemini audio generation failed');
     } catch (error: any) {
-      // Automatic fallback to Google Natural Human Voice
+      const isQuotaExceeded = error.message?.includes('quota') || error.status === 429 || JSON.stringify(error).includes('RESOURCE_EXHAUSTED');
+      
+      if (isQuotaExceeded) {
+        console.warn('TTS Quota hit - falling back');
+      } else {
+        console.error('TTS Error:', error.message || error);
+      }
+      
+      // Automatic fallback to high-quality external service if Gemini fails or quota is hit
       try {
-        const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(cleanText)}`;
-        const gRes = await fetch(googleUrl, {
+        const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(cleanText)}`;
+        const fRes = await fetch(fallbackUrl, {
           headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
         });
-        if (gRes.ok) {
-          const buf = Buffer.from(await gRes.arrayBuffer());
+        if (fRes.ok) {
+          const buf = Buffer.from(await fRes.arrayBuffer());
           const payload = { audio: buf.toString('base64'), mimeType: 'audio/mp3' };
           ttsCache.set(cacheKey, payload);
           return res.json(payload);
         }
-      } catch (gErr) {
-        console.warn('Natural voice fallback error:', gErr);
+      } catch (fErr) {
+        // Silent fallback
       }
 
+      if (isQuotaExceeded) {
+        // Return 200 with fallback flag to silence quota errors in platform logs
+        return res.json({ audio: null, fallback: true, quotaExceeded: true });
+      }
       res.json({ audio: null, fallback: true });
     }
   });

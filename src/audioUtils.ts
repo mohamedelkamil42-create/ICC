@@ -1,6 +1,10 @@
 // Audio utility for high-quality natural human voice pronunciation of legal terms
+const AUDIO_CACHE_NAME = 'icc-legal-audio-v1';
 
 let currentAudio: HTMLAudioElement | null = null;
+
+// Helper to check if we are online
+const isOnline = () => typeof navigator !== 'undefined' && navigator.onLine;
 
 // Preload available voices for speech synthesis fallback
 const loadVoices = () => {
@@ -26,6 +30,41 @@ export function stopNaturalSpeech() {
     try {
       window.speechSynthesis.cancel();
     } catch {}
+  }
+}
+
+/**
+ * Prefetches and caches audio for a given text in the background
+ */
+export async function prefetchAudio(text: string): Promise<void> {
+  const cleanText = text.trim();
+  if (!cleanText || typeof caches === 'undefined') return;
+
+  const cache = await caches.open(AUDIO_CACHE_NAME);
+  const cacheKey = `/api/tts?text=${encodeURIComponent(cleanText)}`;
+  const cachedResponse = await cache.match(cacheKey);
+  
+  if (cachedResponse) return; // Already cached
+
+  try {
+    const res = await fetch('/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: cleanText }),
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      if (data.audio) {
+        // Create a fake response to store in cache
+        const blob = await (await fetch(`data:${data.mimeType || 'audio/mp3'};base64,${data.audio}`)).blob();
+        await cache.put(cacheKey, new Response(blob, {
+          headers: { 'Content-Type': data.mimeType || 'audio/mp3' }
+        }));
+      }
+    }
+  } catch (err) {
+    console.warn('Prefetch failed for:', cleanText, err);
   }
 }
 
@@ -72,30 +111,68 @@ export async function playNaturalEnglishAudio(
     });
   };
 
-  // 1. Try Backend API
-  try {
-    const res = await fetch('/api/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: cleanText }),
-    });
-    if (res.ok && isPlaying) {
-      const data = await res.json();
-      if (data.audio) {
-        const success = await tryPlayAudio(`data:${data.mimeType || 'audio/mp3'};base64,${data.audio}`);
+  // 1. Try Local Cache First (for Offline & Instant Play)
+  if (typeof caches !== 'undefined') {
+    try {
+      const cache = await caches.open(AUDIO_CACHE_NAME);
+      const cacheKey = `/api/tts?text=${encodeURIComponent(cleanText)}`;
+      const cachedResponse = await cache.match(cacheKey);
+      
+      if (cachedResponse && isPlaying) {
+        const blob = await cachedResponse.blob();
+        const url = URL.createObjectURL(blob);
+        const success = await tryPlayAudio(url);
         if (success) return stop;
       }
+    } catch (e) {
+      console.warn('Cache access error:', e);
     }
-  } catch {}
+  }
 
-  // 2. Direct Fallback (Google Translate TTS) - Works on GitHub Pages/Vercel
-  try {
-    const directUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(cleanText)}`;
-    const success = await tryPlayAudio(directUrl);
-    if (success) return stop;
-  } catch {}
+  // 2. Try Backend API (if online)
+  if (isOnline()) {
+    try {
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: cleanText }),
+      });
+      
+      const data = await res.json();
+      
+      if (data.quotaExceeded) {
+        console.warn('Gemini TTS quota exceeded, falling back to browser speech.');
+        // Fall through to browser speech
+      } else if (res.ok && isPlaying && data.audio) {
+        const mime = data.mimeType || 'audio/mp3';
+        const audioData = `data:${mime};base64,${data.audio}`;
+        
+        // Cache it for next time
+        if (typeof caches !== 'undefined') {
+          const cache = await caches.open(AUDIO_CACHE_NAME);
+          const cacheKey = `/api/tts?text=${encodeURIComponent(cleanText)}`;
+          const blob = await (await fetch(audioData)).blob();
+          cache.put(cacheKey, new Response(blob, { headers: { 'Content-Type': mime } }));
+        }
 
-  // 3. Web Speech API (Browser native)
+        const success = await tryPlayAudio(audioData);
+        if (success) return stop;
+      }
+    } catch (err) {
+      console.warn('Backend fetch failed, moving to next fallback');
+    }
+  }
+
+  // 3. Fallback (Google Translate TTS) - Only if online
+  if (isOnline()) {
+    try {
+      const directUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(cleanText)}`;
+      const success = await tryPlayAudio(directUrl);
+      if (success) return stop;
+    } catch {}
+  }
+
+  // 4. Web Speech API (Browser native) - Works offline
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
       window.speechSynthesis.cancel();
