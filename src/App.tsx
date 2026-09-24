@@ -14,10 +14,16 @@ import { RomeStatuteViewer } from './RomeStatuteViewer';
 import { romeStatuteParts } from './romeStatuteData';
 
 export default function App() {
-  const [language, setLanguage] = useState<'ar' | 'en'>('ar');
+  const [language, setLanguage] = useState<'ar' | 'en'>(() => {
+    const saved = localStorage.getItem('icc-app-language');
+    return (saved === 'ar' || saved === 'en') ? saved : 'ar';
+  });
   const [path, setPath] = useState<DrawerItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
-  const [fontSize, setFontSize] = useState(90); // Default slightly smaller as requested
+  const [fontSize, setFontSize] = useState(() => {
+    const saved = localStorage.getItem('icc-app-font-size');
+    return saved ? parseInt(saved, 10) : 90;
+  });
   const isOnline = useOnlineStatus();
   const mainRef = useRef<HTMLDivElement>(null);
 
@@ -46,10 +52,12 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = language;
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    localStorage.setItem('icc-app-language', language);
   }, [language]);
 
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSize}%`;
+    localStorage.setItem('icc-app-font-size', fontSize.toString());
   }, [fontSize]);
 
   const data = language === 'ar' ? libraryDataAr : libraryDataEn;
