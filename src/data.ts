@@ -73,8 +73,21 @@ export const libraryDataAr: DrawerItem[] = [
   {
     id: '8',
     title: 'المراجع والمصادر القانونية',
-    type: 'content',
-    content: 'قائمة شاملة بأهم المراجع القانونية والكتب والمقالات والروابط الرسمية التي تدعم الباحثين والمحامين في عملهم أمام المحكمة.'
+    type: 'folder',
+    children: [
+      { 
+        id: '8-1', 
+        title: 'الموقع الرسمي للمحكمة الجنائية الدولية', 
+        type: 'content', 
+        content: 'الموقع الرسمي هو المصدر الرئيسي لكافة المعلومات المتعلقة بالقضايا، والوثائق القانونية، والبيانات الصحفية، والمنشورات الرسمية للمحكمة.\n\nرابط الموقع: https://www.icc-cpi.int/' 
+      },
+      { 
+        id: '8-2', 
+        title: 'مصادر قانونية إضافية', 
+        type: 'content', 
+        content: 'قائمة شاملة بأهم المراجع القانونية والكتب والمقالات التي تدعم الباحثين والمحامين في عملهم أمام المحكمة.' 
+      }
+    ]
   },
   {
     id: '9',
@@ -159,8 +172,21 @@ export const libraryDataEn: DrawerItem[] = [
   {
     id: '8',
     title: 'Legal References and Sources',
-    type: 'content',
-    content: 'A comprehensive list of legal references, books, articles, and official links supporting researchers and counsel in their work before the Court.'
+    type: 'folder',
+    children: [
+      { 
+        id: '8-1', 
+        title: 'Official ICC Website', 
+        type: 'content', 
+        content: 'The official website is the primary source for all information regarding cases, legal documents, press releases, and official publications of the Court.\n\nWebsite link: https://www.icc-cpi.int/' 
+      },
+      { 
+        id: '8-2', 
+        title: 'Additional Legal Resources', 
+        type: 'content', 
+        content: 'A comprehensive list of legal references, books, and articles supporting researchers and counsel in their work before the Court.' 
+      }
+    ]
   },
   {
     id: '9',

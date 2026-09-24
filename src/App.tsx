@@ -125,7 +125,7 @@ export default function App() {
           {/* Font Controls */}
           <div className="flex items-center bg-white border border-neutral-200 rounded-full overflow-hidden shadow-sm">
             <button 
-              onClick={() => adjustFontSize(-10)}
+              onClick={() => adjustFontSize(-3)}
               className="p-1.5 hover:bg-neutral-50 text-neutral-500 transition-colors"
               title={language === 'ar' ? 'تصغير الخط' : 'Smaller font'}
             >
@@ -133,7 +133,7 @@ export default function App() {
             </button>
             <div className="w-[1px] h-3 bg-neutral-100" />
             <button 
-              onClick={() => adjustFontSize(10)}
+              onClick={() => adjustFontSize(3)}
               className="p-1.5 hover:bg-neutral-50 text-neutral-500 transition-colors"
               title={language === 'ar' ? 'تكبير الخط' : 'Larger font'}
             >

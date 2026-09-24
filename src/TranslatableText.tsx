@@ -44,19 +44,55 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
     }
   };
 
-  if (!isEnglish) return <p className="text-neutral-800 text-lg leading-relaxed whitespace-pre-wrap text-justify">{text}</p>;
+  const renderContent = (content: string, isEn: boolean) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = content.split(urlRegex);
 
-  const words = text.split(/(\s+)/);
+    return parts.map((part, index) => {
+      if (urlRegex.test(part)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline break-all"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {part}
+          </a>
+        );
+      }
+
+      if (isEn) {
+        const words = part.split(/(\s+)/);
+        return (
+          <React.Fragment key={index}>
+            {words.map((w, i) => (
+              /\w+/.test(w) ? (
+                <span
+                  key={`${index}-${i}`}
+                  onClick={(e) => translate(e, w)}
+                  className="cursor-pointer hover:bg-neutral-200 rounded px-0.5 transition-colors"
+                >
+                  {w}
+                </span>
+              ) : <React.Fragment key={`${index}-${i}`}>{w}</React.Fragment>
+            ))}
+          </React.Fragment>
+        );
+      }
+
+      return <React.Fragment key={index}>{part}</React.Fragment>;
+    });
+  };
 
   return (
-    <div className="relative text-neutral-800 text-lg leading-relaxed whitespace-pre-wrap text-justify" dir="ltr">
-      {words.map((w, i) => (
-        /\w+/.test(w) ? (
-          <span key={i} onClick={(e) => translate(e, w)} className="cursor-pointer hover:bg-neutral-200 rounded px-0.5 transition-colors">
-            {w}
-          </span>
-        ) : <React.Fragment key={i}>{w}</React.Fragment>
-      ))}
+    <div 
+      className={`relative text-neutral-800 text-lg leading-relaxed whitespace-pre-wrap text-justify ${isEnglish ? 'ltr' : ''}`}
+      dir={isEnglish ? 'ltr' : 'rtl'}
+    >
+      {renderContent(text, isEnglish)}
 
       {selectedWord && createPortal(
         <div 
