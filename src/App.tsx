@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { libraryDataAr, libraryDataEn } from './data';
 import { DrawerItem } from './types';
-import { Scale, ChevronRight, ChevronLeft, ArrowRight, ArrowLeft, Folder, FileText, Globe } from 'lucide-react';
+import { Scale, ChevronRight, ChevronLeft, ArrowRight, ArrowLeft, Folder, FileText, Globe, ZoomIn, ZoomOut } from 'lucide-react';
 import { PWAInstallButton } from './PWAInstallButton';
 import { TranslatableText } from './TranslatableText';
 import { GlossaryTermCard } from './GlossaryTermCard';
@@ -10,11 +10,14 @@ import { SmartSearchBar } from './SmartSearchBar';
 import { prefetchAudio } from './audioUtils';
 import { useOnlineStatus } from './useOnlineStatus';
 import glossaryData from './glossaryData.json';
+import { RomeStatuteViewer } from './RomeStatuteViewer';
+import { romeStatuteParts } from './romeStatuteData';
 
 export default function App() {
   const [language, setLanguage] = useState<'ar' | 'en'>('ar');
   const [path, setPath] = useState<DrawerItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [fontSize, setFontSize] = useState(90); // Default slightly smaller as requested
   const isOnline = useOnlineStatus();
   const mainRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +47,10 @@ export default function App() {
     document.documentElement.lang = language;
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
+
+  useEffect(() => {
+    document.documentElement.style.fontSize = `${fontSize}%`;
+  }, [fontSize]);
 
   const data = language === 'ar' ? libraryDataAr : libraryDataEn;
   const currentItems = path.length > 0 ? path[path.length - 1].children || [] : data;
@@ -75,6 +82,10 @@ export default function App() {
     setOpenId(null);
   };
 
+  const adjustFontSize = (delta: number) => {
+    setFontSize(prev => Math.min(150, Math.max(50, prev + delta)));
+  };
+
   const t = {
     title: language === 'ar' ? 'مرجع المحكمة الجنائية الدولية' : 'ICC Reference',
     subtitle: language === 'ar' ? 'دليل قانوني شامل لمتطلبات ووثائق المحكمة.' : 'Comprehensive legal guide for ICC requirements.',
@@ -85,7 +96,7 @@ export default function App() {
   const isRTL = language === 'ar';
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-neutral-900 selection:bg-neutral-200">
+    <div className="min-h-screen bg-[#fafafa] text-neutral-900 selection:bg-neutral-200 transition-all duration-150">
       
       {/* Navbar */}
       <nav className={`sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-100 px-4 py-2.5 flex items-center justify-between ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
@@ -110,6 +121,25 @@ export default function App() {
             <Globe size={13} className="text-neutral-400" />
             <span>{language === 'ar' ? 'English' : 'العربية'}</span>
           </button>
+
+          {/* Font Controls */}
+          <div className="flex items-center bg-white border border-neutral-200 rounded-full overflow-hidden shadow-sm">
+            <button 
+              onClick={() => adjustFontSize(-10)}
+              className="p-1.5 hover:bg-neutral-50 text-neutral-500 transition-colors"
+              title={language === 'ar' ? 'تصغير الخط' : 'Smaller font'}
+            >
+              <ZoomOut size={14} />
+            </button>
+            <div className="w-[1px] h-3 bg-neutral-100" />
+            <button 
+              onClick={() => adjustFontSize(10)}
+              className="p-1.5 hover:bg-neutral-50 text-neutral-500 transition-colors"
+              title={language === 'ar' ? 'تكبير الخط' : 'Larger font'}
+            >
+              <ZoomIn size={14} />
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -181,6 +211,7 @@ export default function App() {
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden bg-white border border-neutral-200 rounded-3xl p-6 md:p-8 shadow-sm">
                         <h3 className={`text-xl font-black mb-4 border-b pb-4 ${isRTL ? 'text-right' : 'text-left'}`}>{item.title}</h3>
                         {item.type === 'content' && <TranslatableText text={item.content || ''} isEnglish={language === 'en'} />}
+                        {item.type === 'statute' && <RomeStatuteViewer data={romeStatuteParts} language={language} />}
                         {item.type === 'glossary' && item.terms && (
                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                             {item.terms.map((term, i) => <GlossaryTermCard key={i} ar={term.ar} en={term.en} isRTL={isRTL} />)}

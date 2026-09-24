@@ -6,16 +6,16 @@ const glossaryData = glossaryDataRaw as any[];
 export const libraryDataAr: DrawerItem[] = [
   {
     id: '1',
-    title: 'نبذة عن المحكمة',
+    title: 'نبذة شاملة عن المحكمة',
     type: 'content',
-    content: 'المحكمة الجنائية الدولية (ICC) هي أول محكمة جنائية دولية دائمة قائمة على معاهدة. تأسست للمساعدة في إنهاء الإفلات من العقاب على أخطر الجرائم التي تثير قلق المجتمع الدولي، وهي الإبادة الجماعية والجرائم ضد الإنسانية وجرائم الحرب وجريمة العدوان.'
+    content: 'المحكمة الجنائية الدولية هي هيئة دولية دائمة ومستقلة، أُنشئت بموجب نظام روما الأساسي المعتمد في 17 يوليو 1998. تتمتع المحكمة بشخصية قانونية دولية ولها السلطة لممارسة اختصاصها على الأشخاص إزاء أشد الجرائم خطورة موضع الاهتمام الدولي، وهي: الإبادة الجماعية، والجرائم ضد الإنسانية، وجرائم الحرب، وجريمة العدوان.\n\nتتميز المحكمة بكونها "مكملة" للولايات القضائية الجنائية الوطنية، مما يعني أنها لا تتدخل إلا إذا كانت الدول غير راغبة أو غير قادرة حقاً على التحقيق أو المقاضاة. يقع مقر المحكمة في لاهاي بهولندا، وترتبط بعلاقة وثيقة مع منظمة الأمم المتحدة.\n\nتقوم المحكمة على مبادئ قانونية صارمة، أهمها: لا جريمة ولا عقوبة إلا بنص، وعدم رجعية الأثر على الأشخاص، والمسؤولية الجنائية الفردية التي لا تعفي حتى رؤساء الدول من المساءلة. تهدف المحكمة في جوهرها إلى وضع حد لإفلات مرتكبي هذه الجرائم من العقاب والمساهمة بالتالي في منعها وتحقيق العدالة الدولية الدائمة.'
   },
   {
     id: '2',
     title: 'الوثائق الأساسية للمحكمة الجنائية الدولية',
     type: 'folder',
     children: [
-      { id: '2-1', title: 'نظام روما الأساسي', type: 'content', content: 'نظام روما الأساسي هو المعاهدة المؤسسة للمحكمة الجنائية الدولية، اعتمد في 17 يوليو 1998.' },
+      { id: '2-1', title: 'نظام روما الأساسي', type: 'statute' },
       { id: '2-2', title: 'القواعد الاجرائية وقواعد الإثبات', type: 'content', content: 'أداة لتطبيق نظام روما الأساسي، تحدد القواعد التفصيلية للإجراءات أمام المحكمة.' },
       { id: '2-3', title: 'أركان الجريمة', type: 'content', content: 'تساعد المحكمة في تفسير وتطبيق المواد المتعلقة بالجرائم التي تدخل في اختصاصها.' },
       { id: '2-4', title: 'لوائح المحكمة', type: 'content', content: 'تنظم المسائل الروتينية لعمل المحكمة وتكمل نظام روما والقواعد الإجرائية.' }
@@ -92,16 +92,16 @@ export const libraryDataAr: DrawerItem[] = [
 export const libraryDataEn: DrawerItem[] = [
   {
     id: '1',
-    title: 'About the Court',
+    title: 'Comprehensive Overview',
     type: 'content',
-    content: 'The International Criminal Court (ICC) is the first permanent, treaty-based international criminal court. It was established to help end impunity for the most serious crimes of concern to the international community: genocide, crimes against humanity, war crimes, and the crime of aggression.'
+    content: 'The International Criminal Court (ICC) is a permanent and independent international institution established by the Rome Statute, adopted on 17 July 1998. It has international legal personality and the power to exercise jurisdiction over persons for the most serious crimes of international concern: genocide, crimes against humanity, war crimes, and the crime of aggression.\n\nA cornerstone of the Court is the principle of "complementarity," meaning it acts only as a court of last resort when national systems are unwilling or unable genuinely to carry out investigations or prosecutions. Headquartered in The Hague, Netherlands, the ICC maintains a close relationship with the United Nations system.\n\nThe Court operates based on strict legal principles, including "nullum crimen sine lege" (no crime without law), non-retroactivity, and individual criminal responsibility, which applies equally to all persons regardless of official capacity, including Heads of State. Its ultimate goal is to put an end to impunity for the perpetrators of these grave crimes, thereby contributing to their prevention and ensuring lasting international justice.'
   },
   {
     id: '2',
     title: 'Core Legal Texts',
     type: 'folder',
     children: [
-      { id: '2-1', title: 'Rome Statute', type: 'content', content: 'The Rome Statute is the founding treaty of the ICC, adopted on 17 July 1998.' },
+      { id: '2-1', title: 'Rome Statute', type: 'statute' },
       { id: '2-2', title: 'Rules of Procedure and Evidence', type: 'content', content: 'An instrument for the application of the Rome Statute, setting out detailed rules for proceedings.' },
       { id: '2-3', title: 'Elements of Crimes', type: 'content', content: 'Assists the Court in interpretation and application of articles pertaining to crimes.' },
       { id: '2-4', title: 'Regulations of the Court', type: 'content', content: 'Regulates routine matters for the functioning of the Court.' }

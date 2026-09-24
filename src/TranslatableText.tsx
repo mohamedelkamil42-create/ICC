@@ -44,12 +44,12 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
     }
   };
 
-  if (!isEnglish) return <p className="text-neutral-800 text-lg leading-relaxed whitespace-pre-wrap">{text}</p>;
+  if (!isEnglish) return <p className="text-neutral-800 text-lg leading-relaxed whitespace-pre-wrap text-justify">{text}</p>;
 
   const words = text.split(/(\s+)/);
 
   return (
-    <div className="relative text-neutral-800 text-lg leading-relaxed whitespace-pre-wrap" dir="ltr">
+    <div className="relative text-neutral-800 text-lg leading-relaxed whitespace-pre-wrap text-justify" dir="ltr">
       {words.map((w, i) => (
         /\w+/.test(w) ? (
           <span key={i} onClick={(e) => translate(e, w)} className="cursor-pointer hover:bg-neutral-200 rounded px-0.5 transition-colors">

@@ -1,4 +1,4 @@
-export type ItemType = 'folder' | 'content' | 'glossary';
+export type ItemType = 'folder' | 'content' | 'glossary' | 'statute';
 
 export interface GlossaryTerm {
   ar: string;
