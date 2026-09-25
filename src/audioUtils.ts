@@ -1,5 +1,5 @@
 // Audio utility for high-quality natural human voice pronunciation of legal terms
-const AUDIO_CACHE_NAME = 'icc-legal-audio-v1';
+const AUDIO_CACHE_NAME = 'icc-legal-audio-v2';
 
 let currentAudio: HTMLAudioElement | null = null;
 

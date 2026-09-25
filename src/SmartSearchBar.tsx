@@ -9,6 +9,7 @@ interface SmartSearchBarProps {
   libraryData: DrawerItem[];
   language: 'ar' | 'en';
   onNavigateToItem: (parentPath: DrawerItem[], drawerId: string, artId?: string) => void;
+  scrolled?: boolean;
 }
 
 interface SearchResultRowProps {
@@ -58,7 +59,7 @@ const SearchResultRow: React.FC<SearchResultRowProps> = ({ item, onNavigate }) =
   );
 };
 
-export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, language, onNavigateToItem }) => {
+export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, language, onNavigateToItem, scrolled }) => {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [aiAnswer, setAiAnswer] = useState<string | null>(null);
@@ -100,12 +101,15 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)} className={`w-full max-w-[180px] sm:max-w-xs h-9 px-3 bg-neutral-50 border border-neutral-200 rounded-full shadow-sm flex items-center justify-between text-neutral-500 hover:border-neutral-400 hover:bg-white transition-all group ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
-        <div className={`flex items-center gap-2 overflow-hidden ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
-          <Search size={14} className="shrink-0 group-hover:text-black transition-colors" />
-          <span className="text-[11px] font-medium truncate">{t.trigger}</span>
+      <button 
+        onClick={() => setIsOpen(true)} 
+        className={`h-10 px-4 border border-neutral-200 rounded-full shadow-sm flex items-center justify-between text-neutral-500 hover:border-neutral-400 hover:bg-white transition-all group min-w-[140px] sm:min-w-[200px] ${scrolled ? 'bg-white/50' : 'bg-white/80'}`}
+      >
+        <div className="flex items-center gap-2 overflow-hidden">
+          <Search size={16} className="shrink-0 group-hover:text-black transition-colors" />
+          <span className="text-[12px] font-medium truncate">{t.trigger}</span>
         </div>
-        <Sparkles size={12} className="text-neutral-300 shrink-0" />
+        <Sparkles size={14} className="text-neutral-300 shrink-0" />
       </button>
 
       <AnimatePresence>

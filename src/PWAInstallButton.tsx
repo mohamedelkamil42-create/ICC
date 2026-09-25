@@ -21,8 +21,8 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ language }) 
 
   if (isInstallable) {
     return (
-      <button onClick={install} className="flex items-center gap-2 rounded-full bg-black text-white px-3 py-1.5 text-xs font-bold shadow-sm transition active:scale-95">
-        <Download size={14} />
+      <button onClick={install} className="flex items-center gap-2 rounded-full bg-black text-white px-4 h-10 text-xs font-bold shadow-lg shadow-black/10 transition active:scale-95">
+        <Download size={16} />
         <span>{t.install}</span>
       </button>
     );
@@ -31,8 +31,8 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ language }) 
   if (isIOS) {
     return (
       <>
-        <button onClick={() => setShowIOSGuide(true)} className="flex items-center gap-2 rounded-full border border-neutral-300 bg-white text-black px-3 py-1.5 text-xs font-bold transition active:scale-95">
-          <Download size={14} />
+        <button onClick={() => setShowIOSGuide(true)} className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white text-black px-4 h-10 text-xs font-bold shadow-sm transition active:scale-95">
+          <Download size={16} />
           <span>{t.install}</span>
         </button>
         {showIOSGuide && (

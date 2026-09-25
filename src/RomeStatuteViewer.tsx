@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, ChevronUp, BookOpen, List, ArrowUp, ArrowDown } from 'lucide-react';
+import { ChevronDown, ChevronUp, BookOpen, List, ArrowUp, ArrowDown, ArrowRight, ArrowLeft } from 'lucide-react';
 import { TranslatableText } from './TranslatableText';
 
 export interface Article {
@@ -78,17 +78,17 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
       
       {/* Controls */}
       <div className={`flex items-center justify-between bg-neutral-50 p-2 rounded-2xl border border-neutral-100 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
-        <div className="flex items-center gap-1">
+        <div className={`flex items-center gap-1 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
           <button 
             onClick={() => setViewMode('list')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${viewMode === 'list' ? 'bg-black text-white shadow-lg' : 'text-neutral-400 hover:bg-neutral-100'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${viewMode === 'list' ? 'bg-black text-white shadow-lg' : 'text-neutral-400 hover:bg-neutral-100'} ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}
           >
             <List size={14} />
             <span>{t.listMode}</span>
           </button>
           <button 
             onClick={() => setViewMode('book')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${viewMode === 'book' ? 'bg-black text-white shadow-lg' : 'text-neutral-400 hover:bg-neutral-100'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${viewMode === 'book' ? 'bg-black text-white shadow-lg' : 'text-neutral-400 hover:bg-neutral-100'} ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}
           >
             <BookOpen size={14} />
             <span>{t.bookMode}</span>
@@ -109,7 +109,9 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
                   <span className="text-[10px] font-black uppercase text-neutral-400 tracking-widest mb-1">{language === 'ar' ? part.labelAr : part.labelEn}</span>
                   <h4 className="font-black text-sm sm:text-base">{language === 'ar' ? part.titleAr : part.titleEn}</h4>
                 </div>
-                {expandedPart === part.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                <div className="text-neutral-400">
+                  {expandedPart === part.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                </div>
               </button>
               
               <AnimatePresence>
@@ -120,7 +122,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
                     exit={{ height: 0, opacity: 0 }}
                     className="border-t border-neutral-50 bg-neutral-50/30"
                   >
-                    <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                    <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
                       {part.articles.map((art) => (
                         <button 
                           key={art.id}
@@ -143,7 +145,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
               <div key={`content-${part.id}`} className="flex flex-col gap-8">
                 <div className={`py-8 border-y-2 border-black/5 flex flex-col items-center text-center ${isRTL ? 'font-arabic' : ''}`}>
                   <span className="text-xs font-black uppercase tracking-[0.3em] text-neutral-300 mb-4">{language === 'ar' ? part.labelAr : part.labelEn}</span>
-                  <h2 className="text-2xl font-black max-w-xl">{language === 'ar' ? part.titleAr : part.titleEn}</h2>
+                  <h2 className="text-2xl font-black max-w-xl leading-tight">{language === 'ar' ? part.titleAr : part.titleEn}</h2>
                 </div>
                 
                 {part.articles.map((art) => (
@@ -163,14 +165,14 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
                       </div>
                       <button 
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                        className="p-3 rounded-full hover:bg-neutral-50 text-neutral-300 hover:text-black transition-all"
+                        className="p-3 rounded-full hover:bg-neutral-50 text-neutral-200 hover:text-black transition-all"
                         title={t.backToTop}
                       >
                         <ArrowUp size={18} />
                       </button>
                     </div>
                     
-                    <div className={`prose prose-sm max-w-none text-neutral-600 leading-relaxed text-justify ${isRTL ? 'text-right font-arabic' : 'text-left'}`}>
+                    <div className="text-justify">
                       <TranslatableText text={language === 'ar' ? art.contentAr : art.contentEn} isEnglish={language === 'en'} />
                     </div>
                   </article>
@@ -188,10 +190,10 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
               initial={{ opacity: 0, x: isRTL ? -20 : 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: isRTL ? 20 : -20 }}
-              className="min-h-[500px] p-8 sm:p-12 bg-white border border-neutral-100 rounded-[3rem] shadow-xl shadow-black/5 relative overflow-hidden"
+              className={`min-h-[500px] p-8 sm:p-12 bg-white border border-neutral-100 rounded-[3rem] shadow-xl shadow-black/5 relative overflow-hidden ${isRTL ? 'font-arabic' : ''}`}
             >
               {/* Page Numbering Decoration */}
-              <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+              <div className={`absolute top-0 opacity-[0.03] pointer-events-none p-8 ${isRTL ? 'left-0' : 'right-0'}`}>
                 <span className="text-[12rem] font-black leading-none">{currentPage + 1}</span>
               </div>
 
@@ -208,7 +210,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
                   </h2>
                 </div>
 
-                <div className={`prose prose-lg max-w-none text-neutral-700 leading-relaxed flex-grow text-justify ${isRTL ? 'font-arabic text-lg' : ''}`}>
+                <div className="flex-grow">
                    <TranslatableText text={language === 'ar' ? allArticles[currentPage].contentAr : allArticles[currentPage].contentEn} isEnglish={language === 'en'} />
                 </div>
               </div>
@@ -218,20 +220,20 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
           {/* Book Navigation */}
           <div className="flex items-center justify-between gap-4">
             <button 
-              disabled={currentPage === 0}
-              onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
-              className="flex-1 flex items-center justify-center gap-3 p-5 rounded-[2rem] border border-neutral-200 bg-white hover:bg-neutral-50 disabled:opacity-30 disabled:hover:bg-white transition-all active:scale-95 text-sm font-black uppercase tracking-widest"
-            >
-              <ArrowDown className={`${isRTL ? 'rotate-[-90deg]' : 'rotate-90'}`} size={18} />
-              <span>{t.prev}</span>
-            </button>
-            <button 
               disabled={currentPage === allArticles.length - 1}
               onClick={() => setCurrentPage(prev => Math.min(allArticles.length - 1, prev + 1))}
-              className="flex-1 flex items-center justify-center gap-3 p-5 rounded-[2rem] bg-black text-white hover:bg-neutral-800 shadow-xl shadow-black/10 disabled:opacity-30 transition-all active:scale-95 text-sm font-black uppercase tracking-widest"
+              className="flex-1 flex items-center justify-center gap-3 p-5 rounded-[2rem] bg-black text-white hover:bg-neutral-800 shadow-xl shadow-black/10 disabled:opacity-30 transition-all active:scale-90 text-sm font-black uppercase tracking-widest"
             >
               <span>{t.next}</span>
-              <ArrowDown className={`${isRTL ? 'rotate-90' : 'rotate-[-90deg]'}`} size={18} />
+              <ArrowRight size={18} className={isRTL ? 'rotate-180' : ''} />
+            </button>
+            <button 
+              disabled={currentPage === 0}
+              onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+              className="flex-1 flex items-center justify-center gap-3 p-5 rounded-[2rem] border border-neutral-200 bg-white hover:bg-neutral-50 disabled:opacity-30 transition-all active:scale-90 text-sm font-black uppercase tracking-widest"
+            >
+              <ArrowLeft size={18} className={isRTL ? 'rotate-180' : ''} />
+              <span>{t.prev}</span>
             </button>
           </div>
           
@@ -243,7 +245,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
 
       {/* Quick Access Sidebar (Floating on Desktop) */}
       {viewMode === 'list' && (
-        <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-2">
+        <div className={`fixed bottom-8 z-50 flex flex-col gap-2 ${isRTL ? 'left-8' : 'right-8'}`}>
           <button 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-90 transition-all"

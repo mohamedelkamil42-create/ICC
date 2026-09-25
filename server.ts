@@ -16,40 +16,53 @@ async function startServer() {
   // Dictionary translation endpoint using Gemini
   app.post('/api/translate', async (req, res) => {
     try {
-      const { word, context } = req.body;
+      const { word, context, language } = req.body;
       
       if (!process.env.GEMINI_API_KEY) {
         return res.status(500).json({ error: 'Missing GEMINI_API_KEY environment variable' });
       }
 
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const isTargetArabic = language === 'ar';
       
-      const prompt = `You are a strict legal dictionary for the International Criminal Court (ICC).
-      Translate ONLY the specific term below into Arabic.
+      const prompt = `You are a high-level legal expert specializing in the International Criminal Court (ICC) and international criminal law.
       
-      Term to translate: "${word}"
-      Context (DO NOT translate this, use it ONLY to understand the term's meaning): "${context}"
+      Task: Translate the term "${word}" and provide a contextual explanation.
+      
+      Context of the term (from the current legal text): "${context}"
       
       CRITICAL INSTRUCTIONS:
-      1. Translate ONLY the term itself.
-      2. Do NOT translate the context sentence.
-      3. Return ONLY the exact Arabic translation (usually 1-3 words).
-      4. Do not include any explanations, quotes, or markdown.`;
+      1. Provide a precise legal translation for the term "${word}" in ${isTargetArabic ? 'Arabic (العربية الفصحى)' : 'English'}.
+      2. Provide a short "Contextual Explanation" (1-2 sentences) explaining how this term is used within this specific context or under ICC legal standards (Rome Statute/Rules of Procedure).
+      3. Use official ICC terminology.
+      4. Format your response as a JSON object with exactly two keys: "translation" and "explanation".
+      
+      Example:
+      {
+        "translation": "الغرفة التمهيدية",
+        "explanation": "تشير هنا إلى الهيئة القضائية التي تقرر ما إذا كانت هناك أدلة كافية للمضي قدماً في المحاكمة."
+      }`;
       
       let response;
       try {
         response = await ai.models.generateContent({
           model: 'gemini-3.1-flash-lite',
           contents: prompt,
+          config: { responseMimeType: "application/json" }
         });
       } catch {
         response = await ai.models.generateContent({
           model: 'gemini-flash-latest',
           contents: prompt,
+          config: { responseMimeType: "application/json" }
         });
       }
 
-      res.json({ translation: response.text?.trim() || '' });
+      const result = JSON.parse(response.text?.trim() || '{}');
+      res.json({ 
+        translation: result.translation || '', 
+        explanation: result.explanation || '' 
+      });
     } catch (error) {
       console.error('Translation error:', error);
       res.status(500).json({ error: 'Translation failed' });
@@ -101,7 +114,7 @@ Instructions:
   });
 
   // In-memory cache for audio to provide instant responses on repeated requests
-  const ttsCache = new Map<string, { audio: string; mimeType: string }>();
+  const ttsCacheV2 = new Map<string, { audio: string; mimeType: string }>();
 
   // TTS endpoint using Gemini with Human-like voice
   app.post('/api/tts', async (req, res) => {
@@ -113,8 +126,8 @@ Instructions:
     const cleanText = text.trim();
     const cacheKey = cleanText.toLowerCase();
 
-    if (ttsCache.has(cacheKey)) {
-      return res.json(ttsCache.get(cacheKey));
+    if (ttsCacheV2.has(cacheKey)) {
+      return res.json(ttsCacheV2.get(cacheKey));
     }
 
     try {
@@ -128,27 +141,39 @@ Instructions:
       });
       
       const response = await ai.models.generateContent({
-        model: "gemini-3.1-flash-tts-preview",
-        contents: [{ parts: [{ text: `Pronounce this legal term clearly and naturally: ${cleanText}` }] }],
+        model: "gemini-3.8-flash-tts",
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text: cleanText,
+                speechMetadata: {
+                  style: "Clear, authoritative legal professional, slow and steady pronunciation",
+                },
+              },
+            ],
+          },
+        ],
         config: {
           responseModalities: ["AUDIO"],
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: {
-                voiceName: "Aoede", // Aoede is generally more human/natural
+                voiceName: "Zephyr", // Zephyr is generally very clear and professional
               },
             },
           },
         },
       });
 
-      const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+      const part = response.candidates?.[0]?.content?.parts?.[0];
       const base64Audio = part?.inlineData?.data;
       const mimeType = part?.inlineData?.mimeType || 'audio/wav';
       
       if (base64Audio) {
         const payload = { audio: base64Audio, mimeType };
-        ttsCache.set(cacheKey, payload);
+        ttsCacheV2.set(cacheKey, payload);
         return res.json(payload);
       }
       throw new Error('Gemini audio generation failed');
