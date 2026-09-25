@@ -19,7 +19,7 @@ export default function App() {
     const saved = localStorage.getItem('icc-app-language');
     return (saved === 'ar' || saved === 'en') ? saved : 'ar';
   });
-  const [path, setPath] = useState<DrawerItem[]>([]);
+  const [pathIds, setPathIds] = useState<string[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
   const [highlightArtId, setHighlightArtId] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(() => {
@@ -72,12 +72,28 @@ export default function App() {
   }, [fontSize]);
 
   const data = language === 'ar' ? libraryDataAr : libraryDataEn;
-  const currentItems = path.length > 0 ? path[path.length - 1].children || [] : data;
+  
+  // Resolve path IDs to objects from current data
+  const resolvePath = (ids: string[], rootItems: DrawerItem[]): DrawerItem[] => {
+    const result: DrawerItem[] = [];
+    let currentLevel = rootItems;
+    for (const id of ids) {
+      const found = currentLevel.find(item => item.id === id);
+      if (found) {
+        result.push(found);
+        currentLevel = found.children || [];
+      }
+    }
+    return result;
+  };
+
+  const path = resolvePath(pathIds, data);
   const currentFolder = path.length > 0 ? path[path.length - 1] : null;
+  const currentItems = currentFolder ? currentFolder.children || [] : data;
 
   const handleItemClick = (item: DrawerItem) => {
     if (item.type === 'folder') {
-      setPath([...path, item]);
+      setPathIds([...pathIds, item.id]);
       setOpenId(null);
       scrollToRef();
     } else {
@@ -90,15 +106,13 @@ export default function App() {
   };
 
   const handleBack = () => {
-    setPath(path.slice(0, -1));
+    setPathIds(pathIds.slice(0, -1));
     setOpenId(null);
     scrollToRef();
   };
 
   const toggleLang = () => {
     setLanguage(prev => prev === 'ar' ? 'en' : 'ar');
-    setPath([]);
-    setOpenId(null);
   };
 
   const adjustFontSize = (delta: number) => {
@@ -121,7 +135,7 @@ export default function App() {
       <nav className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between transition-all duration-300 ${scrolled ? 'bg-white/70 backdrop-blur-xl border-b border-neutral-100 shadow-sm' : 'bg-transparent border-b border-transparent'}`}>
         <div className="flex items-center gap-4">
           <SmartSearchBar libraryData={data} language={language} scrolled={scrolled} onNavigateToItem={(p, id, artId) => { 
-            setPath(p); 
+            setPathIds(p.map(item => item.id)); 
             setOpenId(id); 
             setHighlightArtId(artId || null);
             scrollToRef(id);
@@ -196,7 +210,7 @@ export default function App() {
         <main ref={mainRef} className="max-w-4xl mx-auto px-4 pb-20">
           
           {/* Breadcrumb / Back */}
-          <div className={`flex items-center mb-6 min-h-[40px] ${isRTL ? 'justify-start' : 'justify-end'}`}>
+          <div className="flex items-center mb-6 min-h-[40px] justify-start">
             <AnimatePresence mode="wait">
               {currentFolder ? (
                 <motion.button 
@@ -205,13 +219,13 @@ export default function App() {
                   animate={{ opacity: 1, x: 0 }} 
                   exit={{ opacity: 0, x: isRTL ? 10 : -10 }} 
                   onClick={handleBack} 
-                  className={`flex items-center gap-2 text-xs font-black uppercase tracking-wider bg-white border border-neutral-200 px-5 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all active:scale-95 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}
+                  className="flex items-center gap-2 text-xs font-black uppercase tracking-wider bg-white border border-neutral-200 px-5 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all active:scale-95"
                 >
-                  {isRTL ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
+                  <ArrowLeft size={14} className={isRTL ? 'rotate-180' : ''} />
                   <span>{t.back}</span>
                 </motion.button>
               ) : (
-                <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`text-neutral-400 font-black text-[10px] uppercase tracking-[0.2em] px-4 w-full ${isRTL ? 'text-right' : 'text-left'}`}>
+                <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-neutral-400 font-black text-[10px] uppercase tracking-[0.2em] px-4 w-full">
                   {t.main}
                 </motion.div>
               )}

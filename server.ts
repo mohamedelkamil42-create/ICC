@@ -114,7 +114,7 @@ Instructions:
   });
 
   // In-memory cache for audio to provide instant responses on repeated requests
-  const ttsCacheV2 = new Map<string, { audio: string; mimeType: string }>();
+  const ttsCacheV3 = new Map<string, { audio: string; mimeType: string }>();
 
   // TTS endpoint using Gemini with Human-like voice
   app.post('/api/tts', async (req, res) => {
@@ -126,8 +126,8 @@ Instructions:
     const cleanText = text.trim();
     const cacheKey = cleanText.toLowerCase();
 
-    if (ttsCacheV2.has(cacheKey)) {
-      return res.json(ttsCacheV2.get(cacheKey));
+    if (ttsCacheV3.has(cacheKey)) {
+      return res.json(ttsCacheV3.get(cacheKey));
     }
 
     try {
@@ -140,7 +140,7 @@ Instructions:
         httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
       });
       
-      const response = await ai.models.generateContent({
+      const response = await (ai.models.generateContent as any)({
         model: "gemini-3.8-flash-tts",
         contents: [
           {
@@ -148,23 +148,20 @@ Instructions:
             parts: [
               {
                 text: cleanText,
-                speechMetadata: {
-                  style: "Clear, authoritative legal professional, slow and steady pronunciation",
-                },
               },
             ],
           },
-        ],
+        ] as any,
         config: {
           responseModalities: ["AUDIO"],
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: {
-                voiceName: "Zephyr", // Zephyr is generally very clear and professional
+                voiceName: "Zephyr",
               },
             },
           },
-        },
+        } as any, // Cast to any to allow potential speakingRate or other educational params if supported by the backend
       });
 
       const part = response.candidates?.[0]?.content?.parts?.[0];
@@ -173,7 +170,7 @@ Instructions:
       
       if (base64Audio) {
         const payload = { audio: base64Audio, mimeType };
-        ttsCacheV2.set(cacheKey, payload);
+        ttsCacheV3.set(cacheKey, payload);
         return res.json(payload);
       }
       throw new Error('Gemini audio generation failed');
@@ -195,7 +192,7 @@ Instructions:
         if (fRes.ok) {
           const buf = Buffer.from(await fRes.arrayBuffer());
           const payload = { audio: buf.toString('base64'), mimeType: 'audio/mp3' };
-          ttsCache.set(cacheKey, payload);
+          ttsCacheV3.set(cacheKey, payload);
           return res.json(payload);
         }
       } catch (fErr) {

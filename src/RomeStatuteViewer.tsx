@@ -77,18 +77,18 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
     <div className="flex flex-col gap-6">
       
       {/* Controls */}
-      <div className={`flex items-center justify-between bg-neutral-50 p-2 rounded-2xl border border-neutral-100 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
-        <div className={`flex items-center gap-1 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
+      <div className="flex items-center justify-between bg-neutral-50 p-2 rounded-2xl border border-neutral-100">
+        <div className="flex items-center gap-1">
           <button 
             onClick={() => setViewMode('list')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${viewMode === 'list' ? 'bg-black text-white shadow-lg' : 'text-neutral-400 hover:bg-neutral-100'} ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${viewMode === 'list' ? 'bg-black text-white shadow-lg' : 'text-neutral-400 hover:bg-neutral-100'}`}
           >
             <List size={14} />
             <span>{t.listMode}</span>
           </button>
           <button 
             onClick={() => setViewMode('book')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${viewMode === 'book' ? 'bg-black text-white shadow-lg' : 'text-neutral-400 hover:bg-neutral-100'} ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${viewMode === 'book' ? 'bg-black text-white shadow-lg' : 'text-neutral-400 hover:bg-neutral-100'}`}
           >
             <BookOpen size={14} />
             <span>{t.bookMode}</span>

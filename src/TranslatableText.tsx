@@ -195,7 +195,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
 
   return (
     <div 
-      className={`relative text-neutral-800 leading-relaxed whitespace-pre-wrap text-justify ${isEnglish ? 'ltr' : 'rtl font-arabic'}`}
+      className={`relative text-neutral-800 leading-relaxed whitespace-pre-wrap text-justify ${isEnglish ? '' : 'font-arabic'}`}
       dir={isEnglish ? 'ltr' : 'rtl'}
     >
       {renderContent()}
@@ -203,15 +203,15 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
       {selectedTerm && createPortal(
         <div 
           onClick={(e) => e.stopPropagation()}
-          className={`fixed z-[100] bg-white text-black rounded-3xl p-6 shadow-2xl flex flex-col gap-4 min-w-[280px] max-w-[360px] border border-neutral-100 animate-in fade-in zoom-in-95 ${isEnglish ? 'rtl' : 'ltr'}`}
-          dir={selectedTerm.isArabic ? 'ltr' : 'rtl'}
+          className="fixed z-[100] bg-white text-black rounded-3xl p-6 shadow-2xl flex flex-col gap-4 min-w-[280px] max-w-[360px] border border-neutral-100 animate-in fade-in zoom-in-95"
+          dir="rtl"
           style={{
             top: Math.min(selectedTerm.rect.bottom + 15, window.innerHeight - 250),
             left: Math.max(20, Math.min(selectedTerm.rect.left, window.innerWidth - 300))
           }}
         >
-          <div className={`flex justify-between items-center border-b border-neutral-50 pb-3 ${selectedTerm.isArabic ? 'flex-row' : 'flex-row-reverse'}`}>
-            <div className={`flex items-center gap-2 text-neutral-400 ${selectedTerm.isArabic ? 'flex-row' : 'flex-row-reverse'}`}>
+          <div className="flex justify-between items-center border-b border-neutral-50 pb-3">
+            <div className="flex items-center gap-2 text-neutral-400">
               <Book size={14} />
               <span className="text-[10px] font-black uppercase tracking-widest">
                 {selectedTerm.isArabic ? 'Legal Dictionary' : 'القاموس القانوني'}
@@ -225,9 +225,11 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
             </button>
           </div>
 
-          <div className={`flex flex-col gap-1 ${selectedTerm.isArabic ? 'text-left' : 'text-right'}`}>
-            <div className={`flex items-center justify-between gap-3 ${selectedTerm.isArabic ? 'flex-row' : 'flex-row-reverse'}`}>
-              <h4 className={`text-xl font-black ${selectedTerm.isArabic ? 'font-arabic' : ''}`}>{selectedTerm.term}</h4>
+          <div className={`flex flex-col gap-1 ${selectedTerm.isArabic ? 'items-start' : 'items-end'}`}>
+            <div className={`flex items-center gap-3 ${selectedTerm.isArabic ? 'flex-row' : 'flex-row-reverse'}`}>
+              <h4 className={`text-xl font-black ${selectedTerm.isArabic ? 'font-arabic text-right' : 'text-left'}`}>
+                {selectedTerm.term}
+              </h4>
               {!selectedTerm.isArabic && (
                 <button 
                   onClick={() => playNaturalEnglishAudio(selectedTerm.term)} 
@@ -240,7 +242,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
             </div>
           </div>
 
-          <div className={`p-4 rounded-2xl ${selectedTerm.isArabic ? 'bg-neutral-50 text-right' : 'bg-black text-white text-left'}`} dir={selectedTerm.isArabic ? 'rtl' : 'ltr'}>
+          <div className={`p-4 rounded-2xl ${selectedTerm.isArabic ? 'bg-neutral-50 text-left' : 'bg-black text-white text-right'}`} dir={selectedTerm.isArabic ? 'ltr' : 'rtl'}>
             {loading ? (
               <div className="py-4 flex flex-col items-center gap-3">
                 <Loader2 size={24} className="animate-spin text-neutral-400" />
@@ -252,11 +254,22 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
             ) : (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1">
-                  <span className={`text-lg font-black leading-tight ${!selectedTerm.isArabic ? '' : 'font-arabic'}`}>
-                    {apiResult?.translation || selectedTerm.translation}
-                  </span>
+                  <div className={`flex items-start gap-4 ${selectedTerm.isArabic ? 'justify-between' : 'justify-between flex-row-reverse'}`}>
+                    <span className={`text-lg font-black leading-tight ${selectedTerm.isArabic ? '' : 'font-arabic'}`}>
+                      {apiResult?.translation || selectedTerm.translation}
+                    </span>
+                    {selectedTerm.isArabic && (apiResult?.translation || selectedTerm.translation) && (
+                      <button 
+                        onClick={() => playNaturalEnglishAudio(apiResult?.translation || selectedTerm.translation || '')} 
+                        className="p-1.5 rounded-lg bg-neutral-200/50 hover:bg-neutral-200 transition-colors shrink-0"
+                        title="Listen to English Pronunciation"
+                      >
+                        <Volume2 size={14} />
+                      </button>
+                    )}
+                  </div>
                   {(selectedTerm.translation || apiResult?.translation) && (
-                    <div className={`flex items-center gap-1.5 mt-1 opacity-50`}>
+                    <div className={`flex items-center gap-1.5 mt-1 opacity-50 ${selectedTerm.isArabic ? 'justify-start' : 'justify-end'}`}>
                       <Scale size={10} />
                       <span className="text-[9px] font-bold uppercase tracking-tight">
                         {selectedTerm.isArabic ? 'Verified Legal Term' : 'مصطلح قانوني معتمد'}
@@ -276,15 +289,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
             )}
           </div>
           
-          {selectedTerm.isArabic && (apiResult?.translation || selectedTerm.translation) && !loading && (
-             <button 
-                onClick={() => playNaturalEnglishAudio(apiResult?.translation || selectedTerm.translation || '')} 
-                className="mt-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-neutral-100 hover:bg-neutral-50 transition-colors text-[10px] font-black uppercase tracking-tighter"
-              >
-                <Volume2 size={12} />
-                <span>Listen to English Pronunciation</span>
-             </button>
-          )}
+
         </div>,
         document.body
       )}
