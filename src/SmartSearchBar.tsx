@@ -8,12 +8,12 @@ import { playNaturalEnglishAudio } from './audioUtils';
 interface SmartSearchBarProps {
   libraryData: DrawerItem[];
   language: 'ar' | 'en';
-  onNavigateToItem: (parentPath: DrawerItem[], drawerId: string) => void;
+  onNavigateToItem: (parentPath: DrawerItem[], drawerId: string, artId?: string) => void;
 }
 
 interface SearchResultRowProps {
   item: SearchResultItem;
-  onNavigate: (parentPath: DrawerItem[], id: string) => void;
+  onNavigate: (parentPath: DrawerItem[], id: string, artId?: string) => void;
 }
 
 const SearchResultRow: React.FC<SearchResultRowProps> = ({ item, onNavigate }) => {
@@ -21,7 +21,7 @@ const SearchResultRow: React.FC<SearchResultRowProps> = ({ item, onNavigate }) =
 
   return (
     <div 
-      onClick={() => onNavigate(item.parentPath || [], item.drawerIdToOpen || item.id)} 
+      onClick={() => onNavigate(item.parentPath || [], item.drawerIdToOpen || item.id, item.item?.statuteArtId)} 
       className="p-3 rounded-2xl hover:bg-neutral-50 cursor-pointer flex items-center justify-between group"
     >
       <div className="flex items-center gap-3">
@@ -138,8 +138,8 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
                   <SearchResultRow 
                     key={item.id} 
                     item={item} 
-                    onNavigate={(p, id) => {
-                      onNavigateToItem(p, id);
+                    onNavigate={(p, id, artId) => {
+                      onNavigateToItem(p, id, artId);
                       setIsOpen(false);
                     }}
                   />

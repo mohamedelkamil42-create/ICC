@@ -1,6 +1,9 @@
 import { DrawerItem } from './types';
 import glossaryDataRaw from './glossaryData.json';
 
+import { romeStatuteParts } from './romeStatuteData';
+import { rulesOfProcedureParts } from './rulesOfProcedureData';
+
 const glossaryData = glossaryDataRaw as any[];
 
 export const libraryDataAr: DrawerItem[] = [
@@ -12,22 +15,24 @@ export const libraryDataAr: DrawerItem[] = [
   },
   {
     id: '2',
-    title: 'الوثائق الأساسية للمحكمة الجنائية الدولية',
+    title: 'الوثائق القانونية الأساسية',
     type: 'folder',
     children: [
-      { id: '2-1', title: 'نظام روما الأساسي', type: 'statute' },
-      { id: '2-2', title: 'القواعد الاجرائية وقواعد الإثبات', type: 'content', content: 'أداة لتطبيق نظام روما الأساسي، تحدد القواعد التفصيلية للإجراءات أمام المحكمة.' },
-      { id: '2-3', title: 'أركان الجريمة', type: 'content', content: 'تساعد المحكمة في تفسير وتطبيق المواد المتعلقة بالجرائم التي تدخل في اختصاصها.' },
-      { id: '2-4', title: 'لوائح المحكمة', type: 'content', content: 'تنظم المسائل الروتينية لعمل المحكمة وتكمل نظام روما والقواعد الإجرائية.' }
+      { id: '2-1', title: 'نظام روما الأساسي للمحكمة الجنائية الدولية (النظام الأساسي)', type: 'statute' },
+      { id: '2-2', title: 'قواعد الإجراءات والإثبات', type: 'statute' },
+      { id: '2-3', title: 'أركان الجرائم', type: 'content', content: 'تساعد المحكمة في تفسير وتطبيق المواد المتعلقة بالجرائم التي تدخل في اختصاصها. سيتم إضافة النص الكامل قريباً.' },
+      { id: '2-4', title: 'لوائح المحكمة', type: 'content', content: 'تنظم المسائل الروتينية لعمل المحكمة وتكمل نظام روما والقواعد الإجرائية. سيتم إضافة النص الكامل قريباً.' },
+      { id: '2-5', title: 'لوائح قلم المحكمة', type: 'content', content: 'تنظم عمل قلم المحكمة والمسائل الإدارية والخدمية. سيتم إضافة النص الكامل قريباً.' },
+      { id: '2-6', title: 'لوائح مكتب المدعي العام', type: 'content', content: 'تنظم عمل مكتب المدعي العام وإجراءات التحقيق والمقاضاة. سيتم إضافة النص الكامل قريباً.' },
+      { id: '2-7', title: 'مدونة قواعد السلوك المهني للمحامين', type: 'content', content: 'تحدد معايير السلوك والأخلاقيات التي يجب أن يلتزم بها المحامون أمام المحكمة. سيتم إضافة النص الكامل قريباً.' }
     ]
   },
   {
     id: '3',
-    title: 'قواعد السلوك والمهنة والدفاع',
+    title: 'سياسات المساعدة والدفاع',
     type: 'folder',
     children: [
-      { id: '3-1', title: 'مدونة السلوك المهني للمحامي', type: 'content', content: 'تحدد معايير السلوك والأخلاقيات التي يجب أن يلتزم بها المحامون أمام المحكمة.' },
-      { id: '3-2', title: 'سياسة المساعدة القانونية', type: 'content', content: 'تضمن توفير المساعدة القانونية الفعالة للأشخاص الذين لا يملكون الموارد الكافية لتوكيل محامٍ.' }
+      { id: '3-1', title: 'سياسة المساعدة القانونية', type: 'content', content: 'تضمن توفير المساعدة القانونية الفعالة للأشخاص الذين لا يملكون الموارد الكافية لتوكيل محامٍ.' }
     ]
   },
   {
@@ -111,22 +116,24 @@ export const libraryDataEn: DrawerItem[] = [
   },
   {
     id: '2',
-    title: 'Core Legal Texts',
+    title: 'Core Legal Documents',
     type: 'folder',
     children: [
-      { id: '2-1', title: 'Rome Statute', type: 'statute' },
-      { id: '2-2', title: 'Rules of Procedure and Evidence', type: 'content', content: 'An instrument for the application of the Rome Statute, setting out detailed rules for proceedings.' },
-      { id: '2-3', title: 'Elements of Crimes', type: 'content', content: 'Assists the Court in interpretation and application of articles pertaining to crimes.' },
-      { id: '2-4', title: 'Regulations of the Court', type: 'content', content: 'Regulates routine matters for the functioning of the Court.' }
+      { id: '2-1', title: 'Rome Statute of the International Criminal Court (The Statute)', type: 'statute' },
+      { id: '2-2', title: 'Rules of Procedure and Evidence', type: 'statute' },
+      { id: '2-3', title: 'Elements of Crimes', type: 'content', content: 'Assists the Court in interpretation and application of articles pertaining to crimes. Full text will be added soon.' },
+      { id: '2-4', title: 'Regulations of the Court', type: 'content', content: 'Regulates routine matters for the functioning of the Court. Full text will be added soon.' },
+      { id: '2-5', title: 'Regulations of the Registry', type: 'content', content: 'Regulates the functioning of the Registry and administrative matters. Full text will be added soon.' },
+      { id: '2-6', title: 'Regulations of the Office of the Prosecutor', type: 'content', content: 'Regulates the functioning of the Office of the Prosecutor and investigation procedures. Full text will be added soon.' },
+      { id: '2-7', title: 'Code of Professional Conduct for Counsel', type: 'content', content: 'Sets standards of conduct and ethics for counsel practicing before the Court. Full text will be added soon.' }
     ]
   },
   {
     id: '3',
-    title: 'Code of Conduct & Defense',
+    title: 'Assistance and Defense Policies',
     type: 'folder',
     children: [
-      { id: '3-1', title: 'Code of Professional Conduct', type: 'content', content: 'Sets standards of conduct and ethics for counsel practicing before the Court.' },
-      { id: '3-2', title: 'Legal Assistance Policy', type: 'content', content: 'Ensures effective legal assistance for persons lacking sufficient means.' }
+      { id: '3-1', title: 'Legal Assistance Policy', type: 'content', content: 'Ensures effective legal assistance for persons lacking sufficient means.' }
     ]
   },
   {

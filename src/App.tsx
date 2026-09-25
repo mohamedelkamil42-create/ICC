@@ -12,6 +12,7 @@ import { useOnlineStatus } from './useOnlineStatus';
 import glossaryData from './glossaryData.json';
 import { RomeStatuteViewer } from './RomeStatuteViewer';
 import { romeStatuteParts } from './romeStatuteData';
+import { rulesOfProcedureParts } from './rulesOfProcedureData';
 
 export default function App() {
   const [language, setLanguage] = useState<'ar' | 'en'>(() => {
@@ -20,6 +21,7 @@ export default function App() {
   });
   const [path, setPath] = useState<DrawerItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [highlightArtId, setHighlightArtId] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(() => {
     const saved = localStorage.getItem('icc-app-font-size');
     return saved ? parseInt(saved, 10) : 90;
@@ -108,9 +110,10 @@ export default function App() {
       
       {/* Navbar */}
       <nav className={`sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-100 px-4 py-2.5 flex items-center justify-between ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
-        <SmartSearchBar libraryData={data} language={language} onNavigateToItem={(p, id) => { 
+        <SmartSearchBar libraryData={data} language={language} onNavigateToItem={(p, id, artId) => { 
           setPath(p); 
           setOpenId(id); 
+          setHighlightArtId(artId || null);
           scrollToRef(id);
         }} />
         
@@ -133,7 +136,7 @@ export default function App() {
           {/* Font Controls */}
           <div className="flex items-center bg-white border border-neutral-200 rounded-full overflow-hidden shadow-sm">
             <button 
-              onClick={() => adjustFontSize(-3)}
+              onClick={() => adjustFontSize(-1)}
               className="p-1.5 hover:bg-neutral-50 text-neutral-500 transition-colors"
               title={language === 'ar' ? 'تصغير الخط' : 'Smaller font'}
             >
@@ -141,7 +144,7 @@ export default function App() {
             </button>
             <div className="w-[1px] h-3 bg-neutral-100" />
             <button 
-              onClick={() => adjustFontSize(3)}
+              onClick={() => adjustFontSize(1)}
               className="p-1.5 hover:bg-neutral-50 text-neutral-500 transition-colors"
               title={language === 'ar' ? 'تكبير الخط' : 'Larger font'}
             >
@@ -219,7 +222,17 @@ export default function App() {
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden bg-white border border-neutral-200 rounded-3xl p-6 md:p-8 shadow-sm">
                         <h3 className={`text-xl font-black mb-4 border-b pb-4 ${isRTL ? 'text-right' : 'text-left'}`}>{item.title}</h3>
                         {item.type === 'content' && <TranslatableText text={item.content || ''} isEnglish={language === 'en'} />}
-                        {item.type === 'statute' && <RomeStatuteViewer data={romeStatuteParts} language={language} />}
+                        {item.type === 'statute' && (
+                          <RomeStatuteViewer 
+                            data={item.id === '2-2' ? rulesOfProcedureParts : romeStatuteParts} 
+                            language={language} 
+                            highlightId={isOpen ? highlightArtId : null}
+                            documentTitleAr={item.id === '2-2' ? 'قواعد الإجراءات والإثبات' : 'نظام روما الأساسي'}
+                            documentTitleEn={item.id === '2-2' ? 'Rules of Procedure and Evidence' : 'Rome Statute'}
+                            itemLabelAr={item.id === '2-2' ? 'القاعدة' : 'المادة'}
+                            itemLabelEn={item.id === '2-2' ? 'Rule' : 'Article'}
+                          />
+                        )}
                         {item.type === 'glossary' && item.terms && (
                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                             {item.terms.map((term, i) => <GlossaryTermCard key={i} ar={term.ar} en={term.en} isRTL={isRTL} />)}

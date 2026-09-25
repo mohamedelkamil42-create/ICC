@@ -1,4 +1,6 @@
 import { DrawerItem, Language } from './types';
+import { romeStatuteParts } from './romeStatuteData';
+import { rulesOfProcedureParts } from './rulesOfProcedureData';
 
 export type SearchCategory = 'all' | 'documents' | 'terms';
 
@@ -39,6 +41,20 @@ export function buildSearchIndex(data: DrawerItem[], lang: Language): SearchInde
             item: { ...term, sectionId: item.id },
             parentPath: path,
           });
+        }
+      } else if (item.type === 'statute') {
+        const statuteData = item.id === '2-2' ? rulesOfProcedureParts : romeStatuteParts;
+        for (const part of statuteData) {
+          for (const art of part.articles) {
+            index.push({
+              id: `${item.id}-${art.id}`,
+              title: `${item.title}: ${lang === 'ar' ? (item.id === '2-2' ? 'القاعدة' : 'المادة') : (item.id === '2-2' ? 'Rule' : 'Art.')} ${art.number} - ${lang === 'ar' ? art.titleAr : art.titleEn}`,
+              searchableText: `${art.number} ${art.titleAr} ${art.titleEn} ${art.contentAr} ${art.contentEn}`.toLowerCase(),
+              type: 'document',
+              item: { ...item, statuteArtId: art.id },
+              parentPath: path,
+            });
+          }
         }
       } else {
         index.push({
@@ -92,7 +108,7 @@ export function performSmartSearch(
           title: entry.title,
           type: entry.type as 'document' | 'folder',
           contentSnippet: entry.item.content?.substring(0, 100),
-          drawerIdToOpen: entry.id,
+          drawerIdToOpen: entry.item.id, // Use the item's original id to open the correct drawer
           parentPath: entry.parentPath,
         });
       }

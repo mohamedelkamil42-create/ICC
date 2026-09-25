@@ -2,7 +2,9 @@ import { Part } from './RomeStatuteViewer';
 
 export const romeStatuteParts: Part[] = [
   {
-    id: "PART 1 | الباب 1",
+    id: "part-1",
+    labelAr: "الفصل 1",
+    labelEn: "CHAPTER 1",
     titleAr: "إنشاء المحكمة",
     titleEn: "ESTABLISHMENT OF THE COURT",
     articles: [
@@ -41,7 +43,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 2 | الباب 2",
+    id: "part-2",
+    labelAr: "الفصل 2",
+    labelEn: "CHAPTER 2",
     titleAr: "الاختصاص والمقبولية والقانون الواجب التطبيق",
     titleEn: "JURISDICTION, ADMISSIBILITY AND APPLICABLE LAW",
     articles: [
@@ -192,7 +196,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 3 | الباب 3",
+    id: "part-3",
+    labelAr: "الفصل 3",
+    labelEn: "CHAPTER 3",
     titleAr: "المبادئ العامة للقانون الجنائي",
     titleEn: "GENERAL PRINCIPLES OF CRIMINAL LAW",
     articles: [
@@ -295,7 +301,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 4 | الباب 4",
+    id: "part-4",
+    labelAr: "الفصل 4",
+    labelEn: "CHAPTER 4",
     titleAr: "تكوين المحكمة وإدارتها",
     titleEn: "COMPOSITION AND ADMINISTRATION OF THE COURT",
     articles: [
@@ -454,7 +462,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 5 | الباب 5",
+    id: "part-5",
+    labelAr: "الفصل 5",
+    labelEn: "CHAPTER 5",
     titleAr: "التحقيق والمقاضاة",
     titleEn: "INVESTIGATION AND PROSECUTION",
     articles: [
@@ -533,7 +543,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 6 | الباب 6",
+    id: "part-6",
+    labelAr: "الفصل 6",
+    labelEn: "CHAPTER 6",
     titleAr: "المحاكمة",
     titleEn: "THE TRIAL",
     articles: [
@@ -660,7 +672,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 7 | الباب 7",
+    id: "part-7",
+    labelAr: "الفصل 7",
+    labelEn: "CHAPTER 7",
     titleAr: "العقوبات",
     titleEn: "PENALTIES",
     articles: [
@@ -699,7 +713,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 8 | الباب 8",
+    id: "part-8",
+    labelAr: "الفصل 8",
+    labelEn: "CHAPTER 8",
     titleAr: "الاستئناف وإعادة النظر",
     titleEn: "APPEAL AND REVISION",
     articles: [
@@ -746,7 +762,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 9 | الباب 9",
+    id: "part-9",
+    labelAr: "الفصل 9",
+    labelEn: "CHAPTER 9",
     titleAr: "التعاون الدولي والمساعدة القضائية",
     titleEn: "INTERNATIONAL COOPERATION AND JUDICIAL ASSISTANCE",
     articles: [
@@ -889,7 +907,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 10 | الباب 10",
+    id: "part-10",
+    labelAr: "الفصل 10",
+    labelEn: "CHAPTER 10",
     titleAr: "التنفيذ",
     titleEn: "ENFORCEMENT",
     articles: [
@@ -968,7 +988,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 11 | الباب 11",
+    id: "part-11",
+    labelAr: "الفصل 11",
+    labelEn: "CHAPTER 11",
     titleAr: "جمعية الدول الأطراف",
     titleEn: "ASSEMBLY OF STATES PARTIES",
     articles: [
@@ -983,7 +1005,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 12 | الباب 12",
+    id: "part-12",
+    labelAr: "الفصل 12",
+    labelEn: "CHAPTER 12",
     titleAr: "التمويل",
     titleEn: "FINANCING",
     articles: [
@@ -1038,7 +1062,9 @@ export const romeStatuteParts: Part[] = [
     ]
   },
   {
-    id: "PART 13 | الباب 13",
+    id: "part-13",
+    labelAr: "الفصل 13",
+    labelEn: "CHAPTER 13",
     titleAr: "الأحكام الختامية",
     titleEn: "FINAL CLAUSES",
     articles: [

@@ -14,6 +14,8 @@ export interface Article {
 
 export interface Part {
   id: string;
+  labelAr: string;
+  labelEn: string;
   titleAr: string;
   titleEn: string;
   articles: Article[];
@@ -22,13 +24,32 @@ export interface Part {
 interface RomeStatuteViewerProps {
   data: Part[];
   language: 'ar' | 'en';
+  highlightId?: string | null;
+  documentTitleAr: string;
+  documentTitleEn: string;
+  itemLabelAr: string;
+  itemLabelEn: string;
 }
 
-export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, language }) => {
+export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, language, highlightId, documentTitleAr, documentTitleEn, itemLabelAr, itemLabelEn }) => {
   const [viewMode, setViewMode] = useState<'list' | 'book'>('list');
   const [expandedPart, setExpandedPart] = useState<string | null>(data[0]?.id || null);
   const [currentPage, setCurrentPage] = useState(0);
   const isRTL = language === 'ar';
+  
+  useEffect(() => {
+    if (highlightId) {
+      // Find which part contains this article to expand it
+      const partWithArticle = data.find(p => p.articles.some(a => a.id === highlightId));
+      if (partWithArticle) {
+        setExpandedPart(partWithArticle.id);
+        // Small delay to allow expansion animation
+        setTimeout(() => {
+          scrollToArticle(highlightId);
+        }, 300);
+      }
+    }
+  }, [highlightId, data]);
   
   // Flatten articles for book mode
   const allArticles = data.flatMap(p => p.articles);
@@ -44,12 +65,12 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
 
   const t = {
     parts: language === 'ar' ? 'الأبواب' : 'Parts',
-    articles: language === 'ar' ? 'المواد' : 'Articles',
+    articles: language === 'ar' ? (itemLabelAr === 'القاعدة' ? 'القواعد' : 'المواد') : (itemLabelEn === 'Rule' ? 'Rules' : 'Articles'),
     listMode: language === 'ar' ? 'عرض القائمة' : 'List View',
     bookMode: language === 'ar' ? 'عرض الكتاب' : 'Book View',
     backToTop: language === 'ar' ? 'الرجوع للأعلى' : 'Back to Top',
-    next: language === 'ar' ? 'المادة التالية' : 'Next Article',
-    prev: language === 'ar' ? 'المادة السابقة' : 'Previous Article',
+    next: language === 'ar' ? `${itemLabelAr} التالية` : `Next ${itemLabelEn}`,
+    prev: language === 'ar' ? `${itemLabelAr} السابقة` : `Previous ${itemLabelEn}`,
   };
 
   return (
@@ -85,7 +106,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
                 className={`w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}
               >
                 <div className={`flex flex-col ${isRTL ? 'text-right' : 'text-left'}`}>
-                  <span className="text-[10px] font-black uppercase text-neutral-400 tracking-widest mb-1">{part.id}</span>
+                  <span className="text-[10px] font-black uppercase text-neutral-400 tracking-widest mb-1">{language === 'ar' ? part.labelAr : part.labelEn}</span>
                   <h4 className="font-black text-sm sm:text-base">{language === 'ar' ? part.titleAr : part.titleEn}</h4>
                 </div>
                 {expandedPart === part.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -106,7 +127,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
                           onClick={() => scrollToArticle(art.id)}
                           className={`text-[11px] font-bold p-2.5 rounded-xl bg-white border border-neutral-100 hover:border-black hover:scale-105 active:scale-95 transition-all text-center ${isRTL ? 'font-arabic' : ''}`}
                         >
-                          {language === 'ar' ? 'المادة' : 'Art.'} {art.number}
+                          {language === 'ar' ? itemLabelAr : (itemLabelEn === 'Article' ? 'Art.' : itemLabelEn)} {art.number}
                         </button>
                       ))}
                     </div>
@@ -121,7 +142,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
             {data.map((part) => (
               <div key={`content-${part.id}`} className="flex flex-col gap-8">
                 <div className={`py-8 border-y-2 border-black/5 flex flex-col items-center text-center ${isRTL ? 'font-arabic' : ''}`}>
-                  <span className="text-xs font-black uppercase tracking-[0.3em] text-neutral-300 mb-4">{part.id}</span>
+                  <span className="text-xs font-black uppercase tracking-[0.3em] text-neutral-300 mb-4">{language === 'ar' ? part.labelAr : part.labelEn}</span>
                   <h2 className="text-2xl font-black max-w-xl">{language === 'ar' ? part.titleAr : part.titleEn}</h2>
                 </div>
                 
@@ -134,7 +155,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
                     <div className={`flex items-start justify-between mb-6 ${isRTL ? 'flex-row' : 'flex-row-reverse'}`}>
                       <div className={`flex flex-col ${isRTL ? 'items-start' : 'items-end'}`}>
                         <span className="text-[10px] font-black bg-black text-white px-3 py-1 rounded-full mb-3 uppercase tracking-tighter">
-                          {language === 'ar' ? 'المادة' : 'Article'} {art.number}
+                          {language === 'ar' ? itemLabelAr : itemLabelEn} {art.number}
                         </span>
                         <h3 className={`text-lg sm:text-xl font-black ${isRTL ? 'text-right' : 'text-left'}`}>
                           {language === 'ar' ? art.titleAr : art.titleEn}
@@ -177,10 +198,10 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
               <div className={`relative z-10 flex flex-col h-full ${isRTL ? 'text-right' : 'text-left'}`}>
                 <div className="mb-8">
                   <span className="text-xs font-black uppercase text-neutral-400 tracking-widest mb-4 block">
-                    {language === 'ar' ? 'نظام روما الأساسي' : 'Rome Statute'}
+                    {language === 'ar' ? documentTitleAr : documentTitleEn}
                   </span>
                   <span className="inline-block text-[10px] font-black bg-neutral-100 text-neutral-500 px-3 py-1 rounded-full mb-3 uppercase tracking-widest">
-                    {language === 'ar' ? 'المادة' : 'Article'} {allArticles[currentPage].number}
+                    {language === 'ar' ? itemLabelAr : itemLabelEn} {allArticles[currentPage].number}
                   </span>
                   <h2 className="text-2xl sm:text-4xl font-black leading-tight">
                     {language === 'ar' ? allArticles[currentPage].titleAr : allArticles[currentPage].titleEn}
