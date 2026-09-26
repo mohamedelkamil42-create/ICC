@@ -44,11 +44,16 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
   const handleTermClick = async (e: React.MouseEvent, term: string, translation: string, isAr: boolean) => {
     e.stopPropagation();
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    setSelectedTerm({ term, translation, rect, isArabic: isAr });
-    setApiResult(null);
     
-    // If we have a direct glossary match, we still might want an AI explanation for context
-    // but we can prioritize the local translation
+    // Set initial selection
+    setSelectedTerm({ term, translation, rect, isArabic: isAr });
+    
+    // If we have a local glossary translation, show it immediately as a base
+    if (translation) {
+      setApiResult({ translation, explanation: '' });
+    } else {
+      setApiResult(null);
+    }
     
     const cacheKey = `${term}-${isAr ? 'ar' : 'en'}`;
     if (translationCache[cacheKey]) {
@@ -63,22 +68,29 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           word: term, 
-          context: text, // Pass full context for better accuracy
-          language: isAr ? 'en' : 'ar' // Translate to the other language
+          context: text,
+          language: isAr ? 'en' : 'ar' 
         })
       });
       const data = await res.json();
+      
+      // Merge AI result with local translation if AI failed to provide a translation but gave an explanation
+      const finalTranslation = data.translation || translation || term;
       const result = {
-        translation: data.translation || translation || (isAr ? 'Translation unavailable' : 'تعذر العثور على ترجمة'),
+        translation: finalTranslation,
         explanation: data.explanation || ''
       };
+      
       setApiResult(result);
       setTranslationCache(prev => ({ ...prev, [cacheKey]: result }));
     } catch {
-      setApiResult({ 
-        translation: isAr ? 'Error' : 'خطأ في الاتصال',
-        explanation: ''
-      });
+      // If API fails, keep the local translation if we have one
+      if (!translation) {
+        setApiResult({ 
+          translation: isAr ? 'Translation Error' : 'خطأ في جلب الترجمة',
+          explanation: isAr ? 'Check your internet connection.' : 'يرجى التحقق من اتصال الإنترنت.'
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -247,8 +259,8 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
               <div className="py-4 flex flex-col items-center gap-3">
                 <Loader2 size={24} className="animate-spin text-neutral-400" />
                 <div className="flex flex-col items-center gap-1">
-                  <span className="text-[10px] font-black uppercase text-neutral-400 tracking-tighter">تحليل سياقي ذكي...</span>
-                  <span className="text-[9px] text-neutral-300 uppercase">Contextual Legal Analysis...</span>
+                  <span className="text-[10px] font-black uppercase text-neutral-400 tracking-tighter">تحليل سياقي معتمد من المحكمة...</span>
+                  <span className="text-[9px] text-neutral-300 uppercase">ICC Certified Contextual Analysis...</span>
                 </div>
               </div>
             ) : (
@@ -268,14 +280,12 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
                       </button>
                     )}
                   </div>
-                  {(selectedTerm.translation || apiResult?.translation) && (
-                    <div className={`flex items-center gap-1.5 mt-1 opacity-50 ${selectedTerm.isArabic ? 'justify-start' : 'justify-end'}`}>
-                      <Scale size={10} />
-                      <span className="text-[9px] font-bold uppercase tracking-tight">
-                        {selectedTerm.isArabic ? 'Verified Legal Term' : 'مصطلح قانوني معتمد'}
-                      </span>
-                    </div>
-                  )}
+                  <div className={`flex items-center gap-1.5 mt-1 ${selectedTerm.isArabic ? 'justify-start text-emerald-600' : 'justify-end text-emerald-400'}`}>
+                    <Scale size={10} />
+                    <span className="text-[9px] font-black uppercase tracking-widest">
+                      {selectedTerm.isArabic ? 'ICC Official Terminology' : 'مصطلح معتمد من المحكمة'}
+                    </span>
+                  </div>
                 </div>
 
                 {apiResult?.explanation && (

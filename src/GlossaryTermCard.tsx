@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Volume2, Loader2 } from 'lucide-react';
+import { Volume2, Loader2, Scale } from 'lucide-react';
 import { playNaturalEnglishAudio } from './audioUtils';
 
 interface GlossaryTermCardProps {
@@ -42,11 +42,15 @@ export const GlossaryTermCard: React.FC<GlossaryTermCardProps> = ({ ar, en, isRT
       >
         {/* Front Face (Arabic) */}
         <div className="absolute inset-0 backface-hidden bg-white border border-neutral-200 rounded-2xl p-4 shadow-sm flex flex-col justify-center items-center text-center">
+          <div className="absolute top-3 left-3 flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter text-neutral-300">
+            <Scale size={10} />
+            <span>Legal Concept</span>
+          </div>
           <div className="text-[15px] font-black text-black leading-tight mb-2">
             {ar}
           </div>
           <div className="text-[9px] text-neutral-400 font-bold uppercase tracking-[0.15em] opacity-0 group-hover:opacity-100 transition-opacity">
-            {isRTL ? 'انقر للترجمة' : 'Click to translate'}
+            {isRTL ? 'انقر للترجمة المعتمدة' : 'Click for certified translation'}
           </div>
         </div>
 

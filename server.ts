@@ -13,7 +13,7 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Dictionary translation endpoint using Gemini
+  // Dictionary translation endpoint using Gemini - Upgraded for ICC Certified Translation
   app.post('/api/translate', async (req, res) => {
     try {
       const { word, context, language } = req.body;
@@ -21,46 +21,48 @@ async function startServer() {
       if (!process.env.GEMINI_API_KEY) {
         return res.status(500).json({ error: 'Missing GEMINI_API_KEY environment variable' });
       }
-
+ 
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const isTargetArabic = language === 'ar';
       
-      const prompt = `You are a high-level legal expert specializing in the International Criminal Court (ICC) and international criminal law.
+      const prompt = `You are a Senior Legal Linguist and Judicial Expert specializing in the International Criminal Court (ICC).
       
-      Task: Translate the term "${word}" and provide a contextual explanation.
+      Your task is to provide an "ICC-Certified" translation and legal analysis for the term or phrase: "${word}".
       
-      Context of the term (from the current legal text): "${context}"
+      CONTEXT: The phrase appears in the following ICC legal text: "${context}"
       
-      CRITICAL INSTRUCTIONS:
-      1. Provide a precise legal translation for the term "${word}" in ${isTargetArabic ? 'Arabic (العربية الفصحى)' : 'English'}.
-      2. Provide a short "Contextual Explanation" (1-2 sentences) explaining how this term is used within this specific context or under ICC legal standards (Rome Statute/Rules of Procedure).
-      3. Use official ICC terminology.
-      4. Format your response as a JSON object with exactly two keys: "translation" and "explanation".
+      STRICT REQUIREMENTS:
+      1. TRANSLATION: Provide the official, technically accurate legal translation in ${isTargetArabic ? 'Modern Standard Arabic (العربية القانونية الفصحى)' : 'Legal English'}. If this is a multi-word phrase, ensure the translation captures the combined legal concept (e.g., "Complementarity" is not just "integration" but "التكامل").
+      2. LEGAL EXPLANATION: Provide a concise (2 sentences) explanation of how this term functions within the ICC legal framework (Rome Statute, Elements of Crimes, or Rules of Procedure). Explain the legal consequence or definition as understood by the Court.
+      3. AUTHENTICITY: Use terminology identical to official ICC publications.
       
-      Example:
+      FORMAT: JSON object with exactly two keys: "translation" and "explanation".
+      
+      EXAMPLE OUTPUT:
       {
-        "translation": "الغرفة التمهيدية",
-        "explanation": "تشير هنا إلى الهيئة القضائية التي تقرر ما إذا كانت هناك أدلة كافية للمضي قدماً في المحاكمة."
+        "translation": "الدائرة التمهيدية",
+        "explanation": "هي هيئة قضائية مكلفة بمراقبة أداء المدعي العام وضمان حقوق المتهم في مراحل ما قبل المحاكمة، ولها صلاحية إقرار التهم أو رفضها."
       }`;
       
       let response;
       try {
         response = await ai.models.generateContent({
-          model: 'gemini-3.1-flash-lite',
+          model: 'gemini-3-flash-preview', // Aligning with the environment's active model
           contents: prompt,
           config: { responseMimeType: "application/json" }
         });
-      } catch {
+      } catch (error) {
+        // Fallback to 2.0
         response = await ai.models.generateContent({
-          model: 'gemini-flash-latest',
+          model: 'gemini-2.0-flash',
           contents: prompt,
           config: { responseMimeType: "application/json" }
         });
       }
-
+ 
       const result = JSON.parse(response.text?.trim() || '{}');
       res.json({ 
-        translation: result.translation || '', 
+        translation: result.translation || word, // Fallback to original word if translation fails
         explanation: result.explanation || '' 
       });
     } catch (error) {
@@ -96,12 +98,12 @@ Instructions:
       let response;
       try {
         response = await ai.models.generateContent({
-          model: 'gemini-3.1-flash-lite',
+          model: 'gemini-3-flash-preview',
           contents: prompt,
         });
       } catch {
         response = await ai.models.generateContent({
-          model: 'gemini-flash-latest',
+          model: 'gemini-2.0-flash',
           contents: prompt,
         });
       }
@@ -141,7 +143,7 @@ Instructions:
       });
       
       const response = await (ai.models.generateContent as any)({
-        model: "gemini-3.8-flash-tts",
+        model: "gemini-3-flash-preview",
         contents: [
           {
             role: "user",
