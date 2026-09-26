@@ -16,7 +16,7 @@ interface GlossaryTerm {
   defAr?: string;
 }
 
-export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEnglish }) => {
+export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ text, isEnglish }) => {
   const [selectedTerm, setSelectedTerm] = useState<{ term: string, translation: string, rect: DOMRect, isArabic: boolean } | null>(null);
   const [loading, setLoading] = useState(false);
   const [apiResult, setApiResult] = useState<{ translation: string, explanation: string } | null>(null);
@@ -295,4 +295,4 @@ export const TranslatableText: React.FC<TranslatableTextProps> = ({ text, isEngl
       )}
     </div>
   );
-};
+});
