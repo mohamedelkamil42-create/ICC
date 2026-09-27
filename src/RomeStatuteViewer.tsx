@@ -25,13 +25,23 @@ interface RomeStatuteViewerProps {
   data: Part[];
   language: 'ar' | 'en';
   highlightId?: string | null;
+  highlightTerm?: string | null;
   documentTitleAr: string;
   documentTitleEn: string;
   itemLabelAr: string;
   itemLabelEn: string;
 }
 
-export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, language, highlightId, documentTitleAr, documentTitleEn, itemLabelAr, itemLabelEn }) => {
+export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ 
+  data, 
+  language, 
+  highlightId, 
+  highlightTerm,
+  documentTitleAr, 
+  documentTitleEn, 
+  itemLabelAr, 
+  itemLabelEn 
+}) => {
   const [viewMode, setViewMode] = useState<'list' | 'book'>('list');
   const [expandedPart, setExpandedPart] = useState<string | null>(data[0]?.id || null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -43,13 +53,34 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
       const partWithArticle = data.find(p => p.articles.some(a => a.id === highlightId));
       if (partWithArticle) {
         setExpandedPart(partWithArticle.id);
-        // Small delay to allow expansion animation
-        setTimeout(() => {
-          scrollToArticle(highlightId);
-        }, 300);
+        setViewMode('list');
+
+        // Immediate and reliable jump to content with retry mechanism
+        const tryScroll = (attempts = 0) => {
+          const element = document.getElementById(`article-${highlightId}`);
+          if (element) {
+            const yOffset = -90;
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+
+            // If a specific searched term was provided, fine-tune scroll to it after article settles
+            if (highlightTerm) {
+              setTimeout(() => {
+                const termTarget = element.querySelector('#search-highlight-target');
+                if (termTarget) {
+                  termTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }, 400);
+            }
+          } else if (attempts < 10) {
+            setTimeout(() => tryScroll(attempts + 1), 100);
+          }
+        };
+
+        setTimeout(() => tryScroll(), 120);
       }
     }
-  }, [highlightId, data]);
+  }, [highlightId, highlightTerm, data]);
   
   // Flatten articles for book mode with part context - Memoized for performance
   const allArticles = React.useMemo(() => data.flatMap(p => p.articles.map(a => ({
@@ -80,18 +111,36 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
   };
 
   // Helper component for lazy rendering of articles to improve performance
-  const ArticleItem = React.memo(({ art, isRTL, language, itemLabelAr, itemLabelEn, t }: { 
+  const ArticleItem = React.memo(({ 
+    art, 
+    isRTL, 
+    language, 
+    itemLabelAr, 
+    itemLabelEn, 
+    t,
+    isHighlighted,
+    highlightTerm
+  }: { 
     art: Article, 
     isRTL: boolean, 
     language: string, 
     itemLabelAr: string, 
     itemLabelEn: string,
-    t: any
+    t: any,
+    isHighlighted: boolean,
+    highlightTerm?: string | null
   }) => {
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(isHighlighted);
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+      if (isHighlighted) {
+        setIsVisible(true);
+      }
+    }, [isHighlighted]);
+
+    useEffect(() => {
+      if (isVisible) return;
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
@@ -104,36 +153,44 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
 
       if (ref.current) observer.observe(ref.current);
       return () => observer.disconnect();
-    }, []);
+    }, [isVisible]);
 
     return (
       <article 
         ref={ref}
         id={`article-${art.id}`}
-        className="scroll-mt-24 p-6 sm:p-8 bg-white border border-neutral-100 rounded-[2.5rem] shadow-sm hover:shadow-md transition-all group min-h-[150px]"
+        className={`scroll-mt-24 p-5 sm:p-6 md:p-8 bg-white border rounded-2xl sm:rounded-[2.5rem] transition-all group min-h-[140px] ${
+          isHighlighted 
+            ? 'border-black ring-2 ring-black/80 shadow-2xl bg-neutral-50/40 relative' 
+            : 'border-neutral-100 shadow-sm hover:shadow-md'
+        }`}
       >
-        <div className={`flex flex-col mb-8 ${isRTL ? 'items-start text-right' : 'items-start text-left'}`}>
-          <div className={`inline-flex items-center gap-3 mb-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-            <div className="w-8 h-[2px] bg-black/10"></div>
-            <span className="text-[11px] font-black uppercase tracking-widest text-neutral-400">
+        {isHighlighted && (
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-black text-white text-[11px] font-bold rounded-full mb-4 shadow-sm animate-pulse">
+            <span className="w-2 h-2 rounded-full bg-white"></span>
+            <span>{language === 'ar' ? 'الموقع المحدد في البحث' : 'Exact Search Match Location'}</span>
+          </div>
+        )}
+
+        <div className={`flex flex-col mb-6 border-b border-neutral-100 pb-4 w-full ${isRTL ? 'items-start text-right' : 'items-start text-left'}`}>
+          <div className="inline-flex items-center gap-2.5 mb-2">
+            <span className={`text-[11px] font-black uppercase tracking-wider ${isHighlighted ? 'text-black' : 'text-neutral-500'}`}>
               {language === 'ar' ? itemLabelAr : itemLabelEn} {art.number}
             </span>
+            <div className={`w-8 h-[2px] rounded-full ${isHighlighted ? 'bg-black' : 'bg-neutral-200'}`}></div>
           </div>
-          <h3 className={`text-2xl font-black text-neutral-900 leading-snug ${isRTL ? 'font-arabic' : ''}`}>
+          <h3 className={`text-xl sm:text-2xl font-black text-neutral-900 leading-snug w-full ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
             {language === 'ar' ? art.titleAr : art.titleEn}
           </h3>
-          <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="p-3 rounded-full hover:bg-neutral-50 text-neutral-200 hover:text-black transition-all"
-            title={t.backToTop}
-          >
-            <ArrowUp size={18} />
-          </button>
         </div>
         
         <div className="text-justify">
           {isVisible ? (
-            <TranslatableText text={language === 'ar' ? art.contentAr : art.contentEn} isEnglish={language === 'en'} />
+            <TranslatableText 
+              text={language === 'ar' ? art.contentAr : art.contentEn} 
+              isEnglish={language === 'en'} 
+              highlightTerm={isHighlighted ? highlightTerm : undefined}
+            />
           ) : (
             <div className="h-32 flex items-center justify-center border border-dashed border-neutral-100 rounded-2xl bg-neutral-50/30">
               <div className="flex flex-col items-center gap-2">
@@ -148,7 +205,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
   });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div dir={isRTL ? 'rtl' : 'ltr'} className={`flex flex-col gap-6 w-full ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
       
       {/* Controls */}
       <div className="flex items-center justify-between bg-neutral-50 p-2 rounded-2xl border border-neutral-100">
@@ -177,16 +234,16 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
             <div key={part.id} className="border border-neutral-100 rounded-3xl overflow-hidden bg-white">
               <button 
                 onClick={() => setExpandedPart(expandedPart === part.id ? null : part.id)}
-                className={`w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors ${isRTL ? 'flex-row-reverse text-right' : 'flex-row text-left'}`}
+                className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-neutral-50 transition-colors"
               >
-                <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className="w-1 h-8 bg-black/5 rounded-full"></div>
-                  <div className={`flex flex-col ${isRTL ? 'items-start' : 'items-start'}`}>
-                    <span className="text-[10px] font-black uppercase text-neutral-400 tracking-[0.2em] mb-0.5">{language === 'ar' ? part.labelAr : part.labelEn}</span>
-                    <h4 className={`font-black text-sm sm:text-base ${isRTL ? 'font-arabic leading-relaxed' : ''}`}>{language === 'ar' ? part.titleAr : part.titleEn}</h4>
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                  <div className="w-1.5 h-8 bg-black rounded-full shrink-0"></div>
+                  <div className={`flex flex-col min-w-0 ${isRTL ? 'items-start text-right' : 'items-start text-left'}`}>
+                    <span className="text-[10px] font-black uppercase text-neutral-400 tracking-wider mb-0.5">{language === 'ar' ? part.labelAr : part.labelEn}</span>
+                    <h4 className={`font-black text-sm sm:text-base text-neutral-900 truncate ${isRTL ? 'font-arabic' : ''}`}>{language === 'ar' ? part.titleAr : part.titleEn}</h4>
                   </div>
                 </div>
-                <div className="text-neutral-300">
+                <div className="text-neutral-400 shrink-0">
                   {expandedPart === part.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                 </div>
               </button>
@@ -220,10 +277,10 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
           <div className="mt-8 flex flex-col gap-12">
             {data.map((part) => (
               <div key={`content-${part.id}`} className="flex flex-col gap-8">
-                <div className={`py-12 border-b border-neutral-100 flex flex-col relative ${isRTL ? 'items-start text-right font-arabic pr-8' : 'items-start text-left pl-8'}`}>
-                  <div className={`absolute top-12 bottom-12 w-1.5 bg-black rounded-full ${isRTL ? 'right-0' : 'left-0'}`}></div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-neutral-400 mb-3">{language === 'ar' ? part.labelAr : part.labelEn}</span>
-                  <h2 className="text-3xl sm:text-4xl font-black max-w-3xl leading-tight text-neutral-900">{language === 'ar' ? part.titleAr : part.titleEn}</h2>
+                <div className={`py-8 sm:py-10 border-b border-neutral-100 flex flex-col relative w-full ${isRTL ? 'items-start text-right font-arabic pr-6 sm:pr-8' : 'items-start text-left pl-6 sm:pl-8'}`}>
+                  <div className={`absolute top-8 sm:top-10 bottom-8 sm:bottom-10 w-1.5 bg-black rounded-full ${isRTL ? 'right-0' : 'left-0'}`}></div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400 mb-2">{language === 'ar' ? part.labelAr : part.labelEn}</span>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight text-neutral-900 w-full">{language === 'ar' ? part.titleAr : part.titleEn}</h2>
                 </div>
                 
                 {part.articles.map((art) => (
@@ -235,6 +292,8 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
                     itemLabelAr={itemLabelAr} 
                     itemLabelEn={itemLabelEn}
                     t={t}
+                    isHighlighted={art.id === highlightId}
+                    highlightTerm={highlightTerm}
                   />
                 ))}
               </div>
@@ -250,31 +309,31 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
               initial={{ opacity: 0, x: isRTL ? -20 : 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: isRTL ? 20 : -20 }}
-              className={`min-h-[500px] p-8 sm:p-12 bg-white border border-neutral-100 rounded-[3rem] shadow-xl shadow-black/5 relative overflow-hidden ${isRTL ? 'font-arabic' : ''}`}
+              className={`min-h-[420px] sm:min-h-[500px] p-5 sm:p-8 md:p-12 bg-white border border-neutral-100 rounded-2xl sm:rounded-[3rem] shadow-xl shadow-black/5 relative overflow-hidden ${isRTL ? 'font-arabic' : ''}`}
             >
               {/* Page Numbering Decoration */}
-              <div className={`absolute top-0 opacity-[0.03] pointer-events-none p-8 ${isRTL ? 'left-0' : 'right-0'}`}>
-                <span className="text-[12rem] font-black leading-none">{currentPage + 1}</span>
+              <div className={`absolute top-0 opacity-[0.03] pointer-events-none p-4 sm:p-8 ${isRTL ? 'left-0' : 'right-0'}`}>
+                <span className="text-[6rem] sm:text-[9rem] md:text-[12rem] font-black leading-none select-none pointer-events-none">{currentPage + 1}</span>
               </div>
 
               <div className="relative z-10 flex flex-col h-full">
-                <div className={`flex flex-col mb-12 ${isRTL ? 'items-start text-right' : 'items-start text-left'}`}>
-                  <div className={`flex flex-col mb-6 ${isRTL ? 'items-start' : 'items-start'}`}>
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-neutral-300 mb-1 block">
+                <div className={`flex flex-col mb-8 sm:mb-12 w-full ${isRTL ? 'items-start text-right' : 'items-start text-left'}`}>
+                  <div className="flex flex-col mb-4 sm:mb-6 w-full">
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400 mb-1 block">
                       {language === 'ar' ? documentTitleAr : documentTitleEn}
                     </span>
-                    <span className="text-[11px] font-black uppercase tracking-widest text-neutral-500">
+                    <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                       {language === 'ar' ? allArticles[currentPage].partTitleAr : allArticles[currentPage].partTitleEn}
                     </span>
                   </div>
                   
-                  <div className={`inline-flex items-center gap-3 mb-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <div className="w-12 h-[2px] bg-black/10"></div>
-                    <span className="text-[11px] font-black uppercase tracking-widest text-neutral-400">
+                  <div className="inline-flex items-center gap-2.5 mb-3">
+                    <span className="text-xs font-black uppercase tracking-wider text-neutral-900">
                       {language === 'ar' ? itemLabelAr : itemLabelEn} {allArticles[currentPage].number}
                     </span>
+                    <div className="w-8 sm:w-12 h-[2px] bg-black/20 rounded-full"></div>
                   </div>
-                  <h2 className={`text-3xl sm:text-5xl font-black text-neutral-900 leading-tight ${isRTL ? 'font-arabic' : ''}`}>
+                  <h2 className={`text-2xl sm:text-4xl md:text-5xl font-black text-neutral-900 leading-tight w-full ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
                     {language === 'ar' ? allArticles[currentPage].titleAr : allArticles[currentPage].titleEn}
                   </h2>
                 </div>
@@ -287,11 +346,11 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
           </AnimatePresence>
 
           {/* Book Navigation */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
             <button 
               disabled={currentPage === 0}
               onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
-              className="w-full sm:flex-1 flex items-center justify-center gap-3 p-5 rounded-[2rem] border border-neutral-200 bg-white hover:bg-neutral-50 disabled:opacity-30 transition-all active:scale-90 text-sm font-black uppercase tracking-widest order-2 sm:order-1"
+              className="w-full sm:flex-1 flex items-center justify-center gap-3 p-4 sm:p-5 rounded-2xl sm:rounded-[2rem] border border-neutral-200 bg-white hover:bg-neutral-50 disabled:opacity-30 transition-all active:scale-90 text-sm font-black uppercase tracking-widest order-2 sm:order-1"
             >
               <ArrowLeft size={18} className={isRTL ? 'rotate-180' : ''} />
               <span>{t.prev}</span>
@@ -299,7 +358,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
             <button 
               disabled={currentPage === allArticles.length - 1}
               onClick={() => setCurrentPage(prev => Math.min(allArticles.length - 1, prev + 1))}
-              className="w-full sm:flex-1 flex items-center justify-center gap-3 p-5 rounded-[2rem] bg-black text-white hover:bg-neutral-800 shadow-xl shadow-black/10 disabled:opacity-30 transition-all active:scale-90 text-sm font-black uppercase tracking-widest order-1 sm:order-2"
+              className="w-full sm:flex-1 flex items-center justify-center gap-3 p-4 sm:p-5 rounded-2xl sm:rounded-[2rem] bg-black text-white hover:bg-neutral-800 shadow-xl shadow-black/10 disabled:opacity-30 transition-all active:scale-90 text-sm font-black uppercase tracking-widest order-1 sm:order-2"
             >
               <span>{t.next}</span>
               <ArrowRight size={18} className={isRTL ? 'rotate-180' : ''} />
@@ -312,15 +371,15 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ data, lang
         </div>
       )}
 
-      {/* Quick Access Sidebar (Floating on Desktop) */}
+      {/* Quick Access Back to Top (Positioned above Help button to avoid overlap) */}
       {viewMode === 'list' && (
-        <div className="fixed bottom-8 end-8 z-50 flex flex-col gap-2">
+        <div className="fixed bottom-20 end-6 z-30 flex flex-col gap-2">
           <button 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-90 transition-all"
+            className="w-10 h-10 sm:w-11 sm:h-11 bg-white text-black border border-neutral-300 hover:border-black rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all"
             title={t.backToTop}
           >
-            <ArrowUp size={20} />
+            <ArrowUp size={18} />
           </button>
         </div>
       )}

@@ -13,6 +13,8 @@ import glossaryData from './glossaryData.json';
 import { RomeStatuteViewer } from './RomeStatuteViewer';
 import { romeStatuteParts } from './romeStatuteData';
 import { rulesOfProcedureParts } from './rulesOfProcedureData';
+import { elementsOfCrimesParts } from './elementsOfCrimesData';
+import { HelpTourModal } from './HelpTourModal';
 
 export default function App() {
   const [language, setLanguage] = useState<'ar' | 'en'>(() => {
@@ -22,6 +24,7 @@ export default function App() {
   const [pathIds, setPathIds] = useState<string[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
   const [highlightArtId, setHighlightArtId] = useState<string | null>(null);
+  const [highlightSearchTerm, setHighlightSearchTerm] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(() => {
     const saved = localStorage.getItem('icc-app-font-size');
     return saved ? parseInt(saved, 10) : 90;
@@ -95,10 +98,14 @@ export default function App() {
     if (item.type === 'folder') {
       setPathIds([...pathIds, item.id]);
       setOpenId(null);
+      setHighlightSearchTerm(null);
       scrollToRef();
     } else {
       const willOpen = openId !== item.id;
       setOpenId(willOpen ? item.id : null);
+      if (!willOpen) {
+        setHighlightSearchTerm(null);
+      }
       if (willOpen) {
         scrollToRef(item.id);
       }
@@ -108,6 +115,7 @@ export default function App() {
   const handleBack = () => {
     setPathIds(pathIds.slice(0, -1));
     setOpenId(null);
+    setHighlightSearchTerm(null);
     scrollToRef();
   };
 
@@ -132,56 +140,64 @@ export default function App() {
     <div dir={isRTL ? 'rtl' : 'ltr'} className={`min-h-screen bg-[#fafafa] text-neutral-900 selection:bg-neutral-200 transition-all duration-150 ${isRTL ? 'font-arabic' : ''}`}>
       
       {/* Navbar */}
-      <nav className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between transition-all duration-300 ${scrolled ? 'bg-white/70 backdrop-blur-xl border-b border-neutral-100 shadow-sm' : 'bg-transparent border-b border-transparent'}`}>
-        <div className="flex items-center gap-4">
-          <SmartSearchBar libraryData={data} language={language} scrolled={scrolled} onNavigateToItem={(p, id, artId) => { 
-            setPathIds(p.map(item => item.id)); 
-            setOpenId(id); 
-            setHighlightArtId(artId || null);
-            scrollToRef(id);
-          }} />
+      <nav className={`sticky top-0 z-40 px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between transition-all duration-300 w-full overflow-hidden gap-2 ${scrolled ? 'bg-white/75 backdrop-blur-xl border-b border-neutral-100 shadow-sm' : 'bg-transparent border-b border-transparent'}`}>
+        <div className="flex items-center min-w-0 flex-1 sm:flex-initial">
+          <SmartSearchBar 
+            libraryData={data} 
+            language={language} 
+            scrolled={scrolled} 
+            onNavigateToItem={(p, id, artId, searchTerm) => { 
+              setPathIds(p.map(item => item.id)); 
+              setOpenId(id); 
+              setHighlightArtId(artId || null);
+              setHighlightSearchTerm(searchTerm || null);
+              scrollToRef(id);
+            }} 
+          />
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {!isOnline && (
             <motion.div 
               initial={{ opacity: 0, scale: 0.8 }} 
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-neutral-100 text-neutral-500 text-[10px] font-black uppercase px-2 py-1 rounded-md"
+              className="bg-neutral-100 text-neutral-500 text-[9px] sm:text-[10px] font-black uppercase px-2 py-0.5 sm:py-1 rounded-md"
             >
               {language === 'ar' ? 'أوفلاين' : 'Offline'}
             </motion.div>
           )}
           
-          <div className={`flex items-center border border-neutral-200 rounded-full h-10 p-1 shadow-sm transition-all duration-300 ${scrolled ? 'bg-white/50' : 'bg-white/80'}`}>
+          {/* Language Switcher */}
+          <div className={`flex items-center border border-neutral-200 rounded-full h-9 sm:h-10 p-0.5 sm:p-1 shadow-sm transition-all duration-300 ${scrolled ? 'bg-white/50' : 'bg-white/80'}`}>
             <button 
               onClick={toggleLang} 
-              className={`flex items-center justify-center px-4 h-full rounded-full text-[11px] font-black uppercase tracking-tight transition-all active:scale-95 ${language === 'en' ? 'bg-black text-white' : 'text-neutral-400 hover:bg-neutral-50'}`}
+              className={`flex items-center justify-center px-2.5 sm:px-4 h-full rounded-full text-[10px] sm:text-[11px] font-black uppercase tracking-tight transition-all active:scale-95 ${language === 'en' ? 'bg-black text-white' : 'text-neutral-400 hover:bg-neutral-50'}`}
             >
               EN
             </button>
             <button 
               onClick={toggleLang} 
-              className={`flex items-center justify-center px-4 h-full rounded-full text-[12px] font-black uppercase tracking-tight transition-all active:scale-95 ${language === 'ar' ? 'bg-black text-white' : 'text-neutral-400 hover:bg-neutral-50'}`}
+              className={`flex items-center justify-center px-2.5 sm:px-4 h-full rounded-full text-[11px] sm:text-[12px] font-black uppercase tracking-tight transition-all active:scale-95 ${language === 'ar' ? 'bg-black text-white' : 'text-neutral-400 hover:bg-neutral-50'}`}
             >
               <span className="font-arabic">عربي</span>
             </button>
           </div>
 
-          <div className={`flex items-center border border-neutral-200 rounded-full h-10 overflow-hidden shadow-sm transition-all duration-300 ${scrolled ? 'bg-white/50' : 'bg-white/80'}`}>
+          {/* Font Resizer */}
+          <div className={`flex items-center border border-neutral-200 rounded-full h-9 sm:h-10 overflow-hidden shadow-sm transition-all duration-300 ${scrolled ? 'bg-white/50' : 'bg-white/80'}`}>
             <button 
               onClick={() => adjustFontSize(-1)}
-              className="px-3 h-full hover:bg-neutral-50 text-neutral-500 transition-colors border-r border-neutral-100"
+              className="px-2 sm:px-3 h-full hover:bg-neutral-50 text-neutral-500 transition-colors border-r border-neutral-100"
               title={language === 'ar' ? 'تصغير الخط' : 'Smaller font'}
             >
-              <ZoomOut size={16} />
+              <ZoomOut size={15} />
             </button>
             <button 
               onClick={() => adjustFontSize(1)}
-              className="px-3 h-full hover:bg-neutral-50 text-neutral-500 transition-colors"
+              className="px-2 sm:px-3 h-full hover:bg-neutral-50 text-neutral-500 transition-colors"
               title={language === 'ar' ? 'تكبير الخط' : 'Larger font'}
             >
-              <ZoomIn size={16} />
+              <ZoomIn size={15} />
             </button>
           </div>
           
@@ -189,25 +205,26 @@ export default function App() {
         </div>
       </nav>
 
-      {/* 3D Content Container */}
+      {/* 3D Content Container with overflow protection */}
       <motion.div
         key={language}
         initial={{ rotateY: isRTL ? -15 : 15, opacity: 0, scale: 0.95 }}
         animate={{ rotateY: 0, opacity: 1, scale: 1 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
         style={{ perspective: 1000 }}
+        className="w-full overflow-x-hidden"
       >
         {/* Hero */}
-        <header className="pt-12 pb-8 px-4 text-center max-w-2xl mx-auto">
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="inline-flex p-4 bg-black rounded-3xl text-white mb-6 shadow-xl shadow-black/10">
-            <Scale size={32} strokeWidth={1.5} />
+        <header className="pt-8 sm:pt-12 pb-6 sm:pb-8 px-4 text-center max-w-2xl mx-auto">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="inline-flex p-3 sm:p-4 bg-black rounded-3xl text-white mb-4 sm:mb-6 shadow-xl shadow-black/10">
+            <Scale size={28} strokeWidth={1.5} className="sm:w-8 sm:h-8" />
           </motion.div>
-          <h1 className="text-2xl sm:text-3xl font-black mb-3 tracking-tight">{t.title}</h1>
-          <p className="text-neutral-500 text-sm sm:text-base leading-relaxed">{t.subtitle}</p>
+          <h1 className="text-xl sm:text-3xl font-black mb-2 sm:mb-3 tracking-tight">{t.title}</h1>
+          <p className="text-neutral-500 text-xs sm:text-base leading-relaxed">{t.subtitle}</p>
         </header>
 
         {/* Content */}
-        <main ref={mainRef} className="max-w-4xl mx-auto px-4 pb-20">
+        <main ref={mainRef} className="max-w-4xl mx-auto px-3 sm:px-4 pb-24 w-full">
           
           {/* Breadcrumb / Back */}
           <div className="flex items-center mb-6 min-h-[40px] justify-start">
@@ -270,18 +287,45 @@ export default function App() {
 
                     <AnimatePresence>
                       {isOpen && (
-                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden bg-white border border-neutral-200 rounded-3xl p-6 md:p-8 shadow-sm">
-                          <h3 className={`text-xl font-black mb-4 border-b pb-4 ${isRTL ? 'text-right' : 'text-left'}`}>{item.title}</h3>
-                          {item.type === 'content' && <TranslatableText text={item.content || ''} isEnglish={language === 'en'} />}
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden bg-white border border-neutral-200 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-sm">
+                          <h3 className={`text-lg sm:text-xl font-black mb-4 border-b pb-4 ${isRTL ? 'text-right' : 'text-left'}`}>{item.title}</h3>
+                          {item.type === 'content' && (
+                            <TranslatableText 
+                              text={item.content || ''} 
+                              isEnglish={language === 'en'} 
+                              highlightTerm={isOpen ? highlightSearchTerm : null} 
+                            />
+                          )}
                           {item.type === 'statute' && (
                             <RomeStatuteViewer 
-                              data={item.id === '2-2' ? rulesOfProcedureParts : romeStatuteParts} 
+                              data={
+                                item.id === '2-2' 
+                                  ? rulesOfProcedureParts 
+                                  : (item.id === '2-3' ? elementsOfCrimesParts : romeStatuteParts)
+                              } 
                               language={language} 
                               highlightId={isOpen ? highlightArtId : null}
-                              documentTitleAr={item.id === '2-2' ? 'قواعد الإجراءات والإثبات' : 'نظام روما الأساسي'}
-                              documentTitleEn={item.id === '2-2' ? 'Rules of Procedure and Evidence' : 'Rome Statute'}
-                              itemLabelAr={item.id === '2-2' ? 'القاعدة' : 'المادة'}
-                              itemLabelEn={item.id === '2-2' ? 'Rule' : 'Article'}
+                              highlightTerm={isOpen ? highlightSearchTerm : null}
+                              documentTitleAr={
+                                item.id === '2-2' 
+                                  ? 'قواعد الإجراءات والإثبات' 
+                                  : (item.id === '2-3' ? 'أركان الجرائم' : 'نظام روما الأساسي')
+                              }
+                              documentTitleEn={
+                                item.id === '2-2' 
+                                  ? 'Rules of Procedure and Evidence' 
+                                  : (item.id === '2-3' ? 'Elements of Crimes' : 'Rome Statute')
+                              }
+                              itemLabelAr={
+                                item.id === '2-2' 
+                                  ? 'القاعدة' 
+                                  : (item.id === '2-3' ? 'المادة' : 'المادة')
+                              }
+                              itemLabelEn={
+                                item.id === '2-2' 
+                                  ? 'Rule' 
+                                  : (item.id === '2-3' ? 'Article' : 'Article')
+                              }
                             />
                           )}
                           {item.type === 'glossary' && item.terms && (
@@ -299,6 +343,9 @@ export default function App() {
           </div>
         </main>
       </motion.div>
+
+      {/* Floating Help & Interactive Tour */}
+      <HelpTourModal language={language} />
     </div>
   );
 }
