@@ -14,6 +14,7 @@ import { RomeStatuteViewer } from './RomeStatuteViewer';
 import { romeStatuteParts } from './romeStatuteData';
 import { rulesOfProcedureParts } from './rulesOfProcedureData';
 import { elementsOfCrimesParts } from './elementsOfCrimesData';
+import { regulationsOfTheCourtParts } from './regulationsOfTheCourtData';
 import { HelpTourModal } from './HelpTourModal';
 
 export default function App() {
@@ -301,7 +302,11 @@ export default function App() {
                               data={
                                 item.id === '2-2' 
                                   ? rulesOfProcedureParts 
-                                  : (item.id === '2-3' ? elementsOfCrimesParts : romeStatuteParts)
+                                  : (item.id === '2-3' 
+                                      ? elementsOfCrimesParts 
+                                      : (item.id === '2-4' 
+                                          ? regulationsOfTheCourtParts 
+                                          : romeStatuteParts))
                               } 
                               language={language} 
                               highlightId={isOpen ? highlightArtId : null}
@@ -309,22 +314,38 @@ export default function App() {
                               documentTitleAr={
                                 item.id === '2-2' 
                                   ? 'قواعد الإجراءات والإثبات' 
-                                  : (item.id === '2-3' ? 'أركان الجرائم' : 'نظام روما الأساسي')
+                                  : (item.id === '2-3' 
+                                      ? 'أركان الجرائم' 
+                                      : (item.id === '2-4' 
+                                          ? 'لوائح المحكمة' 
+                                          : 'نظام روما الأساسي'))
                               }
                               documentTitleEn={
                                 item.id === '2-2' 
                                   ? 'Rules of Procedure and Evidence' 
-                                  : (item.id === '2-3' ? 'Elements of Crimes' : 'Rome Statute')
+                                  : (item.id === '2-3' 
+                                      ? 'Elements of Crimes' 
+                                      : (item.id === '2-4' 
+                                          ? 'Regulations of the Court' 
+                                          : 'Rome Statute'))
                               }
                               itemLabelAr={
                                 item.id === '2-2' 
                                   ? 'القاعدة' 
-                                  : (item.id === '2-3' ? 'المادة' : 'المادة')
+                                  : (item.id === '2-3' 
+                                      ? 'المادة' 
+                                      : (item.id === '2-4' 
+                                          ? 'اللائحة' 
+                                          : 'المادة'))
                               }
                               itemLabelEn={
                                 item.id === '2-2' 
                                   ? 'Rule' 
-                                  : (item.id === '2-3' ? 'Article' : 'Article')
+                                  : (item.id === '2-3' 
+                                      ? 'Article' 
+                                      : (item.id === '2-4' 
+                                          ? 'Regulation' 
+                                          : 'Article'))
                               }
                             />
                           )}

@@ -2,8 +2,9 @@ import { DrawerItem, Language } from './types';
 import { romeStatuteParts } from './romeStatuteData';
 import { rulesOfProcedureParts } from './rulesOfProcedureData';
 import { elementsOfCrimesParts } from './elementsOfCrimesData';
+import { regulationsOfTheCourtParts } from './regulationsOfTheCourtData';
 
-export type SearchCategory = 'all' | 'rome_statute' | 'rules_of_procedure' | 'elements_of_crimes' | 'terms';
+export type SearchCategory = 'all' | 'rome_statute' | 'rules_of_procedure' | 'elements_of_crimes' | 'regulations_of_the_court' | 'terms';
 
 export interface SearchResultItem {
   id: string;
@@ -11,7 +12,7 @@ export interface SearchResultItem {
   type: 'document' | 'folder' | 'glossary_term' | 'statute_article';
   subtitle?: string;
   documentBadge?: string;
-  documentOrigin?: 'rome_statute' | 'rules_of_procedure' | 'elements_of_crimes' | 'glossary' | 'general';
+  documentOrigin?: 'rome_statute' | 'rules_of_procedure' | 'elements_of_crimes' | 'regulations_of_the_court' | 'glossary' | 'general';
   contentSnippet?: string;
   drawerIdToOpen?: string;
   statuteArtId?: string;
@@ -73,20 +74,27 @@ export function buildSearchIndex(data: DrawerItem[], lang: Language): SearchInde
       } else if (item.type === 'statute') {
         const isRules = item.id === '2-2';
         const isElements = item.id === '2-3';
+        const isRegulations = item.id === '2-4';
         const statuteData = isRules 
           ? rulesOfProcedureParts 
-          : (isElements ? elementsOfCrimesParts : romeStatuteParts);
+          : (isElements ? elementsOfCrimesParts : (isRegulations ? regulationsOfTheCourtParts : romeStatuteParts));
         const docBadge = isRules 
           ? (isAr ? 'قواعد الإجراءات والإثبات' : 'Rules of Procedure') 
           : (isElements 
               ? (isAr ? 'أركان الجرائم' : 'Elements of Crimes') 
-              : (isAr ? 'نظام روما الأساسي' : 'Rome Statute'));
+              : (isRegulations 
+                  ? (isAr ? 'لوائح المحكمة' : 'Regulations of the Court')
+                  : (isAr ? 'نظام روما الأساسي' : 'Rome Statute')));
         const docOrigin = isRules 
           ? 'rules_of_procedure' 
-          : (isElements ? 'elements_of_crimes' : 'rome_statute');
+          : (isElements 
+              ? 'elements_of_crimes' 
+              : (isRegulations ? 'regulations_of_the_court' : 'rome_statute'));
         const itemLabel = isRules 
           ? (isAr ? 'القاعدة' : 'Rule') 
-          : (isElements ? (isAr ? 'المادة' : 'Article') : (isAr ? 'المادة' : 'Article'));
+          : (isElements 
+              ? (isAr ? 'المادة' : 'Article') 
+              : (isRegulations ? (isAr ? 'اللائحة' : 'Regulation') : (isAr ? 'المادة' : 'Article')));
 
         for (const part of statuteData) {
           const partTitle = isAr ? `${part.labelAr} - ${part.titleAr}` : `${part.labelEn} - ${part.titleEn}`;
@@ -162,6 +170,7 @@ export function performSmartSearch(
     if (category === 'rome_statute' && origin !== 'rome_statute') continue;
     if (category === 'rules_of_procedure' && origin !== 'rules_of_procedure') continue;
     if (category === 'elements_of_crimes' && origin !== 'elements_of_crimes') continue;
+    if (category === 'regulations_of_the_court' && origin !== 'regulations_of_the_court') continue;
     if (category === 'terms' && entry.type !== 'glossary_term') continue;
 
     if (entry.searchableText.includes(q)) {

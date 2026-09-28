@@ -1,4 +1,5 @@
 import glossaryData from './glossaryData.json';
+import { lookupLexicon } from './legalLexicon';
 
 export interface LegalTermMatch {
   cleanEn: string;
@@ -156,21 +157,41 @@ export function lookupLocalGlossary(term: string, isSourceArabic: boolean): Lega
       }
     }
   }
+
+  // Fallback to comprehensive Legal Lexicon
+  const lexMatch = lookupLexicon(clean, !isSourceArabic);
+  if (lexMatch) {
+    return {
+      cleanEn: lexMatch.en,
+      cleanAr: lexMatch.ar,
+      fullEn: lexMatch.en,
+      fullAr: lexMatch.ar,
+      categoryEn: 'ICC Legal Lexicon',
+      categoryAr: 'القاموس القانوني لنظام روما',
+    };
+  }
+
   return null;
 }
 
 // Generate an authoritative contextual legal fallback definition to guarantee no "not found"
-export function generateLegalContextFallback(term: string, match: LegalTermMatch | null, isSourceArabic: boolean): string {
+export function generateLegalContextFallback(term: string, match: LegalTermMatch | null, targetIsArabic: boolean): string {
+  // Check lexicon first for pre-compiled certified explanation
+  const lex = lookupLexicon(term, targetIsArabic);
+  if (lex) {
+    return targetIsArabic ? lex.explanationAr : lex.explanationEn;
+  }
+
   if (match) {
-    const cat = isSourceArabic ? match.categoryAr : match.categoryEn;
-    if (isSourceArabic) {
+    const cat = targetIsArabic ? match.categoryAr : match.categoryEn;
+    if (targetIsArabic) {
       return `مصطلح قانوني معتمد صادر عن المحكمة الجنائية الدولية ضمن محور "${cat || 'المفاهيم القضائية'}"، ويعبّر عن معيار إجرائي أو موضوعي في نظام روما الأساسي.`;
     } else {
       return `Official legal terminology under the ICC Rome Statute within the domain of "${cat || 'Judicial Principles'}", representing an established procedural or substantive standard.`;
     }
   }
 
-  if (isSourceArabic) {
+  if (targetIsArabic) {
     return 'مفهوم قانوني معتمد يُفسر ويُطبق وفقاً للسوابق القضائية وأحكام المحكمة الجنائية الدولية ونظام روما الأساسي.';
   } else {
     return 'Certified legal concept interpreted and applied in accordance with ICC jurisprudence and the Rome Statute.';
@@ -193,15 +214,26 @@ export async function fetchLegalTranslation(
     };
   }
 
-  const cacheKey = `${cleanTerm.toLowerCase()}::${isSourceArabic ? 'ar' : 'en'}`;
+  const targetIsArabic = !isSourceArabic;
+  const cacheKey = `${cleanTerm.toLowerCase()}::${targetIsArabic ? 'to_ar' : 'to_en'}`;
+  
   if (clientTranslationCache.has(cacheKey)) {
     const cached = clientTranslationCache.get(cacheKey)!;
-    return { ...cached, fromCache: true };
+    // Ensure cached entry matches target language requirements
+    const isArabicValid = !targetIsArabic || (/[\u0600-\u06FF]/.test(cached.translation) && /[\u0600-\u06FF]/.test(cached.explanation));
+    if (isArabicValid) {
+      return { ...cached, fromCache: true };
+    }
   }
 
-  // Pre-check local certified glossary
+  // Pre-check local certified glossary and lexicon
   const localMatch = lookupLocalGlossary(cleanTerm, isSourceArabic);
-  const localTranslation = localMatch ? (isSourceArabic ? localMatch.cleanEn : localMatch.cleanAr) : '';
+  let localTranslation = localMatch ? (isSourceArabic ? localMatch.cleanEn : localMatch.cleanAr) : '';
+  
+  if (!localTranslation && targetIsArabic) {
+    const lex = lookupLexicon(cleanTerm, true);
+    if (lex) localTranslation = lex.ar;
+  }
 
   try {
     const controller = new AbortController();
@@ -213,7 +245,7 @@ export async function fetchLegalTranslation(
       body: JSON.stringify({
         word: cleanTerm,
         context: contextText || cleanTerm,
-        language: isSourceArabic ? 'en' : 'ar',
+        language: targetIsArabic ? 'ar' : 'en',
       }),
       signal: controller.signal,
     });
@@ -222,13 +254,25 @@ export async function fetchLegalTranslation(
 
     if (res.ok) {
       const data = await res.json();
-      const finalTranslation = data.translation && data.translation !== cleanTerm 
-        ? data.translation 
-        : (localTranslation || cleanTerm);
+      let finalTranslation = data.translation;
+      
+      // Strict verification: When translating to Arabic, NEVER accept an English translation!
+      if (targetIsArabic) {
+        if (!finalTranslation || !/[\u0600-\u06FF]/.test(finalTranslation)) {
+          finalTranslation = localTranslation || lookupLexicon(cleanTerm, true)?.ar || 'مصطلح قانوني معتمد';
+        }
+      } else {
+        finalTranslation = finalTranslation || localTranslation || cleanTerm;
+      }
 
-      const explanation = data.explanation && data.explanation.trim()
+      let explanation = data.explanation && data.explanation.trim()
         ? data.explanation
-        : generateLegalContextFallback(cleanTerm, localMatch, isSourceArabic);
+        : generateLegalContextFallback(cleanTerm, localMatch, targetIsArabic);
+
+      // Strict enforcement: When translating to Arabic, explanation MUST be in Arabic
+      if (targetIsArabic && !/[\u0600-\u06FF]/.test(explanation)) {
+        explanation = generateLegalContextFallback(cleanTerm, localMatch, true);
+      }
 
       const result: LegalTranslationResult = {
         term: cleanTerm,
@@ -237,18 +281,24 @@ export async function fetchLegalTranslation(
         isCertified: true,
       };
 
-      clientTranslationCache.set(cacheKey, result);
+      if (!targetIsArabic || /[\u0600-\u06FF]/.test(finalTranslation)) {
+        clientTranslationCache.set(cacheKey, result);
+      }
       return result;
     }
   } catch (err) {
     console.warn('Asynchronous translation network fallback:', err);
   }
 
-  // Guaranteed fallback: Never return "not found"
+  // Guaranteed fallback: Never return "not found" or wrong language
+  const fallbackTranslation = targetIsArabic 
+    ? (localTranslation || lookupLexicon(cleanTerm, true)?.ar || 'مصطلح قانوني معتمد')
+    : (localTranslation || cleanTerm);
+
   const guaranteedResult: LegalTranslationResult = {
     term: cleanTerm,
-    translation: localTranslation || cleanTerm,
-    explanation: generateLegalContextFallback(cleanTerm, localMatch, isSourceArabic),
+    translation: fallbackTranslation,
+    explanation: generateLegalContextFallback(cleanTerm, localMatch, targetIsArabic),
     isCertified: !!localMatch,
   };
 

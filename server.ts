@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import { GoogleGenAI } from '@google/genai';
 import { createServer as createViteServer } from 'vite';
+import { lookupLexicon } from './src/legalLexicon';
 
 async function startServer() {
   const app = express();
@@ -61,22 +62,49 @@ async function startServer() {
       const cacheKey = `${cleanWord.toLowerCase()}::${language}`;
 
       if (translationCache.has(cacheKey)) {
-        return res.json(translationCache.get(cacheKey));
+        const cached = translationCache.get(cacheKey)!;
+        // Verify cached translation matches required target language
+        if (!isTargetArabic || /[\u0600-\u06FF]/.test(cached.translation)) {
+          return res.json(cached);
+        }
       }
 
       // Check local certified glossary index
       const matchedTerm = glossaryMap.get(cleanWord.toLowerCase()) || glossaryMap.get(cleanWord);
       let localCertifiedTranslation = '';
+      let localCertifiedExplanation = '';
+
       if (matchedTerm) {
         localCertifiedTranslation = isTargetArabic ? matchedTerm.ar : matchedTerm.en;
       }
 
+      // Check certified legal lexicon
+      const lexiconMatch = lookupLexicon(cleanWord, isTargetArabic);
+      if (lexiconMatch) {
+        if (!localCertifiedTranslation) {
+          localCertifiedTranslation = isTargetArabic ? lexiconMatch.ar : lexiconMatch.en;
+        }
+        localCertifiedExplanation = isTargetArabic ? lexiconMatch.explanationAr : lexiconMatch.explanationEn;
+      }
+
+      // Fallback search in glossary map for sub-phrase or root
+      if (!localCertifiedTranslation && isTargetArabic) {
+        const lower = cleanWord.toLowerCase();
+        for (const [key, val] of glossaryMap.entries()) {
+          if (key === lower || key.startsWith(lower) || lower.startsWith(key)) {
+            localCertifiedTranslation = val.ar;
+            break;
+          }
+        }
+      }
+
       if (!process.env.GEMINI_API_KEY) {
+        const safeTranslation = localCertifiedTranslation || (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
         const fallback = {
-          translation: localCertifiedTranslation || cleanWord,
-          explanation: isTargetArabic
+          translation: safeTranslation,
+          explanation: localCertifiedExplanation || (isTargetArabic
             ? 'مصطلح قانوني مستخدم في إطار نظام روما الأساسي للمحكمة الجنائية الدولية.'
-            : 'Legal term used within the framework of the ICC Rome Statute.',
+            : 'Legal term used within the framework of the ICC Rome Statute.'),
           isCertified: !!localCertifiedTranslation
         };
         translationCache.set(cacheKey, fallback);
@@ -87,24 +115,34 @@ async function startServer() {
 
       const prompt = `You are a Senior Legal Linguist and Judicial Expert specializing in the International Criminal Court (ICC).
 
-Your task is to provide an authoritative "ICC-Certified" translation and contextual legal analysis for the term or multi-word phrase: "${cleanWord}".
+Your task is to provide an authoritative "ICC-Certified" translation and contextual legal explanation for the legal term or phrase: "${cleanWord}".
 
 CONTEXT OF USAGE IN THE LEGAL TEXT:
 "${context || cleanWord}"
 
-STRICT REQUIREMENTS:
-1. TRANSLATION:
-   - Target Language: ${isTargetArabic ? 'Modern Standard Legal Arabic (العربية القانونية الفصحى المعتمدة)' : 'Official ICC Legal English'}.
-   - Multi-word phrases MUST be translated as a single unified legal concept (e.g. "Grave breaches of the Geneva Conventions" -> "الانتهاكات الجسيمة لاتفاقيات جنيف", "Individual criminal responsibility" -> "المسؤولية الجنائية الفردية", "Pre-Trial Chamber" -> "الدائرة التمهيدية", "Command responsibility" -> "مسؤولية القائد والرئيس").
-   - NEVER return a literal disjointed translation.
-2. LEGAL EXPLANATION:
-   - Provide a concise 1-2 sentence explanation of how this legal concept operates under the Rome Statute, Elements of Crimes, or Rules of Procedure and Evidence.
-   - Explain its practical legal effect or procedural role.
-3. OUTPUT FORMAT:
-   - Return strictly a JSON object with exactly two keys: "translation" and "explanation".`;
+CRITICAL LANGUAGE REQUIREMENT:
+Target Language: ${isTargetArabic ? 'ARABIC (اللغة العربية الفصحى)' : 'ENGLISH'}.
+${isTargetArabic 
+  ? 'Both "translation" and "explanation" MUST BE ENTIRELY WRITTEN IN MODERN STANDARD ARABIC (اللغة العربية الفصحى). Under NO circumstances should any part of "translation" or "explanation" be in English!' 
+  : 'Both "translation" and "explanation" MUST be written in English.'}
+
+SPECIFIC REQUIREMENTS:
+1. "translation":
+   - ${isTargetArabic ? 'The authoritative, certified ICC legal term in Arabic (e.g. "admissibility" -> "المقبولية", "Pre-Trial Chamber" -> "الدائرة التمهيدية", "Command responsibility" -> "مسؤولية القائد والرئيس").' : 'The certified ICC legal term in English.'}
+   - Multi-word phrases must be translated as a single unified legal concept.
+2. "explanation":
+   - ${isTargetArabic ? 'شرح قانوني دقيق وموجز (جملة أو جملتان) باللغة العربية الفصحى حصراً، يوضح مدلول هذا المصطلح وموقعه في نظام روما الأساسي أو أركان الجرائم أو القواعد الإجرائية.' : 'A concise 1-2 sentence explanation of this legal concept under the Rome Statute or Elements of Crimes.'}
+
+OUTPUT FORMAT:
+Return strictly a valid JSON object with exactly two keys:
+{
+  "translation": "${isTargetArabic ? 'الترجمة العربية القانونية المعتمدة' : 'Official ICC English Term'}",
+  "explanation": "${isTargetArabic ? 'الشرح والتوضيح القانوني باللغة العربية الفصحى' : 'Legal explanation in English'}"
+}`;
 
       let response: any = null;
-      const modelChoices = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
+      // Prioritize highly-available models
+      const modelChoices = ['gemini-flash-latest', 'gemini-3.1-flash-lite', 'gemini-3.8-flash'];
       let success = false;
 
       for (const modelName of modelChoices) {
@@ -124,30 +162,49 @@ STRICT REQUIREMENTS:
       }
 
       if (!success || !response?.text) {
+        const safeTranslation = localCertifiedTranslation || (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
         const payload = {
-          translation: localCertifiedTranslation || cleanWord,
-          explanation: isTargetArabic 
+          translation: safeTranslation,
+          explanation: localCertifiedExplanation || (isTargetArabic 
             ? 'مصطلح قانوني معتمد في المحكمة الجنائية الدولية وفق نصوص نظام روما الأساسي.'
-            : 'Certified legal terminology under the Rome Statute of the International Criminal Court.',
-          isCertified: true
+            : 'Certified legal terminology under the Rome Statute of the International Criminal Court.'),
+          isCertified: !!localCertifiedTranslation
         };
-        translationCache.set(cacheKey, payload);
+        if (isTargetArabic ? /[\u0600-\u06FF]/.test(safeTranslation) : true) {
+          translationCache.set(cacheKey, payload);
+        }
         return res.json(payload);
       }
 
       try {
         const result = JSON.parse(response.text.trim());
+        let translationText = result.translation || localCertifiedTranslation || (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
+        let explanationText = result.explanation || localCertifiedExplanation || '';
+
+        // Strict verification: When translating to Arabic, ensure neither translation nor explanation is in English!
+        if (isTargetArabic) {
+          if (!/[\u0600-\u06FF]/.test(translationText)) {
+            translationText = localCertifiedTranslation || (lexiconMatch ? lexiconMatch.ar : 'مصطلح قانوني معتمد');
+          }
+          if (!/[\u0600-\u06FF]/.test(explanationText)) {
+            explanationText = localCertifiedExplanation || (localCertifiedTranslation
+              ? `مصطلح قانوني معتمد صادر عن المحكمة الجنائية الدولية، ويعبّر عن معيار إجرائي أو موضوعي في نظام روما الأساسي.`
+              : `مفهوم قانوني معتمد يُفسر ويُطبق وفقاً للسوابق القضائية وأحكام المحكمة الجنائية الدولية ونظام روما الأساسي.`);
+          }
+        }
+
         const payload = {
-          translation: result.translation || localCertifiedTranslation || cleanWord,
-          explanation: result.explanation || (isTargetArabic ? 'مصطلح قانوني معتمد وفقاً لنظام روما الأساسي.' : 'Certified ICC legal term.'),
+          translation: translationText,
+          explanation: explanationText || (isTargetArabic ? 'مصطلح قانوني معتمد وفقاً لنظام روما الأساسي.' : 'Certified ICC legal term.'),
           isCertified: true
         };
         translationCache.set(cacheKey, payload);
         return res.json(payload);
       } catch (parseErr) {
+        const safeTranslation = localCertifiedTranslation || (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
         const payload = {
-          translation: localCertifiedTranslation || cleanWord,
-          explanation: '',
+          translation: safeTranslation,
+          explanation: localCertifiedExplanation || (isTargetArabic ? 'مصطلح قانوني معتمد وفقاً لنظام روما الأساسي.' : 'Certified ICC legal term.'),
           isCertified: !!localCertifiedTranslation
         };
         translationCache.set(cacheKey, payload);
@@ -156,10 +213,15 @@ STRICT REQUIREMENTS:
     } catch (error) {
       console.error('Translation global handler:', error);
       const cleanWord = req.body?.word || '';
+      const isTargetArabic = req.body?.language === 'ar';
+      const lexiconMatch = lookupLexicon(cleanWord, isTargetArabic);
+      const safeTranslation = lexiconMatch 
+        ? (isTargetArabic ? lexiconMatch.ar : lexiconMatch.en)
+        : (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
       return res.json({ 
-        translation: cleanWord, 
-        explanation: req.body?.language === 'ar' ? 'مصطلح قانوني وفق أحكام المحكمة الجنائية الدولية.' : 'ICC legal term.',
-        isCertified: false 
+        translation: safeTranslation, 
+        explanation: isTargetArabic ? 'مصطلح قانوني وفق أحكام المحكمة الجنائية الدولية.' : 'ICC legal term.',
+        isCertified: !!lexiconMatch 
       });
     }
   });
@@ -214,10 +276,37 @@ Instructions:
     }
   });
 
-  // In-memory cache for audio to provide instant responses on repeated requests
-  const ttsCacheV3 = new Map<string, { audio: string; mimeType: string }>();
+  // Helper to ensure raw PCM audio from Gemini is wrapped in a standard WAV container
+  function pcmToWav(pcmBuffer: Buffer, sampleRate = 24000, numChannels = 1, bitsPerSample = 16): Buffer {
+    if (pcmBuffer.length >= 12 && pcmBuffer.toString('utf8', 0, 4) === 'RIFF') {
+      return pcmBuffer; // Already a valid WAV
+    }
+    const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
+    const blockAlign = (numChannels * bitsPerSample) / 8;
+    const dataSize = pcmBuffer.length;
+    const header = Buffer.alloc(44);
 
-  // TTS endpoint using Gemini with Human-like voice
+    header.write('RIFF', 0);
+    header.writeUInt32LE(36 + dataSize, 4);
+    header.write('WAVE', 8);
+    header.write('fmt ', 12);
+    header.writeUInt32LE(16, 16); // Subchunk1Size
+    header.writeUInt16LE(1, 20);  // AudioFormat: 1 (PCM)
+    header.writeUInt16LE(numChannels, 22);
+    header.writeUInt32LE(sampleRate, 24);
+    header.writeUInt32LE(byteRate, 28);
+    header.writeUInt16LE(blockAlign, 32);
+    header.writeUInt16LE(bitsPerSample, 34);
+    header.write('data', 36);
+    header.writeUInt32LE(dataSize, 40);
+
+    return Buffer.concat([header, pcmBuffer]);
+  }
+
+  // In-memory cache for audio to provide instant responses on repeated requests
+  const ttsCacheV4 = new Map<string, { audio: string; mimeType: string }>();
+
+  // TTS endpoint using Gemini with Natural Human Voice and clear articulation
   app.post('/api/tts', async (req, res) => {
     const { text } = req.body || {};
     if (!text || typeof text !== 'string') {
@@ -227,8 +316,8 @@ Instructions:
     const cleanText = text.trim();
     const cacheKey = cleanText.toLowerCase();
 
-    if (ttsCacheV3.has(cacheKey)) {
-      return res.json(ttsCacheV3.get(cacheKey));
+    if (ttsCacheV4.has(cacheKey)) {
+      return res.json(ttsCacheV4.get(cacheKey));
     }
 
     try {
@@ -241,14 +330,18 @@ Instructions:
         httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
       });
       
+      // Use gemini-3.8-flash-lite-tts for natural human legal articulation
       const response = await (ai.models.generateContent as any)({
-        model: "gemini-3.8-flash-tts",
+        model: "gemini-3.8-flash-lite-tts",
         contents: [
           {
             role: "user",
             parts: [
               {
                 text: cleanText,
+                speechMetadata: {
+                  style: "Articulate, natural human legal pronunciation, warm tone, clear enunciation with professional judicial pacing"
+                }
               },
             ],
           },
@@ -258,7 +351,8 @@ Instructions:
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: {
-                voiceName: "Zephyr",
+                // 'Kore' delivers a warm, natural, human studio-grade voice
+                voiceName: "Kore",
               },
             },
           },
@@ -267,11 +361,12 @@ Instructions:
 
       const part = response.candidates?.[0]?.content?.parts?.[0];
       const base64Audio = part?.inlineData?.data;
-      const mimeType = part?.inlineData?.mimeType || 'audio/wav';
       
       if (base64Audio) {
-        const payload = { audio: base64Audio, mimeType };
-        ttsCacheV3.set(cacheKey, payload);
+        const rawPcm = Buffer.from(base64Audio, 'base64');
+        const wavBuffer = pcmToWav(rawPcm, 24000, 1, 16);
+        const payload = { audio: wavBuffer.toString('base64'), mimeType: 'audio/wav' };
+        ttsCacheV4.set(cacheKey, payload);
         return res.json(payload);
       }
       throw new Error('Gemini audio generation failed');
@@ -279,29 +374,12 @@ Instructions:
       const isQuotaExceeded = error.message?.includes('quota') || error.status === 429 || JSON.stringify(error).includes('RESOURCE_EXHAUSTED');
       
       if (isQuotaExceeded) {
-        console.warn('TTS Quota hit - falling back');
+        console.warn('TTS Quota limit reached, instructing client to use high-quality speech synthesis');
       } else {
         console.error('TTS Error:', error.message || error);
       }
       
-      // Automatic fallback to high-quality external service if Gemini fails or quota is hit
-      try {
-        const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(cleanText)}`;
-        const fRes = await fetch(fallbackUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-        });
-        if (fRes.ok) {
-          const buf = Buffer.from(await fRes.arrayBuffer());
-          const payload = { audio: buf.toString('base64'), mimeType: 'audio/mp3' };
-          ttsCacheV3.set(cacheKey, payload);
-          return res.json(payload);
-        }
-      } catch (fErr) {
-        // Silent fallback
-      }
-
       if (isQuotaExceeded) {
-        // Return 200 with fallback flag to silence quota errors in platform logs
         return res.json({ audio: null, fallback: true, quotaExceeded: true });
       }
       res.json({ audio: null, fallback: true });

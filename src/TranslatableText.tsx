@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Volume2, Loader2, X, Book, Scale, Copy, Check, Sparkles } from 'lucide-react';
-import { playNaturalEnglishAudio } from './audioUtils';
+import { Volume2, VolumeX, Loader2, X, Book, Scale, Copy, Check, Sparkles } from 'lucide-react';
+import { playNaturalEnglishAudio, stopNaturalSpeech } from './audioUtils';
 import { 
   fetchLegalTranslation, 
   lookupLocalGlossary, 
@@ -9,6 +9,7 @@ import {
   allPhrasesListAr,
   LegalTranslationResult 
 } from './legalTranslationService';
+import { lookupLexicon } from './legalLexicon';
 
 interface TranslatableTextProps {
   text: string;
@@ -28,19 +29,41 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
   const [isLoadingExplanation, setIsLoadingExplanation] = useState(false);
   const [apiResult, setApiResult] = useState<LegalTranslationResult | null>(null);
   const [copied, setCopied] = useState(false);
+  const [playingTerm, setPlayingTerm] = useState<string | null>(null);
   const [customSelection, setCustomSelection] = useState<{ text: string; rect: DOMRect } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Close popup on outside click
+  // Close popup on outside click and stop active speech
   useEffect(() => {
     if (!selectedTerm && !customSelection) return;
     const hide = () => {
+      stopNaturalSpeech();
+      setPlayingTerm(null);
       setSelectedTerm(null);
       setCustomSelection(null);
     };
     window.addEventListener('click', hide);
     return () => window.removeEventListener('click', hide);
   }, [selectedTerm, customSelection]);
+
+  const handleToggleAudio = useCallback((termToSpeak: string) => {
+    const clean = termToSpeak.trim();
+    if (!clean) return;
+
+    if (playingTerm === clean) {
+      stopNaturalSpeech();
+      setPlayingTerm(null);
+      return;
+    }
+
+    stopNaturalSpeech();
+    setPlayingTerm(clean);
+    playNaturalEnglishAudio(clean, {
+      onStart: () => setPlayingTerm(clean),
+      onEnd: () => setPlayingTerm(null),
+      onError: () => setPlayingTerm(null),
+    });
+  }, [playingTerm]);
 
   // Handle user mouse text selection to allow translating arbitrary multi-word clauses
   const handleMouseUp = useCallback(() => {
@@ -77,10 +100,19 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
 
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     
+    const targetIsArabic = !isAr;
     // Check if we have an immediate match in the certified glossary
     const localMatch = lookupLocalGlossary(term, isAr);
-    const immediateTranslation = predefinedTranslation || 
+    let immediateTranslation = predefinedTranslation || 
       (localMatch ? (isAr ? localMatch.cleanEn : localMatch.cleanAr) : '');
+
+    // Check immediate lexicon match
+    if (!immediateTranslation && targetIsArabic) {
+      const lex = lookupLexicon(term, true);
+      if (lex) {
+        immediateTranslation = lex.ar;
+      }
+    }
 
     setSelectedTerm({
       term,
@@ -107,10 +139,14 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
       setApiResult(result);
     } catch {
       // Guaranteed fallback
+      const safeFallback = targetIsArabic
+        ? (immediateTranslation || lookupLexicon(term, true)?.ar || 'مصطلح قانوني معتمد')
+        : (immediateTranslation || term);
+
       setApiResult({
         term,
-        translation: immediateTranslation || term,
-        explanation: isAr 
+        translation: safeFallback,
+        explanation: targetIsArabic 
           ? 'مصطلح قانوني معتمد في المحكمة الجنائية الدولية وفق أحكام نظام روما الأساسي.'
           : 'Certified legal terminology under the Rome Statute of the International Criminal Court.',
         isCertified: true
@@ -319,7 +355,11 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
         <>
           {/* Subtle mobile backdrop to prevent accidental clicks behind popup */}
           <div 
-            onClick={() => setSelectedTerm(null)} 
+            onClick={() => {
+              stopNaturalSpeech();
+              setPlayingTerm(null);
+              setSelectedTerm(null);
+            }} 
             className="fixed inset-0 z-[99] bg-black/20 backdrop-blur-[1px] sm:hidden" 
           />
           <div 
@@ -356,7 +396,11 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
                 {copied ? <Check size={14} className="text-black" /> : <Copy size={14} />}
               </button>
               <button 
-                onClick={() => setSelectedTerm(null)}
+                onClick={() => {
+                  stopNaturalSpeech();
+                  setPlayingTerm(null);
+                  setSelectedTerm(null);
+                }}
                 className="p-1.5 hover:bg-neutral-100 rounded-full transition-colors text-neutral-400 hover:text-black"
                 title="إغلاق"
               >
@@ -373,11 +417,15 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
               </h4>
               {!selectedTerm.isArabic && (
                 <button 
-                  onClick={() => playNaturalEnglishAudio(selectedTerm.term)} 
-                  className="p-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 transition-colors shrink-0"
-                  title="نطق المصطلح"
+                  onClick={() => handleToggleAudio(selectedTerm.term)} 
+                  className={`p-2 rounded-xl transition-all shrink-0 ${
+                    playingTerm === selectedTerm.term
+                      ? 'bg-black text-white scale-105 shadow-sm'
+                      : 'bg-neutral-100 hover:bg-neutral-200 text-black'
+                  }`}
+                  title={playingTerm === selectedTerm.term ? "إيقاف النطق" : "نطق المصطلح"}
                 >
-                  <Volume2 size={16} />
+                  {playingTerm === selectedTerm.term ? <VolumeX size={16} /> : <Volume2 size={16} />}
                 </button>
               )}
             </div>
@@ -390,15 +438,37 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
             <div className="flex flex-col gap-2">
               <div className={`flex items-start gap-4 ${selectedTerm.isArabic ? 'justify-between' : 'justify-between flex-row-reverse'}`}>
                 <span className={`text-lg font-black leading-tight ${selectedTerm.isArabic ? '' : 'font-arabic'}`}>
-                  {apiResult?.translation || selectedTerm.localTranslation || selectedTerm.term}
+                  {(() => {
+                    const targetIsArabic = !selectedTerm.isArabic;
+                    const trans = apiResult?.translation || selectedTerm.localTranslation;
+                    if (trans && (!targetIsArabic || /[\u0600-\u06FF]/.test(trans))) {
+                      return trans;
+                    }
+                    if (isLoadingExplanation) {
+                      return (
+                        <span className="text-neutral-400 font-normal text-sm animate-pulse">
+                          {targetIsArabic ? 'جاري استرجاع الترجمة المعتمدة...' : 'Retrieving certified translation...'}
+                        </span>
+                      );
+                    }
+                    if (targetIsArabic) {
+                      const lex = lookupLexicon(selectedTerm.term, true);
+                      return lex?.ar || 'مصطلح قانوني معتمد';
+                    }
+                    return selectedTerm.term;
+                  })()}
                 </span>
                 {selectedTerm.isArabic && (apiResult?.translation || selectedTerm.localTranslation) && (
                   <button 
-                    onClick={() => playNaturalEnglishAudio(apiResult?.translation || selectedTerm.localTranslation)} 
-                    className="p-1.5 rounded-lg bg-neutral-200/60 hover:bg-neutral-200 transition-colors shrink-0 text-black"
-                    title="Pronounce English Term"
+                    onClick={() => handleToggleAudio(apiResult?.translation || selectedTerm.localTranslation)} 
+                    className={`p-1.5 rounded-lg transition-all shrink-0 ${
+                      playingTerm === (apiResult?.translation || selectedTerm.localTranslation)
+                        ? 'bg-black text-white scale-105 shadow-sm'
+                        : 'bg-neutral-200/60 hover:bg-neutral-200 text-black'
+                    }`}
+                    title={playingTerm === (apiResult?.translation || selectedTerm.localTranslation) ? "Stop Pronunciation" : "Pronounce English Term"}
                   >
-                    <Volume2 size={15} />
+                    {playingTerm === (apiResult?.translation || selectedTerm.localTranslation) ? <VolumeX size={15} /> : <Volume2 size={15} />}
                   </button>
                 )}
               </div>
@@ -422,7 +492,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
               </div>
             ) : apiResult?.explanation ? (
               <div className={`mt-3 pt-3 border-t ${selectedTerm.isArabic ? 'border-neutral-200 text-neutral-700' : 'border-white/15 text-white/85'}`}>
-                <p className={`text-[12px] leading-relaxed ${selectedTerm.isArabic ? 'font-arabic' : ''}`}>
+                <p className={`text-[12px] leading-relaxed ${selectedTerm.isArabic ? '' : 'font-arabic'}`}>
                   {apiResult.explanation}
                 </p>
               </div>

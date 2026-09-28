@@ -145,6 +145,7 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
       rome_statute: allResults.filter(r => r.documentOrigin === 'rome_statute').length,
       rules_of_procedure: allResults.filter(r => r.documentOrigin === 'rules_of_procedure').length,
       elements_of_crimes: allResults.filter(r => r.documentOrigin === 'elements_of_crimes').length,
+      regulations_of_the_court: allResults.filter(r => r.documentOrigin === 'regulations_of_the_court').length,
       terms: allResults.filter(r => r.type === 'glossary_term').length,
     };
   }, [allResults]);
@@ -189,6 +190,7 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
     romeStatuteTab: isRTL ? 'نظام روما' : 'Rome Statute',
     rulesTab: isRTL ? 'قواعد الإجراءات' : 'Rules of Procedure',
     elementsTab: isRTL ? 'أركان الجرائم' : 'Elements of Crimes',
+    regulationsTab: isRTL ? 'لوائح المحكمة' : 'Regulations of the Court',
     termsTab: isRTL ? 'المصطلحات' : 'Glossary',
   };
 
@@ -310,6 +312,20 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
                     <span>{t.elementsTab}</span>
                     <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${activeCategory === 'elements_of_crimes' ? 'bg-white/20' : 'bg-neutral-200 text-neutral-700'}`}>
                       {categoryCounts.elements_of_crimes}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveCategory('regulations_of_the_court')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                      activeCategory === 'regulations_of_the_court' 
+                        ? 'bg-black text-white shadow-sm' 
+                        : 'text-neutral-500 hover:bg-neutral-200/60'
+                    }`}
+                  >
+                    <span>{t.regulationsTab}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${activeCategory === 'regulations_of_the_court' ? 'bg-white/20' : 'bg-neutral-200 text-neutral-700'}`}>
+                      {categoryCounts.regulations_of_the_court}
                     </span>
                   </button>
 

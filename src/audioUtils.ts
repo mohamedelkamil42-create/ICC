@@ -1,10 +1,23 @@
 // Audio utility for high-quality natural human voice pronunciation of legal terms
-const AUDIO_CACHE_NAME = 'icc-legal-audio-v3';
+const AUDIO_CACHE_NAME = 'icc-legal-audio-v4';
 
 let currentAudio: HTMLAudioElement | null = null;
+let currentSpeechRequestId = 0;
+let activeAudioController: AbortController | null = null;
 
 // Helper to check if we are online
 const isOnline = () => typeof navigator !== 'undefined' && navigator.onLine;
+
+// Purge obsolete robotic caches once
+if (typeof caches !== 'undefined') {
+  caches.keys().then((keys) => {
+    keys.forEach((key) => {
+      if (key.startsWith('icc-legal-audio-') && key !== AUDIO_CACHE_NAME) {
+        caches.delete(key).catch(() => {});
+      }
+    });
+  }).catch(() => {});
+}
 
 // Preload available voices for speech synthesis fallback
 const loadVoices = () => {
@@ -19,18 +32,36 @@ if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
 }
 
 export function stopNaturalSpeech() {
+  currentSpeechRequestId++; // Invalidate all pending or inflight requests
+  
+  if (activeAudioController) {
+    try {
+      activeAudioController.abort();
+    } catch {}
+    activeAudioController = null;
+  }
+
   if (currentAudio) {
     try {
       currentAudio.pause();
       currentAudio.currentTime = 0;
+      currentAudio.src = '';
     } catch {}
     currentAudio = null;
   }
+
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
       window.speechSynthesis.cancel();
     } catch {}
   }
+}
+
+export function isAudioSpeaking(): boolean {
+  return (
+    (currentAudio !== null && !currentAudio.paused) ||
+    (typeof window !== 'undefined' && 'speechSynthesis' in window && window.speechSynthesis.speaking)
+  );
 }
 
 /**
@@ -56,10 +87,10 @@ export async function prefetchAudio(text: string): Promise<void> {
     if (res.ok) {
       const data = await res.json();
       if (data.audio) {
-        // Create a fake response to store in cache
-        const blob = await (await fetch(`data:${data.mimeType || 'audio/mp3'};base64,${data.audio}`)).blob();
+        const mime = data.mimeType || 'audio/wav';
+        const blob = await (await fetch(`data:${mime};base64,${data.audio}`)).blob();
         await cache.put(cacheKey, new Response(blob, {
-          headers: { 'Content-Type': data.mimeType || 'audio/mp3' }
+          headers: { 'Content-Type': mime }
         }));
       }
     }
@@ -76,35 +107,55 @@ export async function playNaturalEnglishAudio(
     onError?: () => void;
   }
 ): Promise<() => void> {
-  stopNaturalSpeech();
-
   const cleanText = text.trim();
   if (!cleanText) return () => {};
 
-  callbacks?.onStart?.();
+  // Cleanly terminate any active or in-flight speech before starting a new one
+  stopNaturalSpeech();
+  const thisRequestId = currentSpeechRequestId;
+  const abortController = new AbortController();
+  activeAudioController = abortController;
 
   let isPlaying = true;
   const stop = () => {
-    isPlaying = false;
-    stopNaturalSpeech();
-    callbacks?.onEnd?.();
+    if (thisRequestId === currentSpeechRequestId) {
+      isPlaying = false;
+      stopNaturalSpeech();
+      callbacks?.onEnd?.();
+    }
   };
 
   const tryPlayAudio = (src: string): Promise<boolean> => {
     return new Promise((resolve) => {
+      // Discard immediately if a newer request came in
+      if (thisRequestId !== currentSpeechRequestId || abortController.signal.aborted) {
+        resolve(false);
+        return;
+      }
+
       try {
         const audio = new Audio(src);
         currentAudio = audio;
+
+        callbacks?.onStart?.();
+
         audio.onended = () => {
           if (currentAudio === audio) currentAudio = null;
-          callbacks?.onEnd?.();
+          if (thisRequestId === currentSpeechRequestId) {
+            callbacks?.onEnd?.();
+          }
           resolve(true);
         };
+
         audio.onerror = () => {
           if (currentAudio === audio) currentAudio = null;
           resolve(false);
         };
-        audio.play().catch(() => resolve(false));
+
+        audio.play().catch(() => {
+          if (currentAudio === audio) currentAudio = null;
+          resolve(false);
+        });
       } catch {
         resolve(false);
       }
@@ -118,8 +169,15 @@ export async function playNaturalEnglishAudio(
       const cacheKey = `/api/tts?text=${encodeURIComponent(cleanText)}`;
       const cachedResponse = await cache.match(cacheKey);
       
+      if (thisRequestId !== currentSpeechRequestId || abortController.signal.aborted) {
+        return () => {};
+      }
+
       if (cachedResponse && isPlaying) {
         const blob = await cachedResponse.blob();
+        if (thisRequestId !== currentSpeechRequestId || abortController.signal.aborted) {
+          return () => {};
+        }
         const url = URL.createObjectURL(blob);
         const success = await tryPlayAudio(url);
         if (success) return stop;
@@ -129,71 +187,113 @@ export async function playNaturalEnglishAudio(
     }
   }
 
-  // 2. Try Backend API (if online)
+  // 2. Try Backend Studio-Grade AI Human Voice (Gemini TTS)
   if (isOnline()) {
     try {
+      if (thisRequestId !== currentSpeechRequestId || abortController.signal.aborted) {
+        return () => {};
+      }
+
       const res = await fetch('/api/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: cleanText }),
+        signal: abortController.signal,
       });
+
+      if (thisRequestId !== currentSpeechRequestId || abortController.signal.aborted) {
+        return () => {};
+      }
       
       const data = await res.json();
       
-      if (data.quotaExceeded) {
-        console.warn('Gemini TTS quota exceeded, falling back to browser speech.');
-        // Fall through to browser speech
-      } else if (res.ok && isPlaying && data.audio) {
-        const mime = data.mimeType || 'audio/mp3';
+      if (res.ok && isPlaying && data.audio) {
+        if (thisRequestId !== currentSpeechRequestId || abortController.signal.aborted) {
+          return () => {};
+        }
+
+        const mime = data.mimeType || 'audio/wav';
         const audioData = `data:${mime};base64,${data.audio}`;
         
-        // Cache it for next time
+        // Cache it for subsequent instant replays
         if (typeof caches !== 'undefined') {
-          const cache = await caches.open(AUDIO_CACHE_NAME);
-          const cacheKey = `/api/tts?text=${encodeURIComponent(cleanText)}`;
-          const blob = await (await fetch(audioData)).blob();
-          cache.put(cacheKey, new Response(blob, { headers: { 'Content-Type': mime } }));
+          try {
+            const cache = await caches.open(AUDIO_CACHE_NAME);
+            const cacheKey = `/api/tts?text=${encodeURIComponent(cleanText)}`;
+            const blob = await (await fetch(audioData)).blob();
+            cache.put(cacheKey, new Response(blob, { headers: { 'Content-Type': mime } }));
+          } catch {}
         }
 
         const success = await tryPlayAudio(audioData);
         if (success) return stop;
       }
-    } catch (err) {
-      console.warn('Backend fetch failed, moving to next fallback');
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        return () => {};
+      }
+      console.warn('Backend TTS fetch failed, using high-fidelity local voice');
     }
   }
 
-  // 3. Fallback (Google Translate TTS) - Only if online
-  if (isOnline()) {
-    try {
-      const directUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(cleanText)}`;
-      const success = await tryPlayAudio(directUrl);
-      if (success) return stop;
-    } catch {}
+  // 3. High-Quality Web Speech API (Offline fallback with human neural/natural voices)
+  if (thisRequestId !== currentSpeechRequestId || abortController.signal.aborted) {
+    return () => {};
   }
 
-  // 4. Web Speech API (Browser native) - Works offline
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = 'en-US';
-      utterance.rate = 0.95;
+      utterance.rate = 0.88; // Natural, measured human tempo for legal diction
+      utterance.pitch = 1.0;
       
       let voices = window.speechSynthesis.getVoices();
       if (voices.length === 0) {
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 120));
         voices = window.speechSynthesis.getVoices();
       }
 
-      const naturalVoice = voices.find(v => 
-        v.lang.startsWith('en') && 
-        (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Premium') || v.name.includes('Google'))
-      ) || voices.find(v => v.lang.startsWith('en'));
+      // Prioritize natural, neural, studio human voices
+      const priorityOrder = [
+        (v: SpeechSynthesisVoice) => v.name.includes('Natural') && v.lang.startsWith('en'),
+        (v: SpeechSynthesisVoice) => v.name.includes('Neural') && v.lang.startsWith('en'),
+        (v: SpeechSynthesisVoice) => v.name.includes('Google US English'),
+        (v: SpeechSynthesisVoice) => v.name.includes('Google UK English Female'),
+        (v: SpeechSynthesisVoice) => v.name.includes('Samantha') && !v.name.includes('Compact'),
+        (v: SpeechSynthesisVoice) => v.name.includes('Daniel') && !v.name.includes('Compact'),
+        (v: SpeechSynthesisVoice) => v.name.includes('Serena'),
+        (v: SpeechSynthesisVoice) => v.name.includes('Premium'),
+        (v: SpeechSynthesisVoice) => v.lang === 'en-US' && !v.name.includes('Desktop'),
+        (v: SpeechSynthesisVoice) => v.lang.startsWith('en'),
+      ];
 
-      if (naturalVoice) utterance.voice = naturalVoice;
-      utterance.onend = () => callbacks?.onEnd?.();
-      utterance.onerror = () => { callbacks?.onError?.(); callbacks?.onEnd?.(); };
+      let selectedVoice: SpeechSynthesisVoice | undefined;
+      for (const matcher of priorityOrder) {
+        selectedVoice = voices.find(matcher);
+        if (selectedVoice) break;
+      }
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+
+      callbacks?.onStart?.();
+
+      utterance.onend = () => {
+        if (thisRequestId === currentSpeechRequestId) {
+          callbacks?.onEnd?.();
+        }
+      };
+
+      utterance.onerror = () => {
+        if (thisRequestId === currentSpeechRequestId) {
+          callbacks?.onError?.();
+          callbacks?.onEnd?.();
+        }
+      };
+
       window.speechSynthesis.speak(utterance);
       return stop;
     } catch {

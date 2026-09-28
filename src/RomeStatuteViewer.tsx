@@ -46,6 +46,33 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
   const [expandedPart, setExpandedPart] = useState<string | null>(data[0]?.id || null);
   const [currentPage, setCurrentPage] = useState(0);
   const isRTL = language === 'ar';
+  const viewerTopRef = useRef<HTMLDivElement>(null);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (viewerTopRef.current) {
+        const topPos = viewerTopRef.current.getBoundingClientRect().top;
+        setShowBackToTop(topPos < -150 || window.scrollY > 350);
+      } else {
+        setShowBackToTop(window.scrollY > 350);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    if (viewerTopRef.current) {
+      const yOffset = -90;
+      const y = viewerTopRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
   
   useEffect(() => {
     if (highlightId) {
@@ -102,7 +129,9 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
 
   const t = {
     parts: language === 'ar' ? 'الأبواب' : 'Parts',
-    articles: language === 'ar' ? (itemLabelAr === 'القاعدة' ? 'القواعد' : 'المواد') : (itemLabelEn === 'Rule' ? 'Rules' : 'Articles'),
+    articles: language === 'ar' 
+      ? (itemLabelAr === 'القاعدة' ? 'القواعد' : (itemLabelAr === 'اللائحة' ? 'اللوائح' : 'المواد')) 
+      : (itemLabelEn === 'Rule' ? 'Rules' : (itemLabelEn === 'Regulation' ? 'Regulations' : 'Articles')),
     listMode: language === 'ar' ? 'عرض القائمة' : 'List View',
     bookMode: language === 'ar' ? 'عرض الكتاب' : 'Book View',
     backToTop: language === 'ar' ? 'الرجوع للأعلى' : 'Back to Top',
@@ -119,7 +148,8 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
     itemLabelEn, 
     t,
     isHighlighted,
-    highlightTerm
+    highlightTerm,
+    onScrollToTop
   }: { 
     art: Article, 
     isRTL: boolean, 
@@ -128,7 +158,8 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
     itemLabelEn: string,
     t: any,
     isHighlighted: boolean,
-    highlightTerm?: string | null
+    highlightTerm?: string | null,
+    onScrollToTop: () => void
   }) => {
     const [isVisible, setIsVisible] = useState(isHighlighted);
     const ref = useRef<HTMLDivElement>(null);
@@ -200,12 +231,26 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
             </div>
           )}
         </div>
+
+        {/* Minimal, elegant in-card top link */}
+        <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
+          <span>{language === 'ar' ? itemLabelAr : itemLabelEn} {art.number}</span>
+          <button 
+            type="button"
+            onClick={onScrollToTop}
+            className="inline-flex items-center gap-1 text-neutral-400 hover:text-black transition-colors"
+            title={language === 'ar' ? 'الرجوع للأعلى' : 'Back to top'}
+          >
+            <span>{language === 'ar' ? 'للأعلى' : 'Top'}</span>
+            <ArrowUp size={12} />
+          </button>
+        </div>
       </article>
     );
   });
 
   return (
-    <div dir={isRTL ? 'rtl' : 'ltr'} className={`flex flex-col gap-6 w-full ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
+    <div ref={viewerTopRef} dir={isRTL ? 'rtl' : 'ltr'} className={`flex flex-col gap-6 w-full ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
       
       {/* Controls */}
       <div className="flex items-center justify-between bg-neutral-50 p-2 rounded-2xl border border-neutral-100">
@@ -294,6 +339,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
                     t={t}
                     isHighlighted={art.id === highlightId}
                     highlightTerm={highlightTerm}
+                    onScrollToTop={scrollToTop}
                   />
                 ))}
               </div>
@@ -371,18 +417,29 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
         </div>
       )}
 
-      {/* Quick Access Back to Top (Positioned above Help button to avoid overlap) */}
-      {viewMode === 'list' && (
-        <div className="fixed bottom-20 end-6 z-30 flex flex-col gap-2">
-          <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="w-10 h-10 sm:w-11 sm:h-11 bg-white text-black border border-neutral-300 hover:border-black rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all"
-            title={t.backToTop}
+      {/* Quick Access Back to Top (Simple, Compact, Effective) */}
+      <AnimatePresence>
+        {viewMode === 'list' && showBackToTop && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.15 }}
+            className="fixed bottom-6 start-6 z-40 print:hidden"
+            dir={isRTL ? 'rtl' : 'ltr'}
           >
-            <ArrowUp size={18} />
-          </button>
-        </div>
-      )}
+            <button 
+              type="button"
+              onClick={scrollToTop}
+              className="w-10 h-10 rounded-full bg-black text-white hover:bg-neutral-800 shadow-md border border-neutral-800 flex items-center justify-center hover:scale-105 active:scale-90 transition-all group"
+              title={language === 'ar' ? 'الرجوع للأعلى' : 'Back to top'}
+              aria-label={language === 'ar' ? 'الرجوع للأعلى' : 'Back to top'}
+            >
+              <ArrowUp size={18} className="group-hover:-translate-y-0.5 transition-transform" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
