@@ -130,7 +130,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
   const t = {
     parts: language === 'ar' ? 'الأبواب' : 'Parts',
     articles: language === 'ar' 
-      ? (itemLabelAr === 'القاعدة' ? 'القواعد' : (itemLabelAr === 'اللائحة' ? 'اللوائح' : 'المواد')) 
+      ? (itemLabelAr === 'القاعدة' ? 'القواعد' : (itemLabelAr === 'اللائحة' ? 'اللوائح' : (itemLabelAr === 'البند' ? 'البنود' : 'المواد'))) 
       : (itemLabelEn === 'Rule' ? 'Rules' : (itemLabelEn === 'Regulation' ? 'Regulations' : 'Articles')),
     listMode: language === 'ar' ? 'عرض القائمة' : 'List View',
     bookMode: language === 'ar' ? 'عرض الكتاب' : 'Book View',
@@ -138,6 +138,42 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
     next: language === 'ar' ? `${itemLabelAr} التالية` : `Next ${itemLabelEn}`,
     prev: language === 'ar' ? `${itemLabelAr} السابقة` : `Previous ${itemLabelEn}`,
   };
+
+const observerCallbacks = new Map<Element, () => void>();
+let sharedObserver: IntersectionObserver | null = null;
+
+function observeArticleElement(el: Element, onVisible: () => void): () => void {
+  if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+    onVisible();
+    return () => {};
+  }
+
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const cb = observerCallbacks.get(entry.target);
+            if (cb) {
+              cb();
+              observerCallbacks.delete(entry.target);
+              sharedObserver?.unobserve(entry.target);
+            }
+          }
+        });
+      },
+      { rootMargin: '700px' }
+    );
+  }
+
+  observerCallbacks.set(el, onVisible);
+  sharedObserver.observe(el);
+
+  return () => {
+    observerCallbacks.delete(el);
+    sharedObserver?.unobserve(el);
+  };
+}
 
   // Helper component for lazy rendering of articles to improve performance
   const ArticleItem = React.memo(({ 
@@ -171,19 +207,8 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
     }, [isHighlighted]);
 
     useEffect(() => {
-      if (isVisible) return;
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            observer.disconnect();
-          }
-        },
-        { rootMargin: '600px' } // Load well before it comes into view
-      );
-
-      if (ref.current) observer.observe(ref.current);
-      return () => observer.disconnect();
+      if (isVisible || !ref.current) return;
+      return observeArticleElement(ref.current, () => setIsVisible(true));
     }, [isVisible]);
 
     return (
@@ -308,7 +333,7 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
                           onClick={() => scrollToArticle(art.id)}
                           className={`text-[11px] font-bold p-2.5 rounded-xl bg-white border border-neutral-100 hover:border-black hover:scale-105 active:scale-95 transition-all text-center ${isRTL ? 'font-arabic' : ''}`}
                         >
-                          {language === 'ar' ? itemLabelAr : (itemLabelEn === 'Article' ? 'Art.' : itemLabelEn)} {art.number}
+                          {language === 'ar' ? itemLabelAr : (itemLabelEn === 'Article' ? 'Art.' : (itemLabelEn === 'Regulation' ? 'Reg.' : itemLabelEn))} {art.number}
                         </button>
                       ))}
                     </div>

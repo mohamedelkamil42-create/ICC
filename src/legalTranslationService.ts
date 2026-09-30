@@ -1,5 +1,7 @@
 import glossaryData from './glossaryData.json';
 import { lookupLexicon } from './legalLexicon';
+import { getCachedTranslation, setCachedTranslation } from './dictionaryCache';
+import { translateLegalTermOffline } from './legalTranslationEngine';
 
 export interface LegalTermMatch {
   cleanEn: string;
@@ -17,6 +19,9 @@ export interface LegalTranslationResult {
   isCertified: boolean;
   fromCache?: boolean;
 }
+
+// Re-export cache and offline engine functions for convenient use
+export { getCachedTranslation, setCachedTranslation, translateLegalTermOffline };
 
 // In-memory cache shared across the application session
 const clientTranslationCache = new Map<string, LegalTranslationResult>();
@@ -36,22 +41,12 @@ export function normalizeLegalText(text: string): string {
     .trim();
 }
 
-// Strip leading Arabic particles (waw, fa, baa, laam, kaaf) for fuzzy match
+// Safe Arabic article check without truncating or mutilating root letters
 export function stripArabicPrefixes(word: string): string {
-  let cleaned = word.trim();
-  // Remove diacritics / tashkeel
-  cleaned = cleaned.replace(/[\u064B-\u065F]/g, '');
-  // Remove initial waw, fa
-  if (cleaned.length > 4 && (cleaned.startsWith('و') || cleaned.startsWith('ف'))) {
-    cleaned = cleaned.substring(1);
-  }
-  // Remove initial bi, li, ka
-  if (cleaned.length > 4 && (cleaned.startsWith('ب') || cleaned.startsWith('ل') || cleaned.startsWith('ك'))) {
-    cleaned = cleaned.substring(1);
-  }
-  // Remove 'al-'
-  if (cleaned.length > 4 && cleaned.startsWith('ال')) {
-    cleaned = cleaned.substring(2);
+  let cleaned = word.trim().replace(/[\u064B-\u065F\u0670\u0640]/g, '');
+  // Only remove definite article 'ال' if word length >= 5
+  if (cleaned.length >= 5 && cleaned.startsWith('ال')) {
+    return cleaned.substring(2);
   }
   return cleaned;
 }
@@ -130,32 +125,29 @@ export function stripArabicPrefixes(word: string): string {
   allPhrasesListAr.sort((a, b) => b.length - a.length);
 })();
 
-// Instant local lookup
+// Instant local lookup - guarantees whole-word & whole-phrase contextual matching
 export function lookupLocalGlossary(term: string, isSourceArabic: boolean): LegalTermMatch | null {
   const clean = term.trim();
   if (!clean) return null;
 
   if (isSourceArabic) {
     if (arLookupMap.has(clean)) return arLookupMap.get(clean)!;
-    // Try without parentheticals
+    // Try without parentheticals like (Article 25)
     const withoutParen = clean.replace(/\s*\([^)]*\)/g, '').trim();
     if (arLookupMap.has(withoutParen)) return arLookupMap.get(withoutParen)!;
-    // Try stripping common Arabic conjunctions
+    
+    // Safe definite article check (e.g. المحاكمة -> محاكمة)
     const stripped = stripArabicPrefixes(clean);
-    for (const [key, val] of arLookupMap.entries()) {
-      if (stripArabicPrefixes(key) === stripped || key.includes(clean) || clean.includes(key)) {
-        return val;
-      }
+    if (stripped !== clean && arLookupMap.has(stripped)) {
+      return arLookupMap.get(stripped)!;
     }
   } else {
     const norm = normalizeLegalText(clean);
     if (enLookupMap.has(norm)) return enLookupMap.get(norm)!;
-    // Substring or prefix match
-    for (const [key, val] of enLookupMap.entries()) {
-      if (key === norm || key.startsWith(norm) || norm.startsWith(key)) {
-        return val;
-      }
-    }
+    
+    // Try without parentheticals
+    const withoutParen = norm.replace(/\s*\([^)]*\)/g, '').trim();
+    if (enLookupMap.has(withoutParen)) return enLookupMap.get(withoutParen)!;
   }
 
   // Fallback to comprehensive Legal Lexicon
@@ -198,7 +190,7 @@ export function generateLegalContextFallback(term: string, match: LegalTermMatch
   }
 }
 
-// Robust asynchronous retrieval mechanism with caching and fallback
+// Robust retrieval mechanism with persistent cache and instant lightweight offline engine
 export async function fetchLegalTranslation(
   term: string,
   contextText: string = '',
@@ -215,29 +207,29 @@ export async function fetchLegalTranslation(
   }
 
   const targetIsArabic = !isSourceArabic;
-  const cacheKey = `${cleanTerm.toLowerCase()}::${targetIsArabic ? 'to_ar' : 'to_en'}`;
-  
-  if (clientTranslationCache.has(cacheKey)) {
-    const cached = clientTranslationCache.get(cacheKey)!;
-    // Ensure cached entry matches target language requirements
-    const isArabicValid = !targetIsArabic || (/[\u0600-\u06FF]/.test(cached.translation) && /[\u0600-\u06FF]/.test(cached.explanation));
-    if (isArabicValid) {
-      return { ...cached, fromCache: true };
-    }
+  const targetLang = targetIsArabic ? 'ar' : 'en';
+
+  // 1. Check persistent localStorage & memory cache (instant 0ms response)
+  const cached = getCachedTranslation(cleanTerm, targetLang);
+  if (cached) {
+    return cached;
   }
 
-  // Pre-check local certified glossary and lexicon
-  const localMatch = lookupLocalGlossary(cleanTerm, isSourceArabic);
-  let localTranslation = localMatch ? (isSourceArabic ? localMatch.cleanEn : localMatch.cleanAr) : '';
-  
-  if (!localTranslation && targetIsArabic) {
-    const lex = lookupLexicon(cleanTerm, true);
-    if (lex) localTranslation = lex.ar;
+  // 2. Resolve immediately using lightweight offline legal translation engine
+  // This guarantees an accurate translation and ICC legal explanation in 0ms without any network request
+  const offlineResult = translateLegalTermOffline(cleanTerm, isSourceArabic);
+
+  // If already certified or offline, return offline result immediately and cache it
+  const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : false;
+  if (!isOnline || offlineResult.isCertified) {
+    setCachedTranslation(offlineResult, targetLang);
+    return offlineResult;
   }
 
+  // 3. Optional background enrichment if online with a fast 2.5s timeout
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
 
     const res = await fetch('/api/translate', {
       method: 'POST',
@@ -259,51 +251,36 @@ export async function fetchLegalTranslation(
       // Strict verification: When translating to Arabic, NEVER accept an English translation!
       if (targetIsArabic) {
         if (!finalTranslation || !/[\u0600-\u06FF]/.test(finalTranslation)) {
-          finalTranslation = localTranslation || lookupLexicon(cleanTerm, true)?.ar || 'مصطلح قانوني معتمد';
+          finalTranslation = offlineResult.translation;
         }
       } else {
-        finalTranslation = finalTranslation || localTranslation || cleanTerm;
+        finalTranslation = finalTranslation || offlineResult.translation;
       }
 
       let explanation = data.explanation && data.explanation.trim()
         ? data.explanation
-        : generateLegalContextFallback(cleanTerm, localMatch, targetIsArabic);
+        : offlineResult.explanation;
 
-      // Strict enforcement: When translating to Arabic, explanation MUST be in Arabic
       if (targetIsArabic && !/[\u0600-\u06FF]/.test(explanation)) {
-        explanation = generateLegalContextFallback(cleanTerm, localMatch, true);
+        explanation = offlineResult.explanation;
       }
 
-      const result: LegalTranslationResult = {
+      const enrichedResult: LegalTranslationResult = {
         term: cleanTerm,
         translation: finalTranslation,
         explanation,
         isCertified: true,
       };
 
-      if (!targetIsArabic || /[\u0600-\u06FF]/.test(finalTranslation)) {
-        clientTranslationCache.set(cacheKey, result);
-      }
-      return result;
+      setCachedTranslation(enrichedResult, targetLang);
+      return enrichedResult;
     }
-  } catch (err) {
-    console.warn('Asynchronous translation network fallback:', err);
+  } catch {
+    // Network timed out or offline: cleanly fallback to the guaranteed offline result
   }
 
-  // Guaranteed fallback: Never return "not found" or wrong language
-  const fallbackTranslation = targetIsArabic 
-    ? (localTranslation || lookupLexicon(cleanTerm, true)?.ar || 'مصطلح قانوني معتمد')
-    : (localTranslation || cleanTerm);
-
-  const guaranteedResult: LegalTranslationResult = {
-    term: cleanTerm,
-    translation: fallbackTranslation,
-    explanation: generateLegalContextFallback(cleanTerm, localMatch, targetIsArabic),
-    isCertified: !!localMatch,
-  };
-
-  clientTranslationCache.set(cacheKey, guaranteedResult);
-  return guaranteedResult;
+  setCachedTranslation(offlineResult, targetLang);
+  return offlineResult;
 }
 
 export { allPhrasesListEn, allPhrasesListAr };

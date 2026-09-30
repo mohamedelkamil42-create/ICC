@@ -23,7 +23,7 @@ export const libraryDataAr: DrawerItem[] = [
       { id: '2-3', title: 'أركان الجرائم', type: 'statute' },
       { id: '2-4', title: 'لوائح المحكمة', type: 'statute' },
       { id: '2-5', title: 'لوائح قلم المحكمة', type: 'content', content: 'تنظم عمل قلم المحكمة والمسائل الإدارية والخدمية. سيتم إضافة النص الكامل قريباً.' },
-      { id: '2-6', title: 'لوائح مكتب المدعي العام', type: 'content', content: 'تنظم عمل مكتب المدعي العام وإجراءات التحقيق والمقاضاة. سيتم إضافة النص الكامل قريباً.' },
+      { id: '2-6', title: 'لائحة مكتب المدعي العام', type: 'statute' },
       { id: '2-7', title: 'مدونة قواعد السلوك المهني للمحامين', type: 'content', content: 'تحدد معايير السلوك والأخلاقيات التي يجب أن يلتزم بها المحامون أمام المحكمة. سيتم إضافة النص الكامل قريباً.' }
     ]
   },
@@ -124,7 +124,7 @@ export const libraryDataEn: DrawerItem[] = [
       { id: '2-3', title: 'Elements of Crimes', type: 'statute' },
       { id: '2-4', title: 'Regulations of the Court', type: 'statute' },
       { id: '2-5', title: 'Regulations of the Registry', type: 'content', content: 'Regulates the functioning of the Registry and administrative matters. Full text will be added soon.' },
-      { id: '2-6', title: 'Regulations of the Office of the Prosecutor', type: 'content', content: 'Regulates the functioning of the Office of the Prosecutor and investigation procedures. Full text will be added soon.' },
+      { id: '2-6', title: 'Regulations of the Office of the Prosecutor', type: 'statute' },
       { id: '2-7', title: 'Code of Professional Conduct for Counsel', type: 'content', content: 'Sets standards of conduct and ethics for counsel practicing before the Court. Full text will be added soon.' }
     ]
   },

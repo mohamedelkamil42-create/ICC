@@ -15,6 +15,7 @@ import { romeStatuteParts } from './romeStatuteData';
 import { rulesOfProcedureParts } from './rulesOfProcedureData';
 import { elementsOfCrimesParts } from './elementsOfCrimesData';
 import { regulationsOfTheCourtParts } from './regulationsOfTheCourtData';
+import { regulationsOfTheOfficeOfTheProsecutorParts } from './regulationsOfTheProsecutorData';
 import { HelpTourModal } from './HelpTourModal';
 
 export default function App() {
@@ -36,9 +37,10 @@ export default function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const isScrolled = window.scrollY > 20;
+      setScrolled(prev => prev !== isScrolled ? isScrolled : prev);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -306,7 +308,9 @@ export default function App() {
                                       ? elementsOfCrimesParts 
                                       : (item.id === '2-4' 
                                           ? regulationsOfTheCourtParts 
-                                          : romeStatuteParts))
+                                          : (item.id === '2-6'
+                                              ? regulationsOfTheOfficeOfTheProsecutorParts
+                                              : romeStatuteParts)))
                               } 
                               language={language} 
                               highlightId={isOpen ? highlightArtId : null}
@@ -318,7 +322,9 @@ export default function App() {
                                       ? 'أركان الجرائم' 
                                       : (item.id === '2-4' 
                                           ? 'لوائح المحكمة' 
-                                          : 'نظام روما الأساسي'))
+                                          : (item.id === '2-6'
+                                              ? 'لائحة مكتب المدعي العام'
+                                              : 'نظام روما الأساسي')))
                               }
                               documentTitleEn={
                                 item.id === '2-2' 
@@ -327,7 +333,9 @@ export default function App() {
                                       ? 'Elements of Crimes' 
                                       : (item.id === '2-4' 
                                           ? 'Regulations of the Court' 
-                                          : 'Rome Statute'))
+                                          : (item.id === '2-6'
+                                              ? 'Regulations of the Office of the Prosecutor'
+                                              : 'Rome Statute')))
                               }
                               itemLabelAr={
                                 item.id === '2-2' 
@@ -336,7 +344,9 @@ export default function App() {
                                       ? 'المادة' 
                                       : (item.id === '2-4' 
                                           ? 'اللائحة' 
-                                          : 'المادة'))
+                                          : (item.id === '2-6'
+                                              ? 'البند'
+                                              : 'المادة')))
                               }
                               itemLabelEn={
                                 item.id === '2-2' 
@@ -345,7 +355,9 @@ export default function App() {
                                       ? 'Article' 
                                       : (item.id === '2-4' 
                                           ? 'Regulation' 
-                                          : 'Article'))
+                                          : (item.id === '2-6'
+                                              ? 'Regulation'
+                                              : 'Article')))
                               }
                             />
                           )}

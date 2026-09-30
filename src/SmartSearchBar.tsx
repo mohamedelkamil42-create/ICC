@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useDeferredValue } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, X, FileText, BookOpen, Sparkles, Volume2, ArrowRight, ArrowLeft, Loader2, BookMarked, Scale } from 'lucide-react';
 import { DrawerItem } from './types';
 import { buildSearchIndex, performSmartSearch, SearchResultItem, SearchCategory } from './searchUtils';
 import { playNaturalEnglishAudio } from './audioUtils';
+import { getRecentlySearchedTerms } from './dictionaryCache';
 
 interface SmartSearchBarProps {
   libraryData: DrawerItem[];
@@ -128,16 +129,21 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
   const inputRef = useRef<HTMLInputElement>(null);
   const isRTL = language === 'ar';
 
+  const deferredQuery = useDeferredValue(query);
+
   const searchIndex = useMemo(() => buildSearchIndex(libraryData, language), [libraryData, language]);
   
-  // All results for calculating concurrent counts
-  const allResults = useMemo(() => performSmartSearch(searchIndex, query, 'all', language), [searchIndex, query, language]);
+  // All results for calculating concurrent counts - single search pass
+  const allResults = useMemo(() => performSmartSearch(searchIndex, deferredQuery, 'all', language), [searchIndex, deferredQuery, language]);
   
-  // Filtered results for the active tab
+  // Filtered results for the active tab without re-scanning all 1600+ articles
   const filteredResults = useMemo(() => {
     if (activeCategory === 'all') return allResults;
-    return performSmartSearch(searchIndex, query, activeCategory, language);
-  }, [searchIndex, query, activeCategory, allResults, language]);
+    if (activeCategory === 'terms') return allResults.filter(r => r.type === 'glossary_term');
+    return allResults.filter(r => r.documentOrigin === activeCategory);
+  }, [allResults, activeCategory]);
+
+  const displayedResults = useMemo(() => filteredResults.slice(0, 40), [filteredResults]);
 
   const categoryCounts = useMemo(() => {
     return {
@@ -146,9 +152,12 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
       rules_of_procedure: allResults.filter(r => r.documentOrigin === 'rules_of_procedure').length,
       elements_of_crimes: allResults.filter(r => r.documentOrigin === 'elements_of_crimes').length,
       regulations_of_the_court: allResults.filter(r => r.documentOrigin === 'regulations_of_the_court').length,
+      regulations_of_the_prosecutor: allResults.filter(r => r.documentOrigin === 'regulations_of_the_prosecutor').length,
       terms: allResults.filter(r => r.type === 'glossary_term').length,
     };
   }, [allResults]);
+
+  const [recentTerms, setRecentTerms] = useState<{ term: string; translation: string; targetLang: 'ar' | 'en' }[]>([]);
 
   useEffect(() => {
     const handleOpenEvent = () => setIsOpen(true);
@@ -158,6 +167,7 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
 
   useEffect(() => {
     if (isOpen) {
+      setRecentTerms(getRecentlySearchedTerms(8));
       setTimeout(() => inputRef.current?.focus(), 60);
     }
   }, [isOpen]);
@@ -191,6 +201,7 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
     rulesTab: isRTL ? 'قواعد الإجراءات' : 'Rules of Procedure',
     elementsTab: isRTL ? 'أركان الجرائم' : 'Elements of Crimes',
     regulationsTab: isRTL ? 'لوائح المحكمة' : 'Regulations of the Court',
+    prosecutorTab: isRTL ? 'لائحة المدعي العام' : 'Regulations of OTP',
     termsTab: isRTL ? 'المصطلحات' : 'Glossary',
   };
 
@@ -330,6 +341,20 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
                   </button>
 
                   <button
+                    onClick={() => setActiveCategory('regulations_of_the_prosecutor')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                      activeCategory === 'regulations_of_the_prosecutor' 
+                        ? 'bg-black text-white shadow-sm' 
+                        : 'text-neutral-500 hover:bg-neutral-200/60'
+                    }`}
+                  >
+                    <span>{t.prosecutorTab}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${activeCategory === 'regulations_of_the_prosecutor' ? 'bg-white/20' : 'bg-neutral-200 text-neutral-700'}`}>
+                      {categoryCounts.regulations_of_the_prosecutor}
+                    </span>
+                  </button>
+
+                  <button
                     onClick={() => setActiveCategory('terms')}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                       activeCategory === 'terms' 
@@ -372,7 +397,7 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
                   </div>
                 )}
 
-                {filteredResults.map(item => (
+                {displayedResults.map(item => (
                   <SearchResultRow 
                     key={item.id} 
                     item={item} 
@@ -385,14 +410,47 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({ libraryData, lan
                   />
                 ))}
 
+                {filteredResults.length > 40 && (
+                  <div className="text-center py-2.5 text-[11px] font-bold text-neutral-400 bg-neutral-50/70 rounded-xl border border-neutral-100">
+                    {isRTL ? `يتم عرض أول 40 نتيجة من أصل ${filteredResults.length}` : `Showing top 40 of ${filteredResults.length} results`}
+                  </div>
+                )}
+
                 {!query.trim() && (
-                  <div className="py-10 px-6 text-center text-neutral-400">
-                    <BookMarked size={32} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-xs font-medium">
-                      {isRTL 
-                        ? 'ابحث بالتزامن في مواد نظام روما الأساسي وقواعد الإجراءات والمصطلحات القانونية' 
-                        : 'Search concurrently across Rome Statute articles, Rules of Procedure, and legal terms'}
-                    </p>
+                  <div className="py-6 px-4">
+                    {recentTerms.length > 0 ? (
+                      <div className="text-left w-full" dir={isRTL ? 'rtl' : 'ltr'}>
+                        <div className="flex items-center gap-2 mb-3 px-1 text-[11px] font-black uppercase tracking-wider text-neutral-400">
+                          <Sparkles size={13} className="text-neutral-500" />
+                          <span>{isRTL ? 'مصطلحات في الذاكرة السريعة (Cache)' : 'Cached Legal Terms'}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {recentTerms.map((t, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                setQuery(t.term);
+                                inputRef.current?.focus();
+                              }}
+                              className="px-3 py-1.5 bg-neutral-100 hover:bg-black hover:text-white rounded-xl text-xs font-bold transition-all text-neutral-800 flex items-center gap-2 border border-neutral-200/60 group"
+                            >
+                              <span>{t.term}</span>
+                              <span className="text-[10px] text-neutral-400 group-hover:text-white/60">→</span>
+                              <span className="text-[11px] text-neutral-500 group-hover:text-white/80">{t.translation}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="py-6 text-center text-neutral-400">
+                        <BookMarked size={32} className="mx-auto mb-3 opacity-30" />
+                        <p className="text-xs font-medium">
+                          {isRTL 
+                            ? 'ابحث بالتزامن في مواد نظام روما الأساسي وقواعد الإجراءات والمصطلحات القانونية' 
+                            : 'Search concurrently across Rome Statute articles, Rules of Procedure, and legal terms'}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

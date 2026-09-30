@@ -10,6 +10,7 @@ import {
   LegalTranslationResult 
 } from './legalTranslationService';
 import { lookupLexicon } from './legalLexicon';
+import { translateLegalTermOffline, multiWordPhrasesEn, multiWordPhrasesAr } from './legalTranslationEngine';
 
 interface TranslatableTextProps {
   text: string;
@@ -86,7 +87,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
     }
   }, []);
 
-  // Term click handler with asynchronous retrieval and loading state
+  // Instant term click handler with persistent local cache and guaranteed offline resolution
   const handleTermClick = useCallback(async (
     e: React.MouseEvent | { currentTarget: HTMLElement }, 
     term: string, 
@@ -99,60 +100,38 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
     setCustomSelection(null);
 
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    
-    const targetIsArabic = !isAr;
-    // Check if we have an immediate match in the certified glossary
-    const localMatch = lookupLocalGlossary(term, isAr);
-    let immediateTranslation = predefinedTranslation || 
-      (localMatch ? (isAr ? localMatch.cleanEn : localMatch.cleanAr) : '');
+    const clean = term.trim();
+    if (!clean) return;
 
-    // Check immediate lexicon match
-    if (!immediateTranslation && targetIsArabic) {
-      const lex = lookupLexicon(term, true);
-      if (lex) {
-        immediateTranslation = lex.ar;
-      }
-    }
+    // 1. Instant 0ms resolution via lightweight offline legal translation engine and persistent cache
+    const offlineResult = translateLegalTermOffline(clean, isAr);
+    const resolvedTranslation = predefinedTranslation || offlineResult.translation;
 
     setSelectedTerm({
-      term,
-      localTranslation: immediateTranslation,
+      term: clean,
+      localTranslation: resolvedTranslation,
       rect,
       isArabic: isAr
     });
 
-    // Provide immediate preview so user never waits for basic translation
-    if (immediateTranslation) {
-      setApiResult({
-        term,
-        translation: immediateTranslation,
-        explanation: '',
-        isCertified: true
-      });
-    } else {
-      setApiResult(null);
-    }
+    // Provide complete certified definition immediately: zero waiting, zero spinner, no 'not found'
+    setApiResult({
+      ...offlineResult,
+      translation: resolvedTranslation,
+    });
+    setIsLoadingExplanation(false);
 
-    setIsLoadingExplanation(true);
-    try {
-      const result = await fetchLegalTranslation(term, text, isAr);
-      setApiResult(result);
-    } catch {
-      // Guaranteed fallback
-      const safeFallback = targetIsArabic
-        ? (immediateTranslation || lookupLexicon(term, true)?.ar || 'مصطلح قانوني معتمد')
-        : (immediateTranslation || term);
-
-      setApiResult({
-        term,
-        translation: safeFallback,
-        explanation: targetIsArabic 
-          ? 'مصطلح قانوني معتمد في المحكمة الجنائية الدولية وفق أحكام نظام روما الأساسي.'
-          : 'Certified legal terminology under the Rome Statute of the International Criminal Court.',
-        isCertified: true
-      });
-    } finally {
-      setIsLoadingExplanation(false);
+    // 2. Background async enrichment if online and term was not certified from local corpus
+    if (typeof navigator !== 'undefined' && navigator.onLine && !offlineResult.fromCache) {
+      fetchLegalTranslation(clean, text, isAr)
+        .then((result) => {
+          if (result && result.translation) {
+            setApiResult(result);
+          }
+        })
+        .catch(() => {
+          // Offline result already active
+        });
     }
   }, [text]);
 
@@ -163,15 +142,13 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Compile multi-word phrases for the active language
-  const phrasesToMatch = useMemo(() => {
-    const phrases = isEnglish ? allPhrasesListEn : allPhrasesListAr;
-    // Filter to phrases that actually exist in the current text to save regex cycles
+  // Compile only unified multi-word legal expressions (containing spaces) sorted strictly longest-first
+  const multiWordPhrasesToMatch = useMemo(() => {
+    const phrases = isEnglish ? multiWordPhrasesEn : multiWordPhrasesAr;
     const lowerText = text.toLowerCase();
-    return phrases.filter(p => {
-      if (p.length < 3) return false;
-      return lowerText.includes(p.toLowerCase());
-    });
+    return phrases
+      .filter(p => p.trim().includes(' ') && lowerText.includes(p.toLowerCase()))
+      .sort((a, b) => b.length - a.length);
   }, [text, isEnglish]);
 
   // Auto-scroll to search highlight target inside this text block
@@ -188,7 +165,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
   }, [highlightTerm, text]);
 
   // Robust content tokenizer that matches multi-word legal phrases first, then single words
-  const renderContent = () => {
+  const contentElements = useMemo(() => {
     if (!text) return null;
 
     let keyCounter = 0;
@@ -230,9 +207,18 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
       contentNodes = newNodes;
     }
 
-    // Pass 1: Multi-word legal phrase matching (longest first)
-    phrasesToMatch.forEach((phrase) => {
+    // Pass 1: Match multi-word legal expressions first (longest first) with strict word boundaries
+    multiWordPhrasesToMatch.forEach((phrase) => {
+      const cleanPhrase = phrase.trim();
+      if (!cleanPhrase || !cleanPhrase.includes(' ')) return;
+
       const newNodes: (string | React.ReactNode)[] = [];
+      const escaped = cleanPhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      
+      // Strict word boundary pattern: prevents matching inside other words
+      const regex = isEnglish
+        ? new RegExp(`(^|[^a-zA-Z0-9])(${escaped})($|[^a-zA-Z0-9])`, 'i')
+        : new RegExp(`(^|[^\u0621-\u064A0-9])(${escaped})($|[^\u0621-\u064A0-9])`, 'i');
 
       contentNodes.forEach((node) => {
         if (typeof node !== 'string') {
@@ -240,33 +226,43 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
           return;
         }
 
-        const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        // Match phrase boundaries
-        const regex = new RegExp(`(${escaped})`, 'gi');
-        const parts = node.split(regex);
-
-        parts.forEach((part) => {
-          if (part.toLowerCase() === phrase.toLowerCase()) {
-            newNodes.push(
-              <span
-                key={`legal-phrase-${keyCounter++}`}
-                onClick={(e) => handleTermClick(e, part, '', !isEnglish)}
-                className="cursor-pointer border-b border-dotted border-black/30 hover:border-black hover:bg-black/5 rounded-sm px-0.5 transition-all text-black font-semibold"
-                title={isEnglish ? "ICC Certified Legal Term - Click for translation" : "مصطلح قانوني معتمد - انقر للترجمة والتفسير"}
-              >
-                {part}
-              </span>
-            );
-          } else if (part) {
-            newNodes.push(part);
+        let remaining = node;
+        while (remaining) {
+          const match = remaining.match(regex);
+          if (!match || match.index === undefined) {
+            newNodes.push(remaining);
+            break;
           }
-        });
+
+          const prefixBoundary = match[1] || '';
+          const matchedText = match[2];
+          const suffixBoundary = match[3] || '';
+
+          const matchStart = match.index;
+          const matchedLength = match[0].length;
+
+          const before = remaining.slice(0, matchStart) + prefixBoundary;
+          if (before) newNodes.push(before);
+
+          newNodes.push(
+            <span
+              key={`legal-phrase-${keyCounter++}`}
+              onClick={(e) => handleTermClick(e, matchedText, '', !isEnglish)}
+              className="cursor-pointer border-b border-dotted border-black/40 hover:border-black hover:bg-black/5 rounded-sm px-0.5 transition-all text-black font-semibold"
+              title={isEnglish ? "ICC Certified Legal Expression - Click for context" : "تعبير قانوني معتمد - انقر لعرض الترجمة والسياق الكامل"}
+            >
+              {matchedText}
+            </span>
+          );
+
+          remaining = suffixBoundary + remaining.slice(matchStart + matchedLength);
+        }
       });
 
       contentNodes = newNodes;
     });
 
-    // Pass 2: Remaining text segmented into individual words for clickability
+    // Pass 2: Remaining text segmented strictly into intact whole words (no chopping)
     const finalNodes: (string | React.ReactNode)[] = [];
 
     contentNodes.forEach((node) => {
@@ -276,7 +272,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
       }
 
       if (isEnglish) {
-        const tokens = node.split(/(\s+|[.,;!?:()"'/]+)/);
+        const tokens = node.split(/(\s+|[.,;!?:()"'/«»\[\]\-_]+)/);
         tokens.forEach((t) => {
           if (/[a-zA-Z]{2,}/.test(t)) {
             finalNodes.push(
@@ -293,7 +289,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
           }
         });
       } else {
-        const tokens = node.split(/([\s،؛.:؟!()"'/]+)/);
+        const tokens = node.split(/([\s،؛.:؟!()"'/«»\[\]\-_]+)/);
         tokens.forEach((t) => {
           if (/[\u0600-\u06FF]{2,}/.test(t)) {
             finalNodes.push(
@@ -313,7 +309,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
     });
 
     return finalNodes;
-  };
+  }, [text, isEnglish, highlightTerm, multiWordPhrasesToMatch, handleTermClick]);
 
   return (
     <div 
@@ -322,7 +318,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
       className={`relative text-neutral-800 leading-relaxed whitespace-pre-wrap text-justify selection:bg-black selection:text-white ${isEnglish ? '' : 'font-arabic'}`}
       dir={isEnglish ? 'ltr' : 'rtl'}
     >
-      {renderContent()}
+      {contentElements}
 
       {/* Floating tooltip for custom highlighted multi-word text */}
       {customSelection && createPortal(

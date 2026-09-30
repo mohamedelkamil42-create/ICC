@@ -15,3 +15,11 @@ export interface DrawerItem {
 }
 
 export type Language = 'ar' | 'en';
+
+export interface LegalTranslationResult {
+  term: string;
+  translation: string;
+  explanation: string;
+  isCertified: boolean;
+  fromCache?: boolean;
+}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Volume2, Loader2, Scale, BookOpen, RotateCcw } from 'lucide-react';
 import { playNaturalEnglishAudio } from './audioUtils';
-import { fetchLegalTranslation, LegalTranslationResult } from './legalTranslationService';
+import { fetchLegalTranslation, translateLegalTermOffline, LegalTranslationResult } from './legalTranslationService';
 
 interface GlossaryTermCardProps {
   ar: string;
@@ -16,31 +16,37 @@ export const GlossaryTermCard: React.FC<GlossaryTermCardProps> = ({ ar, en, isRT
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [legalData, setLegalData] = useState<LegalTranslationResult | null>(null);
 
-  // Asynchronously retrieve certified legal explanation when flipped to the back
+  // Instantly retrieve certified legal explanation when flipped to the back
   useEffect(() => {
     let isMounted = true;
     if (isFlipped && !legalData) {
-      setIsLoadingDetails(true);
-      fetchLegalTranslation(en, ar, false)
-        .then((res) => {
-          if (isMounted) {
-            setLegalData(res);
-            setIsLoadingDetails(false);
-          }
-        })
-        .catch(() => {
-          if (isMounted) {
-            setLegalData({
-              term: en,
-              translation: ar,
-              explanation: isRTL 
-                ? 'مصطلح قانوني معتمد في المحكمة الجنائية الدولية وفق أحكام نظام روما الأساسي.' 
-                : 'Certified legal terminology under the Rome Statute of the International Criminal Court.',
-              isCertified: true,
-            });
-            setIsLoadingDetails(false);
-          }
-        });
+      const offline = translateLegalTermOffline(en, false);
+      if (offline && offline.explanation) {
+        setLegalData(offline);
+        setIsLoadingDetails(false);
+      } else {
+        setIsLoadingDetails(true);
+        fetchLegalTranslation(en, ar, false)
+          .then((res) => {
+            if (isMounted) {
+              setLegalData(res);
+              setIsLoadingDetails(false);
+            }
+          })
+          .catch(() => {
+            if (isMounted) {
+              setLegalData({
+                term: en,
+                translation: ar,
+                explanation: isRTL 
+                  ? 'مصطلح قانوني معتمد في المحكمة الجنائية الدولية وفق أحكام نظام روما الأساسي.' 
+                  : 'Certified legal terminology under the Rome Statute of the International Criminal Court.',
+                isCertified: true,
+              });
+              setIsLoadingDetails(false);
+            }
+          });
+      }
     }
     return () => {
       isMounted = false;
