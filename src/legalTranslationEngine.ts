@@ -3,8 +3,16 @@
 
 import glossaryData from './glossaryData.json';
 import { legalLexicon, LexiconEntry, lookupLexicon } from './legalLexicon';
+import { comprehensiveLegalVocab, lookupComprehensiveVocab, LegalVocabEntry } from './comprehensiveLegalDictionary';
 import { getCachedTranslation, setCachedTranslation } from './dictionaryCache';
 import { LegalTranslationResult } from './types';
+
+// Import all application data for automatic indexing
+import { romeStatuteParts } from './romeStatuteData';
+import { rulesOfProcedureParts } from './rulesOfProcedureData';
+import { elementsOfCrimesParts } from './elementsOfCrimesData';
+import { regulationsOfTheCourtParts } from './regulationsOfTheCourtData';
+import { regulationsOfTheOfficeOfTheProsecutorParts } from './regulationsOfTheProsecutorData';
 
 export interface LocalLegalTerm {
   en: string;
@@ -59,19 +67,50 @@ export function getSafeArabicVariants(word: string): string[] {
   const norm = normalizeArabic(word);
   const variants = new Set<string>([norm]);
 
-  // Only safely check definite article 'ال' if word length >= 5
-  if (norm.startsWith('ال') && norm.length >= 5) {
+  // If word does not start with 'ال', also check with definite article 'ال'
+  if (!norm.startsWith('ال') && norm.length >= 3) {
+    variants.add('ال' + norm);
+  }
+
+  // Only safely check definite article 'ال' if word length >= 4
+  if (norm.startsWith('ال') && norm.length >= 4) {
     variants.add(norm.slice(2));
   }
-  // Only safely check conjunction 'وال' if word length >= 6
-  if (norm.startsWith('وال') && norm.length >= 6) {
+  // Only safely check conjunction 'وال' if word length >= 5
+  if (norm.startsWith('وال') && norm.length >= 5) {
     variants.add(norm.slice(1)); // 'ال...'
     variants.add(norm.slice(3)); // base
   }
   // Safe 'لل' prefix (e.g. للمحكمة -> المحكمة, محكمة)
-  if (norm.startsWith('لل') && norm.length >= 5) {
+  if (norm.startsWith('لل') && norm.length >= 4) {
     variants.add(norm.slice(2));
     variants.add('ال' + norm.slice(2));
+  }
+  // Safe 'بال' prefix
+  if (norm.startsWith('بال') && norm.length >= 5) {
+    variants.add(norm.slice(1));
+    variants.add(norm.slice(3));
+  }
+  // Safe 'كال' prefix
+  if (norm.startsWith('كال') && norm.length >= 5) {
+    variants.add(norm.slice(1));
+    variants.add(norm.slice(3));
+  }
+  // Safe 'ب' prefix (e.g. بعلاقة -> علاقة)
+  if (norm.startsWith('ب') && !norm.startsWith('با') && norm.length >= 4) {
+    variants.add(norm.slice(1));
+  }
+  // Safe 'و' prefix
+  if (norm.startsWith('و') && !norm.startsWith('وا') && norm.length >= 4) {
+    variants.add(norm.slice(1));
+  }
+  // Safe 'ل' prefix (if not covered by لل)
+  if (norm.startsWith('ل') && !norm.startsWith('لا') && norm.length >= 4) {
+    variants.add(norm.slice(1));
+  }
+  // Safe 'ف' prefix
+  if (norm.startsWith('ف') && !norm.startsWith('فا') && norm.length >= 4) {
+    variants.add(norm.slice(1));
   }
 
   return Array.from(variants);
@@ -295,6 +334,106 @@ export function getSafeEnglishVariants(word: string): string[] {
     }
   });
 
+  // 5. Comprehensive Legal & Statutory Vocabulary (Modals, Verbs, Nouns, Drafter terms)
+  if (typeof comprehensiveLegalVocab === 'object') {
+    Object.entries(comprehensiveLegalVocab).forEach(([key, v]: [string, LegalVocabEntry]) => {
+      const termObj: LocalLegalTerm = {
+        en: v.en,
+        ar: v.ar,
+        categoryEn: v.categoryEn || 'Statutory Vocabulary',
+        categoryAr: v.categoryAr || 'المصطلحات التشريعية والإجرائية',
+        explanationEn: v.explanationEn,
+        explanationAr: v.explanationAr,
+      };
+
+      const normEn = normalizeEnglish(v.en);
+      const normKey = normalizeEnglish(key);
+      const normAr = normalizeArabic(v.ar);
+
+      if (!enExactMap.has(normEn)) enExactMap.set(normEn, termObj);
+      if (!enExactMap.has(normKey)) enExactMap.set(normKey, termObj);
+      if (!arExactMap.has(normAr)) arExactMap.set(normAr, termObj);
+
+      // Also index individual slashed options if any (e.g., 'يجب / يتعين')
+      const arOptions = v.ar.split(/\s*\/\s*/).map(p => p.trim());
+      arOptions.forEach(opt => {
+        const normOpt = normalizeArabic(opt);
+        if (normOpt && !arExactMap.has(normOpt)) {
+          arExactMap.set(normOpt, termObj);
+        }
+      });
+
+      if (!enSeen.has(v.en)) {
+        enSeen.add(v.en);
+        allPhrasesListEn.push(v.en);
+      }
+      if (!arSeen.has(v.ar)) {
+        arSeen.add(v.ar);
+        allPhrasesListAr.push(v.ar);
+      }
+      if (v.en.includes(' ') && !multiWordPhrasesEn.includes(v.en)) {
+        multiWordPhrasesEn.push(v.en);
+      }
+      if (v.ar.includes(' ') && !multiWordPhrasesAr.includes(v.ar)) {
+        multiWordPhrasesAr.push(v.ar);
+      }
+    });
+  }
+
+  // 6. Dynamic Application Content Indexing
+  // Automatically index all titles and key terms from the application's data files
+  const allDataSets = [
+    { parts: romeStatuteParts, catEn: 'Rome Statute', catAr: 'نظام روما الأساسي' },
+    { parts: rulesOfProcedureParts, catEn: 'Rules of Procedure', catAr: 'القواعد الإجرائية' },
+    { parts: elementsOfCrimesParts, catEn: 'Elements of Crimes', catAr: 'أركان الجرائم' },
+    { parts: regulationsOfTheCourtParts, catEn: 'Regulations of the Court', catAr: 'لوائح المحكمة' },
+    { parts: regulationsOfTheOfficeOfTheProsecutorParts, catEn: 'Prosecutor Regulations', catAr: 'لوائح المدعي العام' },
+  ];
+
+  allDataSets.forEach(({ parts, catEn, catAr }) => {
+    parts.forEach((part: any) => {
+      // Index Part Title
+      if (part.titleEn && part.titleAr) {
+        const termObj: LocalLegalTerm = {
+          en: part.titleEn,
+          ar: part.titleAr,
+          categoryEn: catEn,
+          categoryAr: catAr,
+          explanationEn: `Chapter or Part title within ${catEn}.`,
+          explanationAr: `عنوان فصل أو باب ضمن ${catAr}.`,
+        };
+        const nEn = normalizeEnglish(part.titleEn);
+        const nAr = normalizeArabic(part.titleAr);
+        if (!enExactMap.has(nEn)) enExactMap.set(nEn, termObj);
+        if (!arExactMap.has(nAr)) arExactMap.set(nAr, termObj);
+        if (part.titleEn.includes(' ') && !multiWordPhrasesEn.includes(part.titleEn)) multiWordPhrasesEn.push(part.titleEn);
+        if (part.titleAr.includes(' ') && !multiWordPhrasesAr.includes(part.titleAr)) multiWordPhrasesAr.push(part.titleAr);
+      }
+
+      // Index Article/Rule Titles
+      if (Array.isArray(part.articles)) {
+        part.articles.forEach((art: any) => {
+          if (art.titleEn && art.titleAr && art.titleEn !== '(no title)') {
+            const termObj: LocalLegalTerm = {
+              en: art.titleEn,
+              ar: art.titleAr,
+              categoryEn: catEn,
+              categoryAr: catAr,
+              explanationEn: `Article or Provision title within ${catEn}.`,
+              explanationAr: `عنوان مادة أو حكم ضمن ${catAr}.`,
+            };
+            const nEn = normalizeEnglish(art.titleEn);
+            const nAr = normalizeArabic(art.titleAr);
+            if (!enExactMap.has(nEn)) enExactMap.set(nEn, termObj);
+            if (!arExactMap.has(nAr)) arExactMap.set(nAr, termObj);
+            if (art.titleEn.includes(' ') && !multiWordPhrasesEn.includes(art.titleEn)) multiWordPhrasesEn.push(art.titleEn);
+            if (art.titleAr.includes(' ') && !multiWordPhrasesAr.includes(art.titleAr)) multiWordPhrasesAr.push(art.titleAr);
+          }
+        });
+      }
+    });
+  });
+
   // Sort multi-word phrases strictly by descending length (longest multi-word expressions matched first)
   multiWordPhrasesEn.sort((a, b) => b.length - a.length);
   multiWordPhrasesAr.sort((a, b) => b.length - a.length);
@@ -374,6 +513,21 @@ export function translateLegalTermOffline(
         }
       }
     }
+
+    // 3. Lexicon & comprehensive vocabulary lookup for Arabic
+    if (!match) {
+      const lex = lookupLexicon(clean, false);
+      if (lex) {
+        match = {
+          en: lex.en,
+          ar: lex.ar,
+          categoryEn: 'ICC Legal Lexicon',
+          categoryAr: 'القاموس القانوني لنظام روما',
+          explanationEn: lex.explanationEn,
+          explanationAr: lex.explanationAr,
+        };
+      }
+    }
   } else {
     const norm = normalizeEnglish(clean);
     // 1. Direct whole-word or whole-phrase match
@@ -413,8 +567,9 @@ export function translateLegalTermOffline(
   if (match) {
     translation = isSourceArabic ? match.en : match.ar;
   } else {
-    // If not in exact dictionary, preserve the whole word/expression as a cohesive unit
-    translation = clean;
+    // If not found in exact dictionary, leave translation empty so async translator provides target language
+    // NEVER return the source word as its own translation!
+    translation = '';
   }
 
   const explanation = buildAuthoritativeExplanation(clean, match, targetIsArabic);

@@ -78,7 +78,7 @@ async function startServer() {
         localCertifiedTranslation = isTargetArabic ? matchedTerm.ar : matchedTerm.en;
       }
 
-      // Check certified legal lexicon
+      // Check certified legal lexicon & comprehensive vocabulary
       const lexiconMatch = lookupLexicon(cleanWord, isTargetArabic);
       if (lexiconMatch) {
         if (!localCertifiedTranslation) {
@@ -87,24 +87,13 @@ async function startServer() {
         localCertifiedExplanation = isTargetArabic ? lexiconMatch.explanationAr : lexiconMatch.explanationEn;
       }
 
-      // Fallback search in glossary map for sub-phrase or root
-      if (!localCertifiedTranslation && isTargetArabic) {
-        const lower = cleanWord.toLowerCase();
-        for (const [key, val] of glossaryMap.entries()) {
-          if (key === lower || key.startsWith(lower) || lower.startsWith(key)) {
-            localCertifiedTranslation = val.ar;
-            break;
-          }
-        }
-      }
-
       if (!process.env.GEMINI_API_KEY) {
-        const safeTranslation = localCertifiedTranslation || (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
+        const safeTranslation = localCertifiedTranslation || cleanWord;
         const fallback = {
           translation: safeTranslation,
           explanation: localCertifiedExplanation || (isTargetArabic
-            ? 'مصطلح قانوني مستخدم في إطار نظام روما الأساسي للمحكمة الجنائية الدولية.'
-            : 'Legal term used within the framework of the ICC Rome Statute.'),
+            ? 'مفهوم قانوني معتمد يُفسر ويُطبق وفقاً لأحكام وقضاء المحكمة الجنائية الدولية ونظام روما الأساسي.'
+            : 'Legal concept interpreted and applied in accordance with ICC jurisprudence and the Rome Statute.'),
           isCertified: !!localCertifiedTranslation
         };
         translationCache.set(cacheKey, fallback);
@@ -113,36 +102,13 @@ async function startServer() {
 
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-      const prompt = `You are a Senior Legal Linguist and Judicial Expert specializing in the International Criminal Court (ICC).
-
-Your task is to provide an authoritative "ICC-Certified" translation and contextual legal explanation for the legal term or phrase: "${cleanWord}".
-
-CONTEXT OF USAGE IN THE LEGAL TEXT:
-"${context || cleanWord}"
-
-CRITICAL LANGUAGE REQUIREMENT:
-Target Language: ${isTargetArabic ? 'ARABIC (اللغة العربية الفصحى)' : 'ENGLISH'}.
-${isTargetArabic 
-  ? 'Both "translation" and "explanation" MUST BE ENTIRELY WRITTEN IN MODERN STANDARD ARABIC (اللغة العربية الفصحى). Under NO circumstances should any part of "translation" or "explanation" be in English!' 
-  : 'Both "translation" and "explanation" MUST be written in English.'}
-
-SPECIFIC REQUIREMENTS:
-1. "translation":
-   - ${isTargetArabic ? 'The authoritative, certified ICC legal term in Arabic (e.g. "admissibility" -> "المقبولية", "Pre-Trial Chamber" -> "الدائرة التمهيدية", "Command responsibility" -> "مسؤولية القائد والرئيس").' : 'The certified ICC legal term in English.'}
-   - Multi-word phrases must be translated as a single unified legal concept.
-2. "explanation":
-   - ${isTargetArabic ? 'شرح قانوني دقيق وموجز (جملة أو جملتان) باللغة العربية الفصحى حصراً، يوضح مدلول هذا المصطلح وموقعه في نظام روما الأساسي أو أركان الجرائم أو القواعد الإجرائية.' : 'A concise 1-2 sentence explanation of this legal concept under the Rome Statute or Elements of Crimes.'}
-
-OUTPUT FORMAT:
-Return strictly a valid JSON object with exactly two keys:
-{
-  "translation": "${isTargetArabic ? 'الترجمة العربية القانونية المعتمدة' : 'Official ICC English Term'}",
-  "explanation": "${isTargetArabic ? 'الشرح والتوضيح القانوني باللغة العربية الفصحى' : 'Legal explanation in English'}"
-}`;
+      const prompt = `Translate to ${isTargetArabic ? 'Arabic' : 'English'}: "${cleanWord}".
+Context: "${context || cleanWord}"
+Return JSON: {"translation": "...", "explanation": "1-2 concise sentences"}`;
 
       let response: any = null;
-      // Prioritize highly-available models
-      const modelChoices = ['gemini-flash-latest', 'gemini-3.1-flash-lite', 'gemini-3.8-flash'];
+      // Prioritize 8B for absolute maximum speed
+      const modelChoices = ['gemini-1.5-flash-8b', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
       let success = false;
 
       for (const modelName of modelChoices) {
@@ -156,17 +122,17 @@ Return strictly a valid JSON object with exactly two keys:
             success = true;
             break;
           }
-        } catch (err) {
-          console.warn(`Translation model ${modelName} unavailable, falling back...`);
+        } catch {
+          // Fallback
         }
       }
 
       if (!success || !response?.text) {
-        const safeTranslation = localCertifiedTranslation || (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
+        const safeTranslation = localCertifiedTranslation || cleanWord;
         const payload = {
           translation: safeTranslation,
           explanation: localCertifiedExplanation || (isTargetArabic 
-            ? 'مصطلح قانوني معتمد في المحكمة الجنائية الدولية وفق نصوص نظام روما الأساسي.'
+            ? 'مفهوم قانوني معتمد يُفسر ويُطبق وفقاً للسوابق القضائية وأحكام المحكمة الجنائية الدولية ونظام روما الأساسي.'
             : 'Certified legal terminology under the Rome Statute of the International Criminal Court.'),
           isCertified: !!localCertifiedTranslation
         };
@@ -178,33 +144,42 @@ Return strictly a valid JSON object with exactly two keys:
 
       try {
         const result = JSON.parse(response.text.trim());
-        let translationText = result.translation || localCertifiedTranslation || (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
+        let translationText = result.translation || localCertifiedTranslation || cleanWord;
         let explanationText = result.explanation || localCertifiedExplanation || '';
 
-        // Strict verification: When translating to Arabic, ensure neither translation nor explanation is in English!
+        // Strict verification: target language enforcement
         if (isTargetArabic) {
+          // When translating to Arabic, translation MUST be in Arabic
           if (!/[\u0600-\u06FF]/.test(translationText)) {
-            translationText = localCertifiedTranslation || (lexiconMatch ? lexiconMatch.ar : 'مصطلح قانوني معتمد');
+            translationText = localCertifiedTranslation || (lexiconMatch ? lexiconMatch.ar : cleanWord);
           }
           if (!/[\u0600-\u06FF]/.test(explanationText)) {
-            explanationText = localCertifiedExplanation || (localCertifiedTranslation
-              ? `مصطلح قانوني معتمد صادر عن المحكمة الجنائية الدولية، ويعبّر عن معيار إجرائي أو موضوعي في نظام روما الأساسي.`
-              : `مفهوم قانوني معتمد يُفسر ويُطبق وفقاً للسوابق القضائية وأحكام المحكمة الجنائية الدولية ونظام روما الأساسي.`);
+            explanationText = localCertifiedExplanation || `مفهوم قانوني معتمد يُفسر ويُطبق وفقاً للسوابق القضائية وأحكام المحكمة الجنائية الدولية ونظام روما الأساسي.`;
+          }
+        } else {
+          // When translating to English, translation MUST be in English
+          if (!/[a-zA-Z]/.test(translationText) || /[\u0600-\u06FF]/.test(translationText)) {
+            translationText = localCertifiedTranslation || (lexiconMatch ? lexiconMatch.en : cleanWord);
+          }
+          if (!/[a-zA-Z]/.test(explanationText)) {
+            explanationText = localCertifiedExplanation || `Certified legal concept interpreted and applied in accordance with ICC jurisprudence and the Rome Statute.`;
           }
         }
 
         const payload = {
           translation: translationText,
-          explanation: explanationText || (isTargetArabic ? 'مصطلح قانوني معتمد وفقاً لنظام روما الأساسي.' : 'Certified ICC legal term.'),
+          explanation: explanationText || (isTargetArabic ? 'مفهوم قانوني معتمد وفقاً لنظام روما الأساسي.' : 'Certified ICC legal term.'),
           isCertified: true
         };
         translationCache.set(cacheKey, payload);
         return res.json(payload);
-      } catch (parseErr) {
-        const safeTranslation = localCertifiedTranslation || (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
+      } catch {
+        const safeTranslation = localCertifiedTranslation || cleanWord;
         const payload = {
           translation: safeTranslation,
-          explanation: localCertifiedExplanation || (isTargetArabic ? 'مصطلح قانوني معتمد وفقاً لنظام روما الأساسي.' : 'Certified ICC legal term.'),
+          explanation: localCertifiedExplanation || (isTargetArabic
+            ? 'مفهوم قانوني معتمد صادر عن المحكمة الجنائية الدولية ونظام روما الأساسي.'
+            : 'Certified legal terminology under the Rome Statute of the International Criminal Court.'),
           isCertified: !!localCertifiedTranslation
         };
         translationCache.set(cacheKey, payload);
@@ -217,10 +192,10 @@ Return strictly a valid JSON object with exactly two keys:
       const lexiconMatch = lookupLexicon(cleanWord, isTargetArabic);
       const safeTranslation = lexiconMatch 
         ? (isTargetArabic ? lexiconMatch.ar : lexiconMatch.en)
-        : (isTargetArabic ? 'مصطلح قانوني معتمد' : cleanWord);
+        : cleanWord;
       return res.json({ 
         translation: safeTranslation, 
-        explanation: isTargetArabic ? 'مصطلح قانوني وفق أحكام المحكمة الجنائية الدولية.' : 'ICC legal term.',
+        explanation: isTargetArabic ? 'مفهوم قانوني معتمد وفق أحكام وقضاء المحكمة الجنائية الدولية.' : 'ICC legal term.',
         isCertified: !!lexiconMatch 
       });
     }

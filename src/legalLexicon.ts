@@ -2,6 +2,8 @@
 // Provides instant, guaranteed, offline-ready translations for legal vocabulary,
 // common stems, terms, and expressions in both English and Arabic.
 
+import { lookupComprehensiveVocab } from './comprehensiveLegalDictionary';
+
 export interface LexiconEntry {
   en: string;
   ar: string;
@@ -602,19 +604,19 @@ export function lookupLexicon(word: string, targetIsArabic: boolean): LexiconEnt
   const norm = normalizeWord(word);
   if (!norm) return null;
 
-  // 1. Direct match
+  // 1. Direct match in core lexicon
   if (legalLexicon[norm]) {
     return legalLexicon[norm];
   }
 
   // 2. Singular/plural match (strip trailing 's' or 'es')
-  if (norm.endsWith('ies')) {
+  if (norm.endsWith('ies') && norm.length > 5) {
     const singular = norm.slice(0, -3) + 'y';
     if (legalLexicon[singular]) return legalLexicon[singular];
-  } else if (norm.endsWith('es')) {
+  } else if (norm.endsWith('es') && norm.length > 4) {
     const singular = norm.slice(0, -2);
     if (legalLexicon[singular]) return legalLexicon[singular];
-  } else if (norm.endsWith('s')) {
+  } else if (norm.endsWith('s') && !norm.endsWith('ss') && norm.length > 3) {
     const singular = norm.slice(0, -1);
     if (legalLexicon[singular]) return legalLexicon[singular];
   }
@@ -626,10 +628,39 @@ export function lookupLexicon(word: string, targetIsArabic: boolean): LexiconEnt
     }
   }
 
-  // 4. Search by Arabic term in values
+  // 4. Fallback to comprehensive legal & statutory vocabulary dictionary
+  const vocabMatch = lookupComprehensiveVocab(word, targetIsArabic);
+  if (vocabMatch) {
+    return {
+      en: vocabMatch.en,
+      ar: vocabMatch.ar,
+      explanationAr: vocabMatch.explanationAr,
+      explanationEn: vocabMatch.explanationEn,
+    };
+  }
+
+  // 5. Search by Arabic term in values - exact whole term or option, with/without 'ال', or head-noun
   if (!targetIsArabic) {
+    const cleanAr = word.replace(/[\u064B-\u065F\u0670\u0640]/g, '').trim();
+    const withAl = cleanAr.startsWith('ال') ? cleanAr : 'ال' + cleanAr;
+    const withoutAl = cleanAr.startsWith('ال') && cleanAr.length > 3 ? cleanAr.slice(2) : cleanAr;
+
+    // Exact and option match
     for (const entry of Object.values(legalLexicon)) {
-      if (entry.ar === word.trim() || entry.ar.includes(word.trim())) {
+      const entryArClean = entry.ar.replace(/[\u064B-\u065F\u0670\u0640]/g, '').trim();
+      if (entryArClean === cleanAr || entryArClean === withAl || entryArClean === withoutAl) {
+        return entry;
+      }
+      const options = entryArClean.split(/\s*\/\s*/).map(p => p.trim());
+      if (options.includes(cleanAr) || options.includes(withAl) || options.includes(withoutAl)) {
+        return entry;
+      }
+    }
+
+    // Compound phrase head-noun match (e.g. 'الاختصاص القضائي' when query is 'الاختصاص')
+    for (const entry of Object.values(legalLexicon)) {
+      const entryArClean = entry.ar.replace(/[\u064B-\u065F\u0670\u0640]/g, '').trim();
+      if (entryArClean.startsWith(cleanAr + ' ') || entryArClean.startsWith(withAl + ' ')) {
         return entry;
       }
     }
@@ -637,3 +668,4 @@ export function lookupLexicon(word: string, targetIsArabic: boolean): LexiconEnt
 
   return null;
 }
+

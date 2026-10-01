@@ -114,22 +114,27 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
       isArabic: isAr
     });
 
-    // Provide complete certified definition immediately: zero waiting, zero spinner, no 'not found'
+    // Provide complete certified definition immediately: zero waiting, zero spinner, if in lexicon
     setApiResult({
       ...offlineResult,
       translation: resolvedTranslation,
     });
-    setIsLoadingExplanation(false);
+    
+    // Only show loading state if it is not a certified lexicon match and we are online
+    const needsFetch = !offlineResult.isCertified && typeof navigator !== 'undefined' && navigator.onLine;
+    setIsLoadingExplanation(needsFetch);
 
     // 2. Background async enrichment if online and term was not certified from local corpus
-    if (typeof navigator !== 'undefined' && navigator.onLine && !offlineResult.fromCache) {
+    if (needsFetch) {
       fetchLegalTranslation(clean, text, isAr)
         .then((result) => {
           if (result && result.translation) {
             setApiResult(result);
           }
+          setIsLoadingExplanation(false);
         })
         .catch(() => {
+          setIsLoadingExplanation(false);
           // Offline result already active
         });
     }
@@ -437,21 +442,45 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
                   {(() => {
                     const targetIsArabic = !selectedTerm.isArabic;
                     const trans = apiResult?.translation || selectedTerm.localTranslation;
-                    if (trans && (!targetIsArabic || /[\u0600-\u06FF]/.test(trans))) {
+                    
+                    // Strict Target Language Verification:
+                    // 1. If target is English (source was Arabic): translation MUST contain English letters and NOT be Arabic!
+                    if (!targetIsArabic && trans && /[a-zA-Z]/.test(trans) && trans !== selectedTerm.term) {
                       return trans;
                     }
+                    // 2. If target is Arabic (source was English): translation MUST contain Arabic letters and NOT be English!
+                    if (targetIsArabic && trans && /[\u0600-\u06FF]/.test(trans) && trans !== selectedTerm.term) {
+                      return trans;
+                    }
+
+                    // Fallback to lexicon with strict target language enforcement
+                    const lex = lookupLexicon(selectedTerm.term, targetIsArabic);
+                    if (lex) {
+                      const candidate = targetIsArabic ? lex.ar : lex.en;
+                      if (candidate && candidate !== selectedTerm.term) {
+                        return candidate;
+                      }
+                    }
+
+                    // Fallback to glossary with strict target language enforcement
+                    const local = lookupLocalGlossary(selectedTerm.term, selectedTerm.isArabic);
+                    if (local) {
+                      const candidate = targetIsArabic ? local.cleanAr : local.cleanEn;
+                      if (candidate && candidate !== selectedTerm.term) {
+                        return candidate;
+                      }
+                    }
+
                     if (isLoadingExplanation) {
                       return (
                         <span className="text-neutral-400 font-normal text-sm animate-pulse">
-                          {targetIsArabic ? 'جاري استرجاع الترجمة المعتمدة...' : 'Retrieving certified translation...'}
+                          {targetIsArabic ? 'جاري استرجاع المعنى القانوني...' : 'Translating legal term...'}
                         </span>
                       );
                     }
-                    if (targetIsArabic) {
-                      const lex = lookupLexicon(selectedTerm.term, true);
-                      return lex?.ar || 'مصطلح قانوني معتمد';
-                    }
-                    return selectedTerm.term;
+
+                    // Loading / resolving state - NEVER return Arabic for Arabic input!
+                    return targetIsArabic ? 'جاري استرجاع المعنى...' : 'Translating...';
                   })()}
                 </span>
                 {selectedTerm.isArabic && (apiResult?.translation || selectedTerm.localTranslation) && (
@@ -469,11 +498,13 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
                 )}
               </div>
 
-              {/* Certified Legal Indicator */}
+              {/* Contextual Category / Certification Subtitle */}
               <div className={`flex items-center gap-1.5 mt-0.5 ${selectedTerm.isArabic ? 'justify-start text-neutral-600' : 'justify-end text-white/80'}`}>
                 <Scale size={11} />
                 <span className="text-[9px] font-black uppercase tracking-widest">
-                  {selectedTerm.isArabic ? 'ICC Official Terminology' : 'مصطلح معتمد من المحكمة'}
+                  {selectedTerm.isArabic 
+                    ? (apiResult?.isCertified ? 'Rome Statute Judicial Term' : 'Legal Terminology')
+                    : (apiResult?.isCertified ? 'مصطلح قانوني موثق بنظام روما' : 'القاموس القانوني للمحكمة')}
                 </span>
               </div>
             </div>
