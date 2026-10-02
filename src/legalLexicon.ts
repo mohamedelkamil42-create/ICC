@@ -641,17 +641,26 @@ export function lookupLexicon(word: string, targetIsArabic: boolean): LexiconEnt
 
   // 5. Search by Arabic term in values - exact whole term or option, with/without 'ال', or head-noun
   if (!targetIsArabic) {
-    const cleanAr = word.replace(/[\u064B-\u065F\u0670\u0640]/g, '').trim();
+    const normalizeAr = (s: string) => s
+      .replace(/[\u064B-\u065F\u0670\u0640]/g, '') // remove tashkeel
+      .replace(/[أإآٱ]/g, 'ا')
+      .replace(/ة/g, 'ه')
+      .replace(/ى/g, 'ي')
+      .replace(/ؤ/g, 'و')
+      .replace(/ئ/g, 'ي')
+      .trim();
+
+    const cleanAr = normalizeAr(word);
     const withAl = cleanAr.startsWith('ال') ? cleanAr : 'ال' + cleanAr;
     const withoutAl = cleanAr.startsWith('ال') && cleanAr.length > 3 ? cleanAr.slice(2) : cleanAr;
 
     // Exact and option match
     for (const entry of Object.values(legalLexicon)) {
-      const entryArClean = entry.ar.replace(/[\u064B-\u065F\u0670\u0640]/g, '').trim();
+      const entryArClean = normalizeAr(entry.ar);
       if (entryArClean === cleanAr || entryArClean === withAl || entryArClean === withoutAl) {
         return entry;
       }
-      const options = entryArClean.split(/\s*\/\s*/).map(p => p.trim());
+      const options = entry.ar.split(/\s*\/\s*/).map(p => normalizeAr(p.trim()));
       if (options.includes(cleanAr) || options.includes(withAl) || options.includes(withoutAl)) {
         return entry;
       }
@@ -659,7 +668,7 @@ export function lookupLexicon(word: string, targetIsArabic: boolean): LexiconEnt
 
     // Compound phrase head-noun match (e.g. 'الاختصاص القضائي' when query is 'الاختصاص')
     for (const entry of Object.values(legalLexicon)) {
-      const entryArClean = entry.ar.replace(/[\u064B-\u065F\u0670\u0640]/g, '').trim();
+      const entryArClean = normalizeAr(entry.ar);
       if (entryArClean.startsWith(cleanAr + ' ') || entryArClean.startsWith(withAl + ' ')) {
         return entry;
       }

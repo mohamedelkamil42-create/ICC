@@ -3413,18 +3413,27 @@ export function lookupComprehensiveVocab(word: string, targetIsArabic: boolean):
 
   // 4. Reverse Arabic search - exact whole term or option with article handling
   if (!targetIsArabic) {
-    const cleanAr = word.replace(/[\u064B-\u065F\u0670\u0640]/g, '').trim();
+    const normalizeAr = (s: string) => s
+      .replace(/[\u064B-\u065F\u0670\u0640]/g, '') // remove tashkeel
+      .replace(/[أإآٱ]/g, 'ا')
+      .replace(/ة/g, 'ه')
+      .replace(/ى/g, 'ي')
+      .replace(/ؤ/g, 'و')
+      .replace(/ئ/g, 'ي')
+      .trim();
+
+    const cleanAr = normalizeAr(word);
     const withAl = cleanAr.startsWith('ال') ? cleanAr : 'ال' + cleanAr;
     const withoutAl = (cleanAr.startsWith('ال') && cleanAr.length > 3) ? cleanAr.slice(2) : cleanAr;
 
     // Direct match with or without article
     for (const entry of Object.values(comprehensiveLegalVocab)) {
-      const entryArClean = entry.ar.replace(/[\u064B-\u065F\u0670\u0640]/g, '').trim();
+      const entryArClean = normalizeAr(entry.ar);
       if (entryArClean === cleanAr || entryArClean === withAl || entryArClean === withoutAl) {
         return entry;
       }
-      // Check slashed alternatives (e.g. 'يجب / يتعين')
-      const options = entryArClean.split(/\s*\/\s*/).map(p => p.trim());
+      // Check slashed alternatives
+      const options = entry.ar.split(/\s*\/\s*/).map(p => normalizeAr(p.trim()));
       if (options.includes(cleanAr) || options.includes(withAl) || options.includes(withoutAl)) {
         return entry;
       }

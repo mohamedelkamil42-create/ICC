@@ -15,6 +15,7 @@ import { romeStatuteParts } from './romeStatuteData';
 import { rulesOfProcedureParts } from './rulesOfProcedureData';
 import { elementsOfCrimesParts } from './elementsOfCrimesData';
 import { regulationsOfTheCourtParts } from './regulationsOfTheCourtData';
+import { regulationsOfTheRegistryParts } from './regulationsOfTheRegistryData';
 import { regulationsOfTheOfficeOfTheProsecutorParts } from './regulationsOfTheProsecutorData';
 import { HelpTourModal } from './HelpTourModal';
 
@@ -308,9 +309,11 @@ export default function App() {
                                       ? elementsOfCrimesParts 
                                       : (item.id === '2-4' 
                                           ? regulationsOfTheCourtParts 
-                                          : (item.id === '2-6'
-                                              ? regulationsOfTheOfficeOfTheProsecutorParts
-                                              : romeStatuteParts)))
+                                          : (item.id === '2-5'
+                                              ? regulationsOfTheRegistryParts
+                                              : (item.id === '2-6'
+                                                  ? regulationsOfTheOfficeOfTheProsecutorParts
+                                                  : romeStatuteParts))))
                               } 
                               language={language} 
                               highlightId={isOpen ? highlightArtId : null}
@@ -322,9 +325,11 @@ export default function App() {
                                       ? 'أركان الجرائم' 
                                       : (item.id === '2-4' 
                                           ? 'لوائح المحكمة' 
-                                          : (item.id === '2-6'
-                                              ? 'لائحة مكتب المدعي العام'
-                                              : 'نظام روما الأساسي')))
+                                          : (item.id === '2-5'
+                                              ? 'لوائح قلم المحكمة'
+                                              : (item.id === '2-6'
+                                                  ? 'لائحة مكتب المدعي العام'
+                                                  : 'نظام روما الأساسي'))))
                               }
                               documentTitleEn={
                                 item.id === '2-2' 
@@ -333,9 +338,11 @@ export default function App() {
                                       ? 'Elements of Crimes' 
                                       : (item.id === '2-4' 
                                           ? 'Regulations of the Court' 
-                                          : (item.id === '2-6'
-                                              ? 'Regulations of the Office of the Prosecutor'
-                                              : 'Rome Statute')))
+                                          : (item.id === '2-5'
+                                              ? 'Regulations of the Registry'
+                                              : (item.id === '2-6'
+                                                  ? 'Regulations of the Office of the Prosecutor'
+                                                  : 'Rome Statute'))))
                               }
                               itemLabelAr={
                                 item.id === '2-2' 
@@ -344,9 +351,11 @@ export default function App() {
                                       ? 'المادة' 
                                       : (item.id === '2-4' 
                                           ? 'اللائحة' 
-                                          : (item.id === '2-6'
-                                              ? 'البند'
-                                              : 'المادة')))
+                                          : (item.id === '2-5'
+                                              ? 'اللائحة'
+                                              : (item.id === '2-6'
+                                                  ? 'اللائحة'
+                                                  : 'المادة'))))
                               }
                               itemLabelEn={
                                 item.id === '2-2' 
@@ -355,9 +364,11 @@ export default function App() {
                                       ? 'Article' 
                                       : (item.id === '2-4' 
                                           ? 'Regulation' 
-                                          : (item.id === '2-6'
+                                          : (item.id === '2-5'
                                               ? 'Regulation'
-                                              : 'Article')))
+                                              : (item.id === '2-6'
+                                                  ? 'Regulation'
+                                                  : 'Article'))))
                               }
                             />
                           )}

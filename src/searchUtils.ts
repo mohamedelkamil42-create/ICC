@@ -3,6 +3,7 @@ import { romeStatuteParts } from './romeStatuteData';
 import { rulesOfProcedureParts } from './rulesOfProcedureData';
 import { elementsOfCrimesParts } from './elementsOfCrimesData';
 import { regulationsOfTheCourtParts } from './regulationsOfTheCourtData';
+import { regulationsOfTheRegistryParts } from './regulationsOfTheRegistryData';
 import { regulationsOfTheOfficeOfTheProsecutorParts } from './regulationsOfTheProsecutorData';
 
 export type SearchCategory = 'all' | 'rome_statute' | 'rules_of_procedure' | 'elements_of_crimes' | 'regulations_of_the_court' | 'regulations_of_the_prosecutor' | 'terms';
@@ -107,36 +108,44 @@ export function buildSearchIndex(data: DrawerItem[], lang: Language): SearchInde
               ? elementsOfCrimesParts 
               : (isRegulations 
                   ? regulationsOfTheCourtParts 
-                  : (isProsecutor 
-                      ? regulationsOfTheOfficeOfTheProsecutorParts 
-                      : romeStatuteParts)));
+                  : (item.id === '2-5'
+                      ? regulationsOfTheRegistryParts
+                      : (item.id === '2-6'
+                          ? regulationsOfTheOfficeOfTheProsecutorParts 
+                          : romeStatuteParts))));
         const docBadge = isRules 
           ? (isAr ? 'قواعد الإجراءات والإثبات' : 'Rules of Procedure') 
           : (isElements 
               ? (isAr ? 'أركان الجرائم' : 'Elements of Crimes') 
               : (isRegulations 
                   ? (isAr ? 'لوائح المحكمة' : 'Regulations of the Court')
-                  : (isProsecutor 
-                      ? (isAr ? 'لائحة مكتب المدعي العام' : 'Regulations of the OTP') 
-                      : (isAr ? 'نظام روما الأساسي' : 'Rome Statute'))));
+                  : (item.id === '2-5'
+                      ? (isAr ? 'لوائح قلم المحكمة' : 'Regulations of the Registry')
+                      : (isProsecutor 
+                          ? (isAr ? 'لائحة مكتب المدعي العام' : 'Regulations of the OTP') 
+                          : (isAr ? 'نظام روما الأساسي' : 'Rome Statute')))));
         const docOrigin = isRules 
           ? 'rules_of_procedure' 
           : (isElements 
               ? 'elements_of_crimes' 
               : (isRegulations 
                   ? 'regulations_of_the_court' 
-                  : (isProsecutor 
-                      ? 'regulations_of_the_prosecutor' 
-                      : 'rome_statute')));
+                  : (item.id === '2-5'
+                      ? 'regulations_of_the_registry'
+                      : (isProsecutor 
+                          ? 'regulations_of_the_prosecutor' 
+                          : 'rome_statute'))));
         const itemLabel = isRules 
           ? (isAr ? 'القاعدة' : 'Rule') 
           : (isElements 
               ? (isAr ? 'المادة' : 'Article') 
               : (isRegulations 
                   ? (isAr ? 'اللائحة' : 'Regulation') 
-                  : (isProsecutor 
-                      ? (isAr ? 'البند' : 'Regulation') 
-                      : (isAr ? 'المادة' : 'Article'))));
+                  : (item.id === '2-5'
+                      ? (isAr ? 'اللائحة' : 'Regulation')
+                      : (isProsecutor 
+                          ? (isAr ? 'اللائحة' : 'Regulation') 
+                          : (isAr ? 'المادة' : 'Article')))));
 
         for (const part of statuteData) {
           const partTitle = isAr ? `${part.labelAr} - ${part.titleAr}` : `${part.labelEn} - ${part.titleEn}`;

@@ -12,6 +12,7 @@ import { romeStatuteParts } from './romeStatuteData';
 import { rulesOfProcedureParts } from './rulesOfProcedureData';
 import { elementsOfCrimesParts } from './elementsOfCrimesData';
 import { regulationsOfTheCourtParts } from './regulationsOfTheCourtData';
+import { regulationsOfTheRegistryParts } from './regulationsOfTheRegistryData';
 import { regulationsOfTheOfficeOfTheProsecutorParts } from './regulationsOfTheProsecutorData';
 
 export interface LocalLegalTerm {
@@ -61,56 +62,49 @@ export function normalizeArabic(str: string): string {
 
 /**
  * Safe Arabic word normalization without truncating or mutilating root letters.
- * Preserves the entire word and only checks safe whole-word prefixes (like 'ال' or 'وال').
+ * Preserves the entire word and only checks safe whole-word prefixes.
  */
 export function getSafeArabicVariants(word: string): string[] {
   const norm = normalizeArabic(word);
   const variants = new Set<string>([norm]);
 
-  // If word does not start with 'ال', also check with definite article 'ال'
-  if (!norm.startsWith('ال') && norm.length >= 3) {
+  if (norm.length < 3) return Array.from(variants);
+
+  // 1. Basic 'ال' handling
+  if (norm.startsWith('ال') && norm.length >= 4) {
+    variants.add(norm.slice(2));
+  } else if (!norm.startsWith('ال') && norm.length >= 3) {
     variants.add('ال' + norm);
   }
 
-  // Only safely check definite article 'ال' if word length >= 4
-  if (norm.startsWith('ال') && norm.length >= 4) {
-    variants.add(norm.slice(2));
+  // 2. Multi-letter & Nested Prefixes (handled before single letters to catch longer matches)
+  const multiPrefixes = ['بال', 'وال', 'كال', 'لل', 'فلل', 'وبال', 'وفل', 'ولل'];
+  for (const mp of multiPrefixes) {
+    if (norm.startsWith(mp) && norm.length > mp.length + 2) {
+      const stem = norm.slice(mp.length);
+      variants.add(stem);
+      variants.add('ال' + stem);
+    }
   }
-  // Only safely check conjunction 'وال' if word length >= 5
-  if (norm.startsWith('وال') && norm.length >= 5) {
-    variants.add(norm.slice(1)); // 'ال...'
-    variants.add(norm.slice(3)); // base
-  }
-  // Safe 'لل' prefix (e.g. للمحكمة -> المحكمة, محكمة)
-  if (norm.startsWith('لل') && norm.length >= 4) {
-    variants.add(norm.slice(2));
-    variants.add('ال' + norm.slice(2));
-  }
-  // Safe 'بال' prefix
-  if (norm.startsWith('بال') && norm.length >= 5) {
-    variants.add(norm.slice(1));
-    variants.add(norm.slice(3));
-  }
-  // Safe 'كال' prefix
-  if (norm.startsWith('كال') && norm.length >= 5) {
-    variants.add(norm.slice(1));
-    variants.add(norm.slice(3));
-  }
-  // Safe 'ب' prefix (e.g. بعلاقة -> علاقة)
-  if (norm.startsWith('ب') && !norm.startsWith('با') && norm.length >= 4) {
-    variants.add(norm.slice(1));
-  }
-  // Safe 'و' prefix
-  if (norm.startsWith('و') && !norm.startsWith('وا') && norm.length >= 4) {
-    variants.add(norm.slice(1));
-  }
-  // Safe 'ل' prefix (if not covered by لل)
-  if (norm.startsWith('ل') && !norm.startsWith('لا') && norm.length >= 4) {
-    variants.add(norm.slice(1));
-  }
-  // Safe 'ف' prefix
-  if (norm.startsWith('ف') && !norm.startsWith('فا') && norm.length >= 4) {
-    variants.add(norm.slice(1));
+
+  // 3. Common single-letter prefixes: ب, و, ف, ل, ك
+  const singlePrefixes = ['ب', 'و', 'ف', 'ل', 'ك'];
+  for (const p of singlePrefixes) {
+    if (norm.startsWith(p) && norm.length >= 4) {
+      const stripped = norm.slice(1);
+      variants.add(stripped);
+      
+      // Handle nested single prefixes (e.g., 'وبـ')
+      for (const p2 of singlePrefixes) {
+        if (stripped.startsWith(p2) && stripped.length >= 4) {
+          variants.add(stripped.slice(1));
+        }
+      }
+
+      if (!stripped.startsWith('ال') && stripped.length >= 3) {
+        variants.add('ال' + stripped);
+      }
+    }
   }
 
   return Array.from(variants);
@@ -387,6 +381,7 @@ export function getSafeEnglishVariants(word: string): string[] {
     { parts: rulesOfProcedureParts, catEn: 'Rules of Procedure', catAr: 'القواعد الإجرائية' },
     { parts: elementsOfCrimesParts, catEn: 'Elements of Crimes', catAr: 'أركان الجرائم' },
     { parts: regulationsOfTheCourtParts, catEn: 'Regulations of the Court', catAr: 'لوائح المحكمة' },
+    { parts: regulationsOfTheRegistryParts, catEn: 'Regulations of the Registry', catAr: 'لوائح قلم المحكمة' },
     { parts: regulationsOfTheOfficeOfTheProsecutorParts, catEn: 'Prosecutor Regulations', catAr: 'لوائح المدعي العام' },
   ];
 

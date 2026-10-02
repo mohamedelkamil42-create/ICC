@@ -326,14 +326,19 @@ function observeArticleElement(el: Element, onVisible: () => void): () => void {
                     exit={{ height: 0, opacity: 0 }}
                     className="border-t border-neutral-50 bg-neutral-50/30"
                   >
-                    <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
+                    <div className="p-3 flex flex-col gap-1.5" dir={isRTL ? 'rtl' : 'ltr'}>
                       {part.articles.map((art) => (
                         <button 
                           key={art.id}
                           onClick={() => scrollToArticle(art.id)}
-                          className={`text-[11px] font-bold p-2.5 rounded-xl bg-white border border-neutral-100 hover:border-black hover:scale-105 active:scale-95 transition-all text-center ${isRTL ? 'font-arabic' : ''}`}
+                          className={`flex items-center gap-3 w-full text-right p-3 rounded-2xl bg-white border border-neutral-100 hover:border-black hover:bg-neutral-50 transition-all group ${isRTL ? 'text-right' : 'text-left'}`}
                         >
-                          {language === 'ar' ? itemLabelAr : (itemLabelEn === 'Article' ? 'Art.' : (itemLabelEn === 'Regulation' ? 'Reg.' : itemLabelEn))} {art.number}
+                          <span className="flex-shrink-0 px-2 h-10 flex items-center justify-center rounded-xl bg-neutral-100 group-hover:bg-black group-hover:text-white text-[9px] font-black transition-colors">
+                            {language === 'ar' ? itemLabelAr : (itemLabelEn === 'Article' ? 'Art.' : (itemLabelEn === 'Regulation' ? 'Reg.' : itemLabelEn))} {art.number}
+                          </span>
+                          <span className={`text-[11px] font-bold text-neutral-600 group-hover:text-black transition-colors truncate ${isRTL ? 'font-arabic' : ''}`}>
+                            {language === 'ar' ? art.titleAr : art.titleEn}
+                          </span>
                         </button>
                       ))}
                     </div>
