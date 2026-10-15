@@ -62,41 +62,300 @@ interface RomeStatuteViewerProps {
   itemLabelEn: string;
 }
 
-const observerCallbacks = new Map<Element, () => void>();
-let sharedObserver: IntersectionObserver | null = null;
-
-function observeArticleElement(el: Element, onVisible: () => void): () => void {
-  if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
-    onVisible();
-    return () => {};
-  }
-
-  if (!sharedObserver) {
-    sharedObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const cb = observerCallbacks.get(entry.target);
-            if (cb) {
-              cb();
-              observerCallbacks.delete(entry.target);
-              sharedObserver?.unobserve(entry.target);
-            }
-          }
-        });
-      },
-      { rootMargin: '700px' }
-    );
-  }
-
-  observerCallbacks.set(el, onVisible);
-  sharedObserver.observe(el);
-
-  return () => {
-    observerCallbacks.delete(el);
-    sharedObserver?.unobserve(el);
-  };
+interface ArticleItemProps {
+  art: Article;
+  isHighlighted: boolean;
+  highlightTermCustom?: string | null;
+  language: 'ar' | 'en';
+  isRTL: boolean;
+  itemLabelAr: string;
+  itemLabelEn: string;
+  isSaved: boolean;
+  isCopied: boolean;
+  isCitationCopied: boolean;
+  onToggleBookmark: (art: Article) => void;
+  onCopyContent: (art: Article, lang: 'ar' | 'en' | 'both') => void;
+  onCopyCitation: (art: Article) => void;
+  onScrollToTop: () => void;
+  tBookmark: string;
+  tBookmarked: string;
+  tCopyContent: string;
+  tCopied: string;
+  tCopyCitation: string;
+  tCitationCopied: string;
 }
+
+const ArticleItem = React.memo<ArticleItemProps>(({
+  art,
+  isHighlighted,
+  highlightTermCustom,
+  language,
+  isRTL,
+  itemLabelAr,
+  itemLabelEn,
+  isSaved,
+  isCopied,
+  isCitationCopied,
+  onToggleBookmark,
+  onCopyContent,
+  onCopyCitation,
+  onScrollToTop,
+  tBookmark,
+  tBookmarked,
+  tCopyContent,
+  tCopied,
+  tCopyCitation,
+  tCitationCopied,
+}) => {
+  return (
+    <article 
+      id={`article-${art.id}`}
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '0 200px' }}
+      className={`scroll-mt-24 p-5 sm:p-6 md:p-8 bg-white border rounded-2xl sm:rounded-[2.5rem] transition-all group min-h-[140px] ${
+        isHighlighted 
+          ? 'border-black ring-2 ring-black/80 shadow-2xl bg-neutral-50/40 relative' 
+          : 'border-neutral-200/70 shadow-sm hover:shadow-md hover:border-neutral-300'
+      }`}
+    >
+      {isHighlighted && (
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-black text-white text-[11px] font-bold rounded-full mb-4 shadow-sm animate-pulse">
+          <span className="w-2 h-2 rounded-full bg-white"></span>
+          <span>{language === 'ar' ? 'الموقع المحدد في البحث' : 'Exact Search Match Location'}</span>
+        </div>
+      )}
+
+      {/* Card Header with Article Title and Action Toolbar */}
+      <div className={`flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 border-b border-neutral-100 pb-4 w-full ${isRTL ? 'items-start text-right' : 'items-start text-left'}`}>
+        <div className="flex flex-col min-w-0 flex-1">
+          <div className="inline-flex items-center gap-2.5 mb-2">
+            <span className={`text-[11px] font-black uppercase tracking-wider ${isHighlighted ? 'text-black' : 'text-neutral-500'}`}>
+              {language === 'ar' ? itemLabelAr : itemLabelEn} {art.number}
+            </span>
+            <div className={`w-8 h-[2px] rounded-full ${isHighlighted ? 'bg-black' : 'bg-neutral-200'}`}></div>
+          </div>
+          <h3 className={`text-xl sm:text-2xl font-black text-neutral-900 leading-snug w-full ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
+            {language === 'ar' ? art.titleAr : art.titleEn}
+          </h3>
+        </div>
+
+        {/* Quick Actions Toolbar */}
+        <div className="flex items-center gap-1.5 shrink-0 pt-1 flex-wrap">
+          {/* Bookmark button */}
+          <button
+            type="button"
+            onClick={() => onToggleBookmark(art)}
+            className={`p-2 rounded-xl border text-xs font-bold transition-all flex items-center gap-1 ${
+              isSaved 
+                ? 'bg-black text-white border-black shadow-sm' 
+                : 'bg-white text-neutral-500 border-neutral-200 hover:border-black hover:text-black'
+            }`}
+            title={isSaved ? tBookmarked : tBookmark}
+          >
+            {isSaved ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+            <span className="hidden md:inline text-[10px]">{isSaved ? tBookmarked : tBookmark}</span>
+          </button>
+
+          {/* Copy full text button */}
+          <button
+            type="button"
+            onClick={() => onCopyContent(art, language)}
+            className="p-2 rounded-xl border border-neutral-200 bg-white text-neutral-500 hover:border-black hover:text-black text-xs font-bold transition-all flex items-center gap-1"
+            title={tCopyContent}
+          >
+            {isCopied ? <Check size={14} className="text-black" /> : <Copy size={14} />}
+            <span className="hidden md:inline text-[10px]">{isCopied ? tCopied : tCopyContent}</span>
+          </button>
+
+          {/* Copy citation button */}
+          <button
+            type="button"
+            onClick={() => onCopyCitation(art)}
+            className="p-2 rounded-xl border border-neutral-200 bg-white text-neutral-500 hover:border-black hover:text-black text-xs font-bold transition-all flex items-center gap-1"
+            title={tCopyCitation}
+          >
+            {isCitationCopied ? <Check size={14} className="text-black" /> : <Share2 size={14} />}
+            <span className="hidden md:inline text-[10px]">{isCitationCopied ? tCitationCopied : tCopyCitation}</span>
+          </button>
+        </div>
+      </div>
+      
+      {/* Article Content - rendered directly and permanently, zero artificial delay or reload */}
+      <div className="text-justify leading-relaxed">
+        <TranslatableText 
+          text={language === 'ar' ? art.contentAr : art.contentEn} 
+          isEnglish={language === 'en'} 
+          highlightTerm={isHighlighted ? highlightTermCustom : undefined}
+        />
+      </div>
+
+      {/* Minimal in-card top link */}
+      <div className="mt-6 pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
+        <span>{language === 'ar' ? itemLabelAr : itemLabelEn} {art.number}</span>
+        <button 
+          type="button"
+          onClick={onScrollToTop}
+          className="inline-flex items-center gap-1 text-neutral-400 hover:text-black transition-colors"
+          title={language === 'ar' ? 'الرجوع للأعلى' : 'Back to top'}
+        >
+          <span>{language === 'ar' ? 'للأعلى' : 'Top'}</span>
+          <ArrowUp size={12} />
+        </button>
+      </div>
+    </article>
+  );
+});
+
+interface BilingualArticleItemProps {
+  art: Article;
+  isHighlighted: boolean;
+  highlightTermCustom?: string | null;
+  language: 'ar' | 'en';
+  itemLabelAr: string;
+  itemLabelEn: string;
+  isSaved: boolean;
+  isCopied: boolean;
+  isCitationCopied: boolean;
+  onToggleBookmark: (art: Article) => void;
+  onCopyContent: (art: Article, lang: 'ar' | 'en' | 'both') => void;
+  onCopyCitation: (art: Article) => void;
+  onScrollToTop: () => void;
+  tBookmark: string;
+  tBookmarked: string;
+  tCopyContent: string;
+  tCopied: string;
+  tCopyCitation: string;
+  tCitationCopied: string;
+  tArabicOfficial: string;
+  tEnglishOfficial: string;
+}
+
+const BilingualArticleItem = React.memo<BilingualArticleItemProps>(({
+  art,
+  isHighlighted,
+  highlightTermCustom,
+  language,
+  itemLabelAr,
+  itemLabelEn,
+  isSaved,
+  isCopied,
+  isCitationCopied,
+  onToggleBookmark,
+  onCopyContent,
+  onCopyCitation,
+  onScrollToTop,
+  tBookmark,
+  tBookmarked,
+  tCopyContent,
+  tCopied,
+  tCopyCitation,
+  tCitationCopied,
+  tArabicOfficial,
+  tEnglishOfficial,
+}) => {
+  return (
+    <article 
+      id={`article-${art.id}`}
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '0 260px' }}
+      className={`scroll-mt-24 p-5 sm:p-6 md:p-8 bg-white border rounded-2xl sm:rounded-[2.5rem] transition-all group min-h-[140px] ${
+        isHighlighted 
+          ? 'border-black ring-2 ring-black/80 shadow-2xl bg-neutral-50/40 relative' 
+          : 'border-neutral-200/70 shadow-sm hover:shadow-md'
+      }`}
+    >
+      {/* Header with Title and Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-neutral-100 pb-4 w-full">
+        <div className="flex items-center gap-3">
+          <span className="px-3 py-1 rounded-xl bg-black text-white text-xs font-black uppercase">
+            {itemLabelAr} {art.number} / {itemLabelEn} {art.number}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onToggleBookmark(art)}
+            className={`p-2 rounded-xl border text-xs font-bold transition-all flex items-center gap-1 ${
+              isSaved ? 'bg-black text-white border-black' : 'bg-white text-neutral-600 border-neutral-200 hover:border-black'
+            }`}
+          >
+            {isSaved ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+            <span className="text-[10px]">{isSaved ? tBookmarked : tBookmark}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onCopyContent(art, 'both')}
+            className="p-2 rounded-xl border border-neutral-200 bg-white text-neutral-600 hover:border-black text-xs font-bold transition-all flex items-center gap-1"
+          >
+            {isCopied ? <Check size={14} className="text-black" /> : <Copy size={14} />}
+            <span className="text-[10px]">{isCopied ? tCopied : tCopyContent}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onCopyCitation(art)}
+            className="p-2 rounded-xl border border-neutral-200 bg-white text-neutral-600 hover:border-black text-xs font-bold transition-all flex items-center gap-1"
+          >
+            {isCitationCopied ? <Check size={14} className="text-black" /> : <Share2 size={14} />}
+            <span className="text-[10px]">{isCitationCopied ? tCitationCopied : tCopyCitation}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Side-by-Side Dual Columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 divide-y lg:divide-y-0 lg:divide-x lg:divide-x-reverse divide-neutral-100">
+        {/* Arabic Column (RTL) */}
+        <div dir="rtl" className="flex flex-col gap-3 font-arabic pt-4 lg:pt-0">
+          <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
+            <span className="text-[11px] font-black uppercase text-neutral-400 tracking-wider">
+              {tArabicOfficial}
+            </span>
+            <span className="text-xs font-black text-black">
+              {itemLabelAr} {art.number}
+            </span>
+          </div>
+          <h4 className="text-lg font-black text-neutral-900 mb-1">
+            {art.titleAr}
+          </h4>
+          <div className="text-justify leading-relaxed">
+            <TranslatableText text={art.contentAr} isEnglish={false} highlightTerm={highlightTermCustom} />
+          </div>
+        </div>
+
+        {/* English Column (LTR) */}
+        <div dir="ltr" className="flex flex-col gap-3 pt-6 lg:pt-0 lg:pl-8">
+          <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
+            <span className="text-[11px] font-black uppercase text-neutral-400 tracking-wider">
+              {tEnglishOfficial}
+            </span>
+            <span className="text-xs font-black text-black">
+              {itemLabelEn} {art.number}
+            </span>
+          </div>
+          <h4 className="text-lg font-black text-neutral-900 mb-1">
+            {art.titleEn}
+          </h4>
+          <div className="text-justify leading-relaxed">
+            <TranslatableText text={art.contentEn} isEnglish={true} highlightTerm={highlightTermCustom} />
+          </div>
+        </div>
+      </div>
+
+      {/* Card Footer */}
+      <div className="mt-6 pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
+        <span>{itemLabelAr} {art.number} | {itemLabelEn} {art.number}</span>
+        <button 
+          type="button"
+          onClick={onScrollToTop}
+          className="inline-flex items-center gap-1 text-neutral-400 hover:text-black transition-colors"
+        >
+          <span>{language === 'ar' ? 'للأعلى' : 'Top'}</span>
+          <ArrowUp size={12} />
+        </button>
+      </div>
+    </article>
+  );
+});
 
 export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({ 
   data, 
@@ -333,260 +592,6 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
     arabicOfficial: language === 'ar' ? 'النص العربي (المعتمد)' : 'Arabic (Official)',
     englishOfficial: language === 'ar' ? 'النص الإنجليزي (المعتمد)' : 'English (Official)',
   };
-
-  // Helper component for rendering standard single-language article
-  const ArticleItem = React.memo(({ 
-    art, 
-    isHighlighted,
-    highlightTermCustom,
-  }: { 
-    art: Article;
-    isHighlighted: boolean;
-    highlightTermCustom?: string | null;
-  }) => {
-    const [isVisible, setIsVisible] = useState(isHighlighted);
-    const ref = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      if (isHighlighted) {
-        setIsVisible(true);
-      }
-    }, [isHighlighted]);
-
-    useEffect(() => {
-      if (isVisible || !ref.current) return;
-      return observeArticleElement(ref.current, () => setIsVisible(true));
-    }, [isVisible]);
-
-    const isSaved = isBookmarked(art.id);
-    const isCopied = copiedId === art.id;
-    const isCitationCopied = citationCopiedId === art.id;
-    const isLinkCopied = linkCopiedId === art.id;
-
-    return (
-      <article 
-        ref={ref}
-        id={`article-${art.id}`}
-        className={`scroll-mt-24 p-5 sm:p-6 md:p-8 bg-white border rounded-2xl sm:rounded-[2.5rem] transition-all group min-h-[140px] ${
-          isHighlighted 
-            ? 'border-black ring-2 ring-black/80 shadow-2xl bg-neutral-50/40 relative' 
-            : 'border-neutral-200/70 shadow-sm hover:shadow-md hover:border-neutral-300'
-        }`}
-      >
-        {isHighlighted && (
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-black text-white text-[11px] font-bold rounded-full mb-4 shadow-sm animate-pulse">
-            <span className="w-2 h-2 rounded-full bg-white"></span>
-            <span>{language === 'ar' ? 'الموقع المحدد في البحث' : 'Exact Search Match Location'}</span>
-          </div>
-        )}
-
-        {/* Card Header with Article Title and Action Toolbar */}
-        <div className={`flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 border-b border-neutral-100 pb-4 w-full ${isRTL ? 'items-start text-right' : 'items-start text-left'}`}>
-          <div className="flex flex-col min-w-0 flex-1">
-            <div className="inline-flex items-center gap-2.5 mb-2">
-              <span className={`text-[11px] font-black uppercase tracking-wider ${isHighlighted ? 'text-black' : 'text-neutral-500'}`}>
-                {language === 'ar' ? itemLabelAr : itemLabelEn} {art.number}
-              </span>
-              <div className={`w-8 h-[2px] rounded-full ${isHighlighted ? 'bg-black' : 'bg-neutral-200'}`}></div>
-            </div>
-            <h3 className={`text-xl sm:text-2xl font-black text-neutral-900 leading-snug w-full ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
-              {language === 'ar' ? art.titleAr : art.titleEn}
-            </h3>
-          </div>
-
-          {/* Quick Actions Toolbar */}
-          <div className="flex items-center gap-1.5 shrink-0 pt-1 flex-wrap">
-            {/* Bookmark button */}
-            <button
-              type="button"
-              onClick={() => handleToggleBookmark(art)}
-              className={`p-2 rounded-xl border text-xs font-bold transition-all flex items-center gap-1 ${
-                isSaved 
-                  ? 'bg-black text-white border-black shadow-sm' 
-                  : 'bg-white text-neutral-500 border-neutral-200 hover:border-black hover:text-black'
-              }`}
-              title={isSaved ? t.bookmarked : t.bookmark}
-            >
-              {isSaved ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
-              <span className="hidden md:inline text-[10px]">{isSaved ? t.bookmarked : t.bookmark}</span>
-            </button>
-
-            {/* Copy full text button */}
-            <button
-              type="button"
-              onClick={() => handleCopyContent(art, language)}
-              className="p-2 rounded-xl border border-neutral-200 bg-white text-neutral-500 hover:border-black hover:text-black text-xs font-bold transition-all flex items-center gap-1"
-              title={t.copyContent}
-            >
-              {isCopied ? <Check size={14} className="text-black" /> : <Copy size={14} />}
-              <span className="hidden md:inline text-[10px]">{isCopied ? t.copied : t.copyContent}</span>
-            </button>
-
-            {/* Copy citation button */}
-            <button
-              type="button"
-              onClick={() => handleCopyCitation(art)}
-              className="p-2 rounded-xl border border-neutral-200 bg-white text-neutral-500 hover:border-black hover:text-black text-xs font-bold transition-all flex items-center gap-1"
-              title={t.copyCitation}
-            >
-              {isCitationCopied ? <Check size={14} className="text-black" /> : <Share2 size={14} />}
-              <span className="hidden md:inline text-[10px]">{isCitationCopied ? t.citationCopied : t.copyCitation}</span>
-            </button>
-          </div>
-        </div>
-        
-        {/* Article Content */}
-        <div className="text-justify leading-relaxed">
-          {isVisible ? (
-            <TranslatableText 
-              text={language === 'ar' ? art.contentAr : art.contentEn} 
-              isEnglish={language === 'en'} 
-              highlightTerm={isHighlighted ? highlightTermCustom : undefined}
-            />
-          ) : (
-            <div className="h-32 flex items-center justify-center border border-dashed border-neutral-100 rounded-2xl bg-neutral-50/30">
-              <div className="flex flex-col items-center gap-2">
-                <div className="w-6 h-6 border-2 border-neutral-200 border-t-black rounded-full animate-spin"></div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-neutral-300">Loading Text...</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Minimal in-card top link */}
-        <div className="mt-6 pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
-          <span>{language === 'ar' ? itemLabelAr : itemLabelEn} {art.number}</span>
-          <button 
-            type="button"
-            onClick={scrollToTop}
-            className="inline-flex items-center gap-1 text-neutral-400 hover:text-black transition-colors"
-            title={language === 'ar' ? 'الرجوع للأعلى' : 'Back to top'}
-          >
-            <span>{language === 'ar' ? 'للأعلى' : 'Top'}</span>
-            <ArrowUp size={12} />
-          </button>
-        </div>
-      </article>
-    );
-  });
-
-  // Helper component for Bilingual Side-by-Side comparison article
-  const BilingualArticleItem = React.memo(({ 
-    art, 
-    isHighlighted,
-    highlightTermCustom,
-  }: { 
-    art: Article;
-    isHighlighted: boolean;
-    highlightTermCustom?: string | null;
-  }) => {
-    const isSaved = isBookmarked(art.id);
-    const isCopied = copiedId === art.id;
-    const isCitationCopied = citationCopiedId === art.id;
-
-    return (
-      <article 
-        id={`article-${art.id}`}
-        className={`scroll-mt-24 p-5 sm:p-6 md:p-8 bg-white border rounded-2xl sm:rounded-[2.5rem] transition-all group min-h-[140px] ${
-          isHighlighted 
-            ? 'border-black ring-2 ring-black/80 shadow-2xl bg-neutral-50/40 relative' 
-            : 'border-neutral-200/70 shadow-sm hover:shadow-md'
-        }`}
-      >
-        {/* Header with Title and Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-neutral-100 pb-4 w-full">
-          <div className="flex items-center gap-3">
-            <span className="px-3 py-1 rounded-xl bg-black text-white text-xs font-black uppercase">
-              {itemLabelAr} {art.number} / {itemLabelEn} {art.number}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => handleToggleBookmark(art)}
-              className={`p-2 rounded-xl border text-xs font-bold transition-all flex items-center gap-1 ${
-                isSaved ? 'bg-black text-white border-black' : 'bg-white text-neutral-600 border-neutral-200 hover:border-black'
-              }`}
-            >
-              {isSaved ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
-              <span className="text-[10px]">{isSaved ? t.bookmarked : t.bookmark}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleCopyContent(art, 'both')}
-              className="p-2 rounded-xl border border-neutral-200 bg-white text-neutral-600 hover:border-black text-xs font-bold transition-all flex items-center gap-1"
-            >
-              {isCopied ? <Check size={14} className="text-black" /> : <Copy size={14} />}
-              <span className="text-[10px]">{isCopied ? t.copied : t.copyContent}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleCopyCitation(art)}
-              className="p-2 rounded-xl border border-neutral-200 bg-white text-neutral-600 hover:border-black text-xs font-bold transition-all flex items-center gap-1"
-            >
-              {isCitationCopied ? <Check size={14} className="text-black" /> : <Share2 size={14} />}
-              <span className="text-[10px]">{isCitationCopied ? t.citationCopied : t.copyCitation}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Side-by-Side Dual Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 divide-y lg:divide-y-0 lg:divide-x lg:divide-x-reverse divide-neutral-100">
-          {/* Arabic Column (RTL) */}
-          <div dir="rtl" className="flex flex-col gap-3 font-arabic pt-4 lg:pt-0">
-            <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
-              <span className="text-[11px] font-black uppercase text-neutral-400 tracking-wider">
-                {t.arabicOfficial}
-              </span>
-              <span className="text-xs font-black text-black">
-                {itemLabelAr} {art.number}
-              </span>
-            </div>
-            <h4 className="text-lg font-black text-neutral-900 mb-1">
-              {art.titleAr}
-            </h4>
-            <div className="text-justify leading-relaxed">
-              <TranslatableText text={art.contentAr} isEnglish={false} highlightTerm={highlightTermCustom} />
-            </div>
-          </div>
-
-          {/* English Column (LTR) */}
-          <div dir="ltr" className="flex flex-col gap-3 pt-6 lg:pt-0 lg:pl-8">
-            <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
-              <span className="text-[11px] font-black uppercase text-neutral-400 tracking-wider">
-                {t.englishOfficial}
-              </span>
-              <span className="text-xs font-black text-black">
-                {itemLabelEn} {art.number}
-              </span>
-            </div>
-            <h4 className="text-lg font-black text-neutral-900 mb-1">
-              {art.titleEn}
-            </h4>
-            <div className="text-justify leading-relaxed">
-              <TranslatableText text={art.contentEn} isEnglish={true} highlightTerm={highlightTermCustom} />
-            </div>
-          </div>
-        </div>
-
-        {/* Card Footer */}
-        <div className="mt-6 pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
-          <span>{itemLabelAr} {art.number} | {itemLabelEn} {art.number}</span>
-          <button 
-            type="button"
-            onClick={scrollToTop}
-            className="inline-flex items-center gap-1 text-neutral-400 hover:text-black transition-colors"
-          >
-            <span>{language === 'ar' ? 'للأعلى' : 'Top'}</span>
-            <ArrowUp size={12} />
-          </button>
-        </div>
-      </article>
-    );
-  });
 
   return (
     <div ref={viewerTopRef} dir={isRTL ? 'rtl' : 'ltr'} className={`flex flex-col gap-6 w-full ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
@@ -846,6 +851,24 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
                       art={art} 
                       isHighlighted={art.id === highlightId}
                       highlightTermCustom={highlightTerm}
+                      language={language}
+                      itemLabelAr={itemLabelAr}
+                      itemLabelEn={itemLabelEn}
+                      isSaved={isBookmarked(art.id)}
+                      isCopied={copiedId === art.id}
+                      isCitationCopied={citationCopiedId === art.id}
+                      onToggleBookmark={handleToggleBookmark}
+                      onCopyContent={handleCopyContent}
+                      onCopyCitation={handleCopyCitation}
+                      onScrollToTop={scrollToTop}
+                      tBookmark={t.bookmark}
+                      tBookmarked={t.bookmarked}
+                      tCopyContent={t.copyContent}
+                      tCopied={t.copied}
+                      tCopyCitation={t.copyCitation}
+                      tCitationCopied={t.citationCopied}
+                      tArabicOfficial={t.arabicOfficial}
+                      tEnglishOfficial={t.englishOfficial}
                     />
                   ) : (
                     <ArticleItem 
@@ -853,6 +876,23 @@ export const RomeStatuteViewer: React.FC<RomeStatuteViewerProps> = ({
                       art={art} 
                       isHighlighted={art.id === highlightId}
                       highlightTermCustom={highlightTerm}
+                      language={language}
+                      isRTL={isRTL}
+                      itemLabelAr={itemLabelAr}
+                      itemLabelEn={itemLabelEn}
+                      isSaved={isBookmarked(art.id)}
+                      isCopied={copiedId === art.id}
+                      isCitationCopied={citationCopiedId === art.id}
+                      onToggleBookmark={handleToggleBookmark}
+                      onCopyContent={handleCopyContent}
+                      onCopyCitation={handleCopyCitation}
+                      onScrollToTop={scrollToTop}
+                      tBookmark={t.bookmark}
+                      tBookmarked={t.bookmarked}
+                      tCopyContent={t.copyContent}
+                      tCopied={t.copied}
+                      tCopyCitation={t.copyCitation}
+                      tCitationCopied={t.citationCopied}
                     />
                   )
                 ))}

@@ -33,18 +33,50 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
   const [playingTerm, setPlayingTerm] = useState<string | null>(null);
   const [customSelection, setCustomSelection] = useState<{ text: string; rect: DOMRect } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const lastOpenTimeRef = useRef<number>(0);
 
-  // Close popup on outside click and stop active speech
+  // Close popup gracefully on genuine outside click/pointerdown and stop active speech
   useEffect(() => {
     if (!selectedTerm && !customSelection) return;
-    const hide = () => {
-      stopNaturalSpeech();
-      setPlayingTerm(null);
-      setSelectedTerm(null);
-      setCustomSelection(null);
+
+    let cleanupListener: (() => void) | null = null;
+    const timer = setTimeout(() => {
+      const handleOutsidePointer = (event: MouseEvent | TouchEvent) => {
+        // Protect against premature closing within 200ms of opening
+        if (Date.now() - lastOpenTimeRef.current < 200) {
+          return;
+        }
+
+        const target = event.target as HTMLElement | null;
+        if (!target) return;
+
+        // If click or touch is inside the popup container, keep it open!
+        if (popupRef.current && popupRef.current.contains(target)) {
+          return;
+        }
+
+        // If clicking another translatable term, allow its click handler to transition smoothly
+        if (target.closest('[data-translatable-term]')) {
+          return;
+        }
+
+        stopNaturalSpeech();
+        setPlayingTerm(null);
+        setSelectedTerm(null);
+        setCustomSelection(null);
+      };
+
+      document.addEventListener('pointerdown', handleOutsidePointer, true);
+      cleanupListener = () => {
+        document.removeEventListener('pointerdown', handleOutsidePointer, true);
+      };
+    }, 60);
+
+    return () => {
+      clearTimeout(timer);
+      if (cleanupListener) cleanupListener();
     };
-    window.addEventListener('click', hide);
-    return () => window.removeEventListener('click', hide);
   }, [selectedTerm, customSelection]);
 
   const handleToggleAudio = useCallback((termToSpeak: string) => {
@@ -75,11 +107,12 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
     }
 
     const selectedStr = selection.toString().trim();
-    // Only trigger for meaningful phrases (2 to 60 characters)
+    // Only trigger for meaningful phrases (2 to 150 characters)
     if (selectedStr.length >= 2 && selectedStr.length <= 150) {
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
+        lastOpenTimeRef.current = Date.now();
         setCustomSelection({ text: selectedStr, rect });
       }
     } else {
@@ -89,14 +122,20 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
 
   // Instant term click handler with persistent local cache and guaranteed offline resolution
   const handleTermClick = useCallback(async (
-    e: React.MouseEvent | { currentTarget: HTMLElement }, 
+    e: React.MouseEvent | { currentTarget: HTMLElement; stopPropagation?: () => void; nativeEvent?: any }, 
     term: string, 
     predefinedTranslation: string = '', 
     isAr: boolean = false
   ) => {
-    if ('stopPropagation' in e) {
-      e.stopPropagation();
+    if (e) {
+      if ('stopPropagation' in e && typeof e.stopPropagation === 'function') {
+        e.stopPropagation();
+      }
+      if ('nativeEvent' in e && e.nativeEvent && typeof (e.nativeEvent as any).stopImmediatePropagation === 'function') {
+        (e.nativeEvent as any).stopImmediatePropagation();
+      }
     }
+    lastOpenTimeRef.current = Date.now();
     setCustomSelection(null);
 
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -196,6 +235,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
               <mark
                 key={`search-target-${keyCounter++}`}
                 id="search-highlight-target"
+                data-translatable-term="true"
                 onClick={(e) => handleTermClick(e, part, '', !isEnglish)}
                 className="cursor-pointer bg-black text-white font-bold px-1.5 py-0.5 rounded shadow-sm inline-block mx-0.5 animate-pulse"
                 title={isEnglish ? "Searched Term - Click for certified translation" : "المصطلح المبحوث عنه - انقر للترجمة القانونية"}
@@ -252,6 +292,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
           newNodes.push(
             <span
               key={`legal-phrase-${keyCounter++}`}
+              data-translatable-term="true"
               onClick={(e) => handleTermClick(e, matchedText, '', !isEnglish)}
               className="cursor-pointer border-b border-dotted border-black/40 hover:border-black hover:bg-black/5 rounded-sm px-0.5 transition-all text-black font-semibold"
               title={isEnglish ? "ICC Certified Legal Expression - Click for context" : "تعبير قانوني معتمد - انقر لعرض الترجمة والسياق الكامل"}
@@ -283,6 +324,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
             finalNodes.push(
               <span
                 key={`en-word-${keyCounter++}`}
+                data-translatable-term="true"
                 onClick={(e) => handleTermClick(e, t, '', false)}
                 className="cursor-pointer hover:underline decoration-neutral-300 hover:text-black transition-colors"
               >
@@ -300,6 +342,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
             finalNodes.push(
               <span
                 key={`ar-word-${keyCounter++}`}
+                data-translatable-term="true"
                 onClick={(e) => handleTermClick(e, t, '', true)}
                 className="cursor-pointer hover:underline decoration-neutral-300 hover:text-black transition-colors"
               >
@@ -330,6 +373,9 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
         <div
           onClick={(e) => {
             e.stopPropagation();
+            if (e.nativeEvent && typeof (e.nativeEvent as any).stopImmediatePropagation === 'function') {
+              (e.nativeEvent as any).stopImmediatePropagation();
+            }
             handleTermClick(
               { currentTarget: { getBoundingClientRect: () => customSelection.rect } as any },
               customSelection.text,
@@ -356,7 +402,8 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
         <>
           {/* Subtle mobile backdrop to prevent accidental clicks behind popup */}
           <div 
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               stopNaturalSpeech();
               setPlayingTerm(null);
               setSelectedTerm(null);
@@ -364,7 +411,19 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
             className="fixed inset-0 z-[99] bg-black/20 backdrop-blur-[1px] sm:hidden" 
           />
           <div 
-            onClick={(e) => e.stopPropagation()}
+            ref={popupRef}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (e.nativeEvent && typeof (e.nativeEvent as any).stopImmediatePropagation === 'function') {
+                (e.nativeEvent as any).stopImmediatePropagation();
+              }
+            }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              if (e.nativeEvent && typeof (e.nativeEvent as any).stopImmediatePropagation === 'function') {
+                (e.nativeEvent as any).stopImmediatePropagation();
+              }
+            }}
             className="fixed z-[100] bg-white text-black rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col gap-4 border border-neutral-200 animate-in fade-in zoom-in-95 max-h-[85vh] overflow-y-auto overscroll-contain inset-x-3 bottom-4 sm:inset-x-auto sm:bottom-auto w-auto sm:w-[380px]"
             dir="rtl"
             style={typeof window !== 'undefined' && window.innerWidth >= 640 ? {
