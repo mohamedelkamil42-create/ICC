@@ -18,6 +18,7 @@ import {
   ArrowLeft 
 } from 'lucide-react';
 import { playNaturalEnglishAudio, stopNaturalSpeech } from './audioUtils';
+import { safeStorage } from './storageUtils';
 
 interface HelpTourModalProps {
   language: 'ar' | 'en';
@@ -30,7 +31,7 @@ export const HelpTourModal: React.FC<HelpTourModalProps> = ({ language }) => {
   const [audioSuccess, setAudioSuccess] = useState(false);
   const [demoViewMode, setDemoViewMode] = useState<'list' | 'book'>('list');
   const [hasSeenTour, setHasSeenTour] = useState(() => {
-    return localStorage.getItem('icc_tour_completed') === 'true';
+    return safeStorage.getItem('icc_tour_completed') === 'true';
   });
 
   const isRTL = language === 'ar';
@@ -65,7 +66,7 @@ export const HelpTourModal: React.FC<HelpTourModalProps> = ({ language }) => {
     setIsPlayingAudio(false);
     setIsOpen(false);
     setHasSeenTour(true);
-    localStorage.setItem('icc_tour_completed', 'true');
+    safeStorage.setItem('icc_tour_completed', 'true');
   };
 
   const nextStep = () => {

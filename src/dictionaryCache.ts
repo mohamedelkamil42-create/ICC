@@ -1,5 +1,5 @@
-// High-Performance Local Persistent Cache for ICC Interactive Dictionary & Legal Translation
 import { LegalTranslationResult } from './types';
+import { safeStorage } from './storageUtils';
 
 const CACHE_STORAGE_KEY = 'icc_legal_dict_cache_v2';
 const MAX_CACHE_ENTRIES = 1200;
@@ -25,15 +25,13 @@ export function buildCacheKey(term: string, targetLang: 'ar' | 'en'): string {
   return `${targetLang}::${clean}`;
 }
 
-// Load cache from localStorage
+// Load cache from storage
 function initCacheIfNeeded() {
   if (isInitialized) return;
   isInitialized = true;
 
-  if (typeof window === 'undefined' || !window.localStorage) return;
-
   try {
-    const raw = localStorage.getItem(CACHE_STORAGE_KEY);
+    const raw = safeStorage.getItem(CACHE_STORAGE_KEY);
     if (raw) {
       const parsed: Record<string, CachedTranslationItem> = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
@@ -49,10 +47,8 @@ function initCacheIfNeeded() {
   }
 }
 
-// Debounced persistence to localStorage
+// Debounced persistence to storage
 function scheduleSave() {
-  if (typeof window === 'undefined' || !window.localStorage) return;
-
   if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
   saveDebounceTimer = setTimeout(() => {
     try {
@@ -71,7 +67,7 @@ function scheduleSave() {
         obj[key] = value;
       });
 
-      localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify(obj));
+      safeStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify(obj));
     } catch (err) {
       console.warn('Dictionary cache save failed (storage quota):', err);
     }

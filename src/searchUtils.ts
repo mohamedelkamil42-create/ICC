@@ -6,7 +6,7 @@ import { regulationsOfTheCourtParts } from './regulationsOfTheCourtData';
 import { regulationsOfTheRegistryParts } from './regulationsOfTheRegistryData';
 import { regulationsOfTheOfficeOfTheProsecutorParts } from './regulationsOfTheProsecutorData';
 
-export type SearchCategory = 'all' | 'rome_statute' | 'rules_of_procedure' | 'elements_of_crimes' | 'regulations_of_the_court' | 'regulations_of_the_prosecutor' | 'terms';
+export type SearchCategory = 'all' | 'rome_statute' | 'rules_of_procedure' | 'elements_of_crimes' | 'regulations_of_the_court' | 'regulations_of_the_registry' | 'regulations_of_the_prosecutor' | 'terms';
 
 export interface SearchResultItem {
   id: string;
@@ -14,7 +14,7 @@ export interface SearchResultItem {
   type: 'document' | 'folder' | 'glossary_term' | 'statute_article';
   subtitle?: string;
   documentBadge?: string;
-  documentOrigin?: 'rome_statute' | 'rules_of_procedure' | 'elements_of_crimes' | 'regulations_of_the_court' | 'regulations_of_the_prosecutor' | 'glossary' | 'general';
+  documentOrigin?: 'rome_statute' | 'rules_of_procedure' | 'elements_of_crimes' | 'regulations_of_the_court' | 'regulations_of_the_registry' | 'regulations_of_the_prosecutor' | 'glossary' | 'general';
   contentSnippet?: string;
   drawerIdToOpen?: string;
   statuteArtId?: string;
@@ -227,6 +227,7 @@ export function performSmartSearch(
     if (category === 'rules_of_procedure' && origin !== 'rules_of_procedure') continue;
     if (category === 'elements_of_crimes' && origin !== 'elements_of_crimes') continue;
     if (category === 'regulations_of_the_court' && origin !== 'regulations_of_the_court') continue;
+    if (category === 'regulations_of_the_registry' && origin !== 'regulations_of_the_registry') continue;
     if (category === 'regulations_of_the_prosecutor' && origin !== 'regulations_of_the_prosecutor') continue;
     if (category === 'terms' && entry.type !== 'glossary_term') continue;
 
