@@ -35,14 +35,38 @@ export default defineConfig(({ command }) => {
         },
         manifest: {
           name: 'مرجع المحكمة الجنائية الدولية',
-          short_name: 'ICC Ref',
+          short_name: 'مرجع الجنائية',
           description: 'مرجع قانوني أنيق يضم متطلبات ووثائق المحكمة الجنائية الدولية.',
+          lang: 'ar',
+          dir: 'rtl',
           theme_color: '#ffffff',
           background_color: '#fafafa',
           display: 'standalone',
           icons: [
-            { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
-            { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' }
+            {
+              src: 'pwa-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'any'
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any'
+            },
+            {
+              src: 'pwa-maskable-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable'
+            },
+            {
+              src: 'icon.svg',
+              sizes: 'any',
+              type: 'image/svg+xml',
+              purpose: 'any'
+            }
           ],
         },
         devOptions: {
