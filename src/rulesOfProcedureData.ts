@@ -198,7 +198,7 @@ export const rulesOfProcedureParts: Part[] = [
         number: "22", 
         titleAr: "تعيين ومؤهلات محامي الدفاع", 
         titleEn: "Appointment and qualifications of Counsel for the defence", 
-        contentAr: "1 - يجب أن تتوفر في محامي الدفاع كفاءة مشهود بها في القانون الدولي أو الجنائي والإجراءات، وكذلك الخبرة ذات الصلة الضرورية، سواء بصفته قاضياً أو مدعياً عاماً أو محامياً أو في أي صفة أخرى مماثلة، في الإجراءات الجنائية. ويجب أن يكون لدى محامي الدفاع معرفة ممتازة بواحدة على الأقل من لغات عمل المحكمة وإجادة التحدث بها. ويجوز لمحامي الدفاع أن يستعين بأشخاص آخرين، بما في ذلك أساتذة القانون، من ذوي الخبرة ذات الصلة.\n2 - يقوم محامي الدفاع الذي يكلفه شخص يمارس حقه بموجب النظام الأساسي في توكيل محامٍ من اختياره بإيداع توكيل لدى المسجل في أول فرصة.\n3 - يخضع محامي الدفاع في أداء واجباتهم للنظام الأساسي والقواعد واللائحة ومدونة قواعد السلوك المهني للمحامين المعتمدة طبقا للقاعدة 8 وأي وثيقة أخرى تعتمدها المحكمة قد تكون ذات صلة بأداء واجباتهم.",
+        contentAr: "1 - يجب أن تتوفر في محامي الدفاع كفاءة مشهود بها في القانون الدولي أو الجنائي والإجراءات، وكذلك الخبرة ذات الصلة الضرورية، سواء بصفته قاضياً أو مدعياً عاماً أو محامياً أو في أي صفة أخرى مماثلة، في الإجراءات الجنائية. ويجب أن يكون لدى محامي الدفاع معرفة ممتازة بواحدة على الأقل من لغات عمل المحكمة وإجادة التحدث بها. ويجوز لمحامي الدفاع أن يستعين بأشخاص آخرين، بما في ذلك أساتذة القانون، من ذوي الخبرة ذات الصلة.\n2 - يقوم محامي الدفاع الذي يكلفه شخص يمارس حقه بموجب النظام الأساسي في توكيل محامٍ من اختياره بإيداع توكيل لدى المسجل في أول فرصة.\n3 - يخضع محامو الدفاع في أداء واجباتهم للنظام الأساسي والقواعد واللائحة ومدونة قواعد السلوك المهني للمحامين المعتمدة طبقا للقاعدة 8 وأي وثيقة أخرى تعتمدها المحكمة قد تكون ذات صلة بأداء واجباتهم.",
         contentEn: "1. A counsel for the defence shall have established competence in international or criminal law and procedure, as well as the necessary relevant experience, whether as judge, prosecutor, advocate or in other similar capacity, in criminal proceedings. A counsel for the defence shall have an excellent knowledge of and be fluent in at least one of the working languages of the Court. Counsel for the defence may be assisted by other persons, including professors of law, with relevant expertise.\n2. Counsel for the defence engaged by a person exercising his or her right under the Statute to retain legal counsel of his or her choosing shall file a power of attorney with the Registrar at the earliest opportunity.\n3. In the performance of their duties, Counsel for the defence shall be subject to the Statute, the Rules, the Regulations, the Code of Professional Conduct for Counsel adopted in accordance with rule 8 and any other document adopted by the Court that may be relevant to the performance of their duties."
       },
       { 
@@ -206,7 +206,7 @@ export const rulesOfProcedureParts: Part[] = [
         number: "23", 
         titleAr: "مبدأ عام", 
         titleEn: "General principle", 
-        contentAr: "ينحى القاضي أو المدعي العام أو المدعي العام المساعد أو المسجل أو نائب المسجل من منصبه أو يخضع لتدابير تأديبية في الحالات وبالضمانات المقررة في النظام الأساسي وفي القواعد.",
+        contentAr: "يُعزل القاضي أو المدعي العام أو المدعي العام المساعد أو المسجل أو نائب المسجل من منصبه أو يخضع لتدابير تأديبية في الحالات وبالضمانات المقررة في النظام الأساسي وفي القواعد.",
         contentEn: "A judge, the Prosecutor, a Deputy Prosecutor, the Registrar and a Deputy Registrar shall be removed from office or shall be subject to disciplinary measures in such cases and with such guarantees as are established in the Statute and the Rules."
       },
       { 
@@ -246,7 +246,7 @@ export const rulesOfProcedureParts: Part[] = [
         number: "26 ثانياً", 
         titleAr: "السرية", 
         titleEn: "Confidentiality", 
-        contentAr: "1 - تظل الشكوى وتقرير التحقيق وجميع الوثائق والمواد المتعلقة بعمل الفريق المخصص سرية. ولدى تقديم التقرير النهائي للفريق المخصص إلى متخذ(ي) القرار المختص(ين)، تقوم آلية الرقابة المستقلة أو المحقق الخارجي، حسب الاقتضاء، بإحالة ملخص سري للتحقيق إلى جمعية الدول الأطراف، دون الإشارة مباشرة أو غير مباشرة إلى المصدر أو هوية الأفراد المعنيين أو المتورطين، أو الكشف عن أي معلومات مصنفة أخرى ذات صلة.\n2 - عقب الانتهاء من إجراءات تأديبية، يقوم متخذ القرار المختص بإعلان وجود أي سوء سلوك جسيم أو إخلال جسيم بالواجب أدى إلى النحي عن المنصب، بما في ذلك هوية المسؤول المنتخب المعني. ولا تقدم أي معلومات، مباشرة أو غير مباشرة، عن أي أفراد آخرين معنيين أو متورطين.\n3 - عقب الانتهاء من إجراءات تأديبية، يظل وجود أي سوء سلوك أدى إلى فرض تدبير تأديبي سرياً، مع عدم الإخلال بالحاجة إلى إبلاغ رئيس مكتب جمعية الدول الأطراف، وفقاً للقاعدة الفرعية 7 من القاعدة 30. ويقوم رئيس مكتب جمعية الدول الأطراف بإبلاغ الجمعية بفرض التدبير التأديبي، بما في ذلك هوية المسؤول المنتخب المعني وطبيعة سوء السلوك الذي تم التوصل إليه. ولا تقدم أي معلومات، مباشرة أو غير مباشرة، عن أي أفراد آخرين معنيين أو متورطين. ويجوز للجمعية منح استثناء لواجب الإبلاغ المفروض على رئيس مكتب جمعية الدول الأطراف عند الضرورة القصوى وبناء على أسباب معللة.\n4 - في حالة الوقف عن أداء الواجب وفقاً للقاعدة 28، يتم إعلان وجود تحقيق وفرض الوقف، مع الإشارة إلى أن وجود تحقيق في مسألة ما لا يعني حدوث أي سوء سلوك أو إخلال بالواجب.\n\n(ملاحظة: أضيفت هذه القاعدة بموجب القرار ICC-ASP/24/Res.1)",
+        contentAr: "1 - تظل الشكوى وتقرير التحقيق وجميع الوثائق والمواد المتعلقة بعمل الفريق المخصص سرية. ولدى تقديم التقرير النهائي للفريق المخصص إلى متخذ(ي) القرار المختص(ين)، تقوم آلية الرقابة المستقلة أو المحقق الخارجي، حسب الاقتضاء، بإحالة ملخص سري للتحقيق إلى جمعية الدول الأطراف، دون الإشارة مباشرة أو غير مباشرة إلى المصدر أو هوية الأفراد المعنيين أو المتورطين، أو الكشف عن أي معلومات مصنفة أخرى ذات صلة.\n2 - عقب الانتهاء من إجراءات تأديبية، يقوم متخذ القرار المختص بإعلان وجود أي سوء سلوك جسيم أو إخلال جسيم بالواجب أدى إلى العزل من المنصب، بما في ذلك هوية المسؤول المنتخب المعني. ولا تقدم أي معلومات، مباشرة أو غير مباشرة، عن أي أفراد آخرين معنيين أو متورطين.\n3 - عقب الانتهاء من إجراءات تأديبية، يظل وجود أي سوء سلوك أدى إلى فرض تدبير تأديبي سرياً، مع عدم الإخلال بالحاجة إلى إبلاغ رئيس مكتب جمعية الدول الأطراف، وفقاً للقاعدة الفرعية 7 من القاعدة 30. ويقوم رئيس مكتب جمعية الدول الأطراف بإبلاغ الجمعية بفرض التدبير التأديبي، بما في ذلك هوية المسؤول المنتخب المعني وطبيعة سوء السلوك الذي تم التوصل إليه. ولا تقدم أي معلومات، مباشرة أو غير مباشرة، عن أي أفراد آخرين معنيين أو متورطين. ويجوز للجمعية منح استثناء لواجب الإبلاغ المفروض على رئيس مكتب جمعية الدول الأطراف عند الضرورة القصوى وبناء على أسباب معللة.\n4 - في حالة الوقف عن أداء الواجب وفقاً للقاعدة 28، يتم إعلان وجود تحقيق وفرض الوقف، مع الإشارة إلى أن وجود تحقيق في مسألة ما لا يعني حدوث أي سوء سلوك أو إخلال بالواجب.\n\n(ملاحظة: أضيفت هذه القاعدة بموجب القرار ICC-ASP/24/Res.1)",
         contentEn: "1. The complaint, the investigation report, and all documents and materials related to the work of the ad hoc panel shall remain confidential. Upon submission of the final report of the ad hoc panel to the competent decision-maker(s), the Independent Oversight Mechanism or the external investigator, as applicable, shall transmit a confidential summary of the investigation to the Assembly of States Parties, without attribution directly or indirectly as to the source or identity of the individuals involved or implicated, or disclosing any other classified information in connection thereto.\n2. Following the completion of a disciplinary proceeding, the existence of any serious misconduct or serious breach of duty which has resulted in removal from office shall be made public by the competent decision-maker, including the identity of the elected official concerned. No information shall be provided, directly or indirectly, about any other individuals involved or implicated.\n3. Following the completion of a disciplinary proceeding, the existence of any misconduct which has resulted in the imposition of a disciplinary measure shall remain confidential, without prejudice to the need to inform the President of the Bureau of the Assembly of States Parties, in accordance with rule 30, sub-rule 7. The President of the Bureau of the Assembly of States Parties shall inform the Assembly of States Parties of the imposition of a disciplinary measure, including the identity of the elected official concerned and nature of the misconduct found. No information shall be provided, directly or indirectly, about any other individuals involved or implicated. The Assembly may grant an exception to the duty of information of the President of the Bureau of the Assembly of States Parties where strictly necessary and duly reasoned.\n4. In the event of suspension from duty in accordance with rule 28, the existence of an investigation and the imposition of a suspension shall be made public, stating that the existence of an investigation into a matter does not mean that any misconduct or breach of duty have occurred.\n\nNote: Inserted by resolution ICC-ASP/24/Res.1."
       },
       { 
@@ -262,15 +262,15 @@ export const rulesOfProcedureParts: Part[] = [
         number: "28", 
         titleAr: "الوقف عن أداء الواجب", 
         titleEn: "Suspension from duty", 
-        contentAr: "1 - عندما يكون الادعاء ضد شخص هو موضوع شكوى ذا طبيعة خطيرة بما يكفي، يجوز وقف الشخص عن أداء الواجب في أي مرحلة بانتظار القرار النهائي لمتخذ القرار المختص.\n2 - في حالة القاضي، يجوز اتخاذ قرار الوقف عن أداء الواجب من قبل الجلسة العامة للقضاة. وإذا كانت قد قدمت بالفعل توصية بالنحي من المنصب وأبلغ رئيس مكتب جمعية الدول الأطراف بذلك بموجب القاعدة 29، يجوز بعد ذلك اتخاذ قرار الوقف من قبل مكتب جمعية الدول الأطراف.\n3 - في حالة المسجل أو نائب المسجل، يجوز اتخاذ قرار الوقف عن أداء الواجب من قبل الجلسة العامة للقضاة.\n4 - في حالة المدعي العام أو المدعي العام المساعد، يجوز اتخاذ قرار الوقف عن أداء الواجب من قبل مكتب جمعية الدول الأطراف.\n\n(ملاحظة: تم تعديل هذه القاعدة بموجب القرار ICC-ASP/24/Res.1)",
+        contentAr: "1 - عندما يكون الادعاء ضد شخص هو موضوع شكوى ذا طبيعة خطيرة بما يكفي، يجوز وقف الشخص عن أداء الواجب في أي مرحلة بانتظار القرار النهائي لمتخذ القرار المختص.\n2 - في حالة القاضي، يجوز اتخاذ قرار الوقف عن أداء الواجب من قبل الجلسة العامة للقضاة. وإذا كانت قد قدمت بالفعل توصية بالعزل من المنصب وأبلغ رئيس مكتب جمعية الدول الأطراف بذلك بموجب القاعدة 29، يجوز بعد ذلك اتخاذ قرار الوقف من قبل مكتب جمعية الدول الأطراف.\n3 - في حالة المسجل أو نائب المسجل، يجوز اتخاذ قرار الوقف عن أداء الواجب من قبل الجلسة العامة للقضاة.\n4 - في حالة المدعي العام أو المدعي العام المساعد، يجوز اتخاذ قرار الوقف عن أداء الواجب من قبل مكتب جمعية الدول الأطراف.\n\n(ملاحظة: تم تعديل هذه القاعدة بموجب القرار ICC-ASP/24/Res.1)",
         contentEn: "1. Where an allegation against a person who is the subject of a complaint is of a sufficiently serious nature, the person may be suspended from duty at any stage pending the final decision of the competent decision-maker.\n2. In the case of a judge, the decision to suspend from duty may be taken by a plenary of judges. If a recommendation to remove from office has already been made and the President of the Bureau of the Assembly of States Parties so informed under rule 29, the decision to suspend may thereafter be taken by the Bureau of the Assembly of States Parties.\n3. In the case of a Registrar or a Deputy Registrar, the decision to suspend from duty may be taken by a plenary of judges.\n4. In the case of a Prosecutor or Deputy Prosecutor, the decision to suspend from duty may be taken by the Bureau of the Assembly of States Parties.\n\nNote: As amended by resolution ICC-ASP/24/Res.1."
       },
       { 
         id: "rule-29", 
         number: "29", 
-        titleAr: "الإجراءات في حال إمكانية النحي من المنصب بسبب سوء سلوك جسيم أو إخلال جسيم بالواجب", 
+        titleAr: "الإجراءات في حال إمكانية العزل من المنصب بسبب سوء سلوك جسيم أو إخلال جسيم بالواجب", 
         titleEn: "Procedure in the event of potential removal from office for serious misconduct or serious breach of duty", 
-        contentAr: "1 - في حالة القاضي، تطرح مسألة ما إذا كان يوصى بالنحي من المنصب للتصويت في جلسة عامة للقضاة عملاً بالفقرة 2 من المادة 46.\n2 - في حالة المسجل أو نائب المسجل، يطرح قرار النحي من المنصب للتصويت في جلسة عامة للقضاة عملاً بالفقرة 3 من المادة 46.\n3 - تقوم هيئة الرئاسة بإبلاغ رئيس مكتب جمعية الدول الأطراف كتابة بـ (أ) أي توصية تعتمد في حالة القاضي عملاً بالقاعدة الفرعية 1 أعلاه؛ و(ب) أي قرار يعتمد في حالة المسجل أو نائب المسجل عملاً بالقاعدة الفرعية 2 أعلاه.\n4 - في حالة المدعي العام، يتخذ قرار النحي من المنصب بأغلبية مطلقة من الدول الأطراف، عملاً بالفقرة 2 من المادة 46.\n5 - يقوم المدعي العام بإبلاغ رئيس مكتب جمعية الدول الأطراف كتابة بأي توصية يقدمها في حالة المدعي العام المساعد، لغرض الفقرة 2 من المادة 46.\n6 - عندما يجد متخذ القرار المختص أن السلوك يرقى إلى سوء سلوك جسيم أو إخلال جسيم بالواجب ولكنه يقرر عدم نحي المسؤول المنتخب المعني من منصبه، تفرض تدابير تأديبية تتفق مع خطورة سوء السلوك أو الإخلال بالواجب وفقاً للقاعدة 30.\n7 - عندما يجد متخذ القرار المختص أن السلوك لا يرقى إلى سوء سلوك جسيم أو إخلال جسيم بالواجب، تحال المسألة إلى متخذ القرار المختص عملاً بالقاعدة 30.\n8 - عندما يثبت متخذ القرار المختص عملاً بالقاعدة 29 عدم حدوث سوء سلوك أو إخلال بالواجب، تغلق المسألة.\n\n(ملاحظة: تم تعديل هذه القاعدة بموجب القرار ICC-ASP/24/Res.1)",
+        contentAr: "1 - في حالة القاضي، تطرح مسألة ما إذا كان يوصى بالعزل من المنصب للتصويت في جلسة عامة للقضاة عملاً بالفقرة 2 من المادة 46.\n2 - في حالة المسجل أو نائب المسجل، يطرح قرار العزل من المنصب للتصويت في جلسة عامة للقضاة عملاً بالفقرة 3 من المادة 46.\n3 - تقوم هيئة الرئاسة بإبلاغ رئيس مكتب جمعية الدول الأطراف كتابة بـ (أ) أي توصية تعتمد في حالة القاضي عملاً بالقاعدة الفرعية 1 أعلاه؛ و(ب) أي قرار يعتمد في حالة المسجل أو نائب المسجل عملاً بالقاعدة الفرعية 2 أعلاه.\n4 - في حالة المدعي العام، يتخذ قرار العزل من المنصب بأغلبية مطلقة من الدول الأطراف، عملاً بالفقرة 2 من المادة 46.\n5 - يقوم المدعي العام بإبلاغ رئيس مكتب جمعية الدول الأطراف كتابة بأي توصية يقدمها في حالة المدعي العام المساعد، لغرض الفقرة 2 من المادة 46.\n6 - عندما يجد متخذ القرار المختص أن السلوك يرقى إلى سوء سلوك جسيم أو إخلال جسيم بالواجب ولكنه يقرر عدم عزل المسؤول المنتخب المعني من منصبه، تفرض تدابير تأديبية تتفق مع خطورة سوء السلوك أو الإخلال بالواجب وفقاً للقاعدة 30.\n7 - عندما يجد متخذ القرار المختص أن السلوك لا يرقى إلى سوء سلوك جسيم أو إخلال جسيم بالواجب، تحال المسألة إلى متخذ القرار المختص عملاً بالقاعدة 30.\n8 - عندما يثبت متخذ القرار المختص عملاً بالقاعدة 29 عدم حدوث سوء سلوك أو إخلال بالواجب، تغلق المسألة.\n\n(ملاحظة: تم تعديل هذه القاعدة بموجب القرار ICC-ASP/24/Res.1)",
         contentEn: "1. In the case of a judge, the question of whether to recommend removal from office shall be put to a vote at a plenary session of the judges pursuant to article 46, paragraph 2.\n2. In the case of the Registrar or a Deputy Registrar, the decision of removal from office shall be put to a vote at a plenary session of the judges pursuant to article 46, paragraph 3.\n3. The Presidency shall inform the President of the Bureau of the Assembly of States Parties in writing of (a) any recommendation adopted in the case of a judge pursuant to sub-rule 1 above; and (b) any decision adopted in the case of the Registrar or a Deputy Registrar pursuant to sub-rule 2 above.\n4. In the case of the Prosecutor, the decision of removal from office shall be taken by an absolute majority of the State Parties, pursuant to article 46, paragraph 2.\n5. The Prosecutor shall inform the President of the Bureau of the Assembly of States Parties in writing of any recommendation he or she makes in the case of a Deputy Prosecutor, for the purpose of article 46, paragraph 2.\n6. Where the competent decision-maker finds that the conduct amounts to serious misconduct or a serious breach of duty but decides not to remove the elected official concerned from office, disciplinary measures that are consistent with the seriousness of the misconduct or breach of duty shall be imposed in accordance with rule 30.\n7. Where the competent decision-maker finds that the conduct does not amount to serious misconduct or serious breach of duty, the matter shall be referred to the competent decision-maker pursuant to rule 30.\n8. Where the competent decision-maker pursuant to rule 29 establishes that no misconduct or breach of duty has occurred, the matter shall be closed.\n\nNote: As amended by resolution ICC-ASP/24/Res.1."
       },
       { 
@@ -284,9 +284,9 @@ export const rulesOfProcedureParts: Part[] = [
       { 
         id: "rule-31", 
         number: "31", 
-        titleAr: "النحي من المنصب", 
+        titleAr: "العزل من المنصب", 
         titleEn: "Removal from office", 
-        contentAr: "بمجرد النطق بالنحي من المنصب، يسري مفعوله فوراً. ويكف الشخص المعني عن أن يكون جزءاً من المحكمة، بما في ذلك في القضايا غير المنتهية التي كان يشارك فيها.",
+        contentAr: "بمجرد النطق بالعزل من المنصب، يسري مفعوله فوراً. ويكف الشخص المعني عن أن يكون جزءاً من المحكمة، بما في ذلك في القضايا غير المنتهية التي كان يشارك فيها.",
         contentEn: "Once removal from office has been pronounced, it shall take effect immediately. The person concerned shall cease to form part of the Court, including for unfinished cases in which he or she was taking part."
       },
       { 
@@ -342,7 +342,7 @@ export const rulesOfProcedureParts: Part[] = [
         number: "38", 
         titleAr: "الاستبدالات", 
         titleEn: "Replacements", 
-        contentAr: "1 - يجوز استبدال قاضٍ لأسباب موضوعية ومبررة، ومنها:\n(أ) الاستقالة؛\n(ب) قبول الإعفاء؛\n(ج) التنحية؛\n(د) النحي من المنصب؛\n(هـ) الوفاة.\n2 - يتم الاستبدال وفقاً للإجراء المحدد سلفاً في النظام الأساسي والقواعد واللائحة.",
+        contentAr: "1 - يجوز استبدال قاضٍ لأسباب موضوعية ومبررة، ومنها:\n(أ) الاستقالة؛\n(ب) قبول الإعفاء؛\n(ج) التنحية؛\n(د) العزل من المنصب؛\n(هـ) الوفاة.\n2 - يتم الاستبدال وفقاً للإجراء المحدد سلفاً في النظام الأساسي والقواعد واللائحة.",
         contentEn: "1. A judge may be replaced for objective and justified reasons, inter alia:\n(a) Resignation;\n(b) Accepted excuse;\n(c) Disqualification;\n(d) Removal from office;\n(e) Death.\n2. Replacement shall take place in accordance with the pre-established procedure in the Statute, the Rules and the Regulations."
       },
       { 
@@ -1049,7 +1049,7 @@ export const rulesOfProcedureParts: Part[] = [
         number: "122", 
         titleAr: "الإجراءات في جلسة إقرار التهم في حضور الشخص المتهم", 
         titleEn: "Proceedings at the confirmation hearing in the presence of the person charged", 
-        contentAr: "1 - في بداية الجلسة، تتحقق الدائرة التمهيدية من أن الشخص يفهم التهم الموجهة إليه.\n2 - يقدم المدعي العام والشخص حججهما وأدلتما.\n3 - يجوز للدائرة التمهيدية توجيه أسئلة إلى الأطراف.",
+        contentAr: "1 - في بداية الجلسة، تتحقق الدائرة التمهيدية من أن الشخص يفهم التهم الموجهة إليه.\n2 - يقدم المدعي العام والشخص حججهما وأدلتهما.\n3 - يجوز للدائرة التمهيدية توجيه أسئلة إلى الأطراف.",
         contentEn: "1. At the commencement of the hearing, the Pre-Trial Chamber shall satisfy itself that the person understands the charges.\n2. The Prosecutor and the person shall present their arguments and evidence.\n3. The Pre-Trial Chamber may put questions to the parties."
       },
       { 
@@ -1314,82 +1314,82 @@ export const rulesOfProcedureParts: Part[] = [
       { 
         id: "rule-152", 
         number: "152", 
-        titleAr: "الرد على الاستئناف", 
-        titleEn: "Response to the appeal", 
-        contentAr: "يجوز للطرف الآخر تقديم رد على الاستئناف في غضون المهلة المحددة.",
-        contentEn: "The other party may file a response to the appeal within the time limit set."
+        titleAr: "التنازل عن الاستئناف", 
+        titleEn: "Discontinuance of the appeal", 
+        contentAr: "1 - يجوز لأي طرف قدم استئنافاً أن يتنازل عنه في أي وقت قبل النطق بالحكم. وفي هذه الحالة، يودع ذلك الطرف لدى المسجل إشعاراً كتابياً بالتنازل عن استئنافه. ويقوم المسجل بإبلاغ الأطراف الأخرى بوقوع هذا الإيداع.\n2 - إذا كان المدعي العام قد قدم استئنافاً نيابة عن شخص مدان وفقاً للفقرة 1(ب) من المادة 81، فعليه قبل إيداع أي إشعار بالتنازل أن يبلغ الشخص المدان بأنه يعتزم سحب الاستئناف من أجل منحه فرصة لمواصلة إجراءات الاستئناف.",
+        contentEn: "1. Any party who has filed an appeal may discontinue the appeal at any time before judgement has been delivered. In such case, the party shall file with the Registrar a written notice of discontinuance of appeal. The Registrar shall inform the other parties that such a notice has been filed.\n2. If the Prosecutor has filed an appeal on behalf of a convicted person in accordance with article 81, paragraph 1 (b), before filing any notice of discontinuance, the Prosecutor shall inform the convicted person that he or she intends to withdraw the appeal in order to give him or her the opportunity to continue the appeal proceedings."
       },
       { 
         id: "rule-153", 
         number: "153", 
-        titleAr: "الاستئنافات التبعية", 
-        titleEn: "Interlocutory appeals", 
-        contentAr: "يجوز للأطراف استئناف القرارات الصادرة عن الدائرة التمهيدية أو الدائرة الابتدائية بشأن المسائل التي تؤثر على سير الإجراءات.",
-        contentEn: "Parties may appeal decisions of the Pre-Trial Chamber or Trial Chamber on issues that affect the conduct of the proceedings."
+        titleAr: "الحكم في الاستئنافات المرفوعة ضد أوامر جبر الضرر", 
+        titleEn: "Judgement on appeals against reparation orders", 
+        contentAr: "1 - يجوز لدائرة الاستئناف أن تؤيد الأمر الصادر بموجب المادة 75 أو أن تلغيه أو تعدله.\n2 - يصدر حكم دائرة الاستئناف وفقاً للفقرتين 4 و5 من المادة 83.",
+        contentEn: "1. The Appeals Chamber may confirm, reverse or amend a reparation order made under article 75.\n2. The judgement of the Appeals Chamber shall be delivered in accordance with article 83, paragraphs 4 and 5."
       },
       { 
         id: "rule-154", 
         number: "154", 
-        titleAr: "الاستئناف ضد قرارات الدائرة التمهيدية", 
-        titleEn: "Appeals against decisions of the Pre-Trial Chamber", 
-        contentAr: "يجوز استئناف قرارات الدائرة التمهيدية المتعلقة بالاختصاص أو المقبولية.",
-        contentEn: "Appeals against decisions of the Pre-Trial Chamber regarding jurisdiction or admissibility may be filed."
+        titleAr: "الاستئنافات التي لا تتطلب إذناً من المحكمة", 
+        titleEn: "Appeals that do not require leave of the Court", 
+        contentAr: "1 - يجوز تقديم استئناف بموجب الفقرة 3(ج)‘2’ من المادة 81 أو الفقرة 1(أ) أو (ب) من المادة 82 في غضون خمسة أيام من تاريخ إخطار الطرف مقدم الاستئناف بالقرار.\n2 - يجوز تقديم استئناف بموجب الفقرة 2 من المادة 82 في غضون خمسة أيام من تاريخ إخطار الطرف مقدم الاستئناف بالقرار.",
+        contentEn: "1. An appeal may be filed under article 81, paragraph 3 (c) (ii), or article 82, paragraph 1 (a) or (b), not later than five days from the date upon which the party filing the appeal is notified of the decision.\n2. An appeal may be filed under article 82, paragraph 2, not later than five days from the date upon which the party filing the appeal is notified of the decision."
       },
       { 
         id: "rule-155", 
         number: "155", 
-        titleAr: "الاستئناف ضد قرارات الدائرة الابتدائية", 
-        titleEn: "Appeals against decisions of the Trial Chamber", 
-        contentAr: "يجوز استئناف قرارات الدائرة الابتدائية المتعلقة بالإفراج أو الاحتجاز.",
-        contentEn: "Appeals against decisions of the Trial Chamber regarding release or detention may be filed."
+        titleAr: "الاستئنافات التي تتطلب إذناً من المحكمة", 
+        titleEn: "Appeals that require leave of the Court", 
+        contentAr: "1 - عندما يرغب طرف في استئناف قرار بموجب الفقرة 1(د) من المادة 82، أو الفقرة 2 من المادة 82، يقدم في غضون خمسة أيام من تاريخ إخطاره بذلك القرار طلباً مكتوباً إلى الدائرة التي أصدرت القرار، مبيناً الأسباب التي يلتمس على أساسها الإذن بالاستئناف.\n2 - تصدر الدائرة قراراً وتخطر به جميع الأطراف الذين شاركوا في الإجراءات التي أدت إلى صدور القرار المشار إليه في القاعدة الفرعية 1.",
+        contentEn: "1. When a party wishes to appeal a decision under article 82, paragraph 1 (d), or article 82, paragraph 2, that party shall, within five days of being notified of that decision, make a written application to the Chamber that gave the decision, setting out the reasons for the request for leave to appeal.\n2. The Chamber shall render a decision and shall notify all parties who participated in the proceedings that gave rise to the decision referred to in sub-rule 1."
       },
       { 
         id: "rule-156", 
         number: "156", 
-        titleAr: "إجراءات الاستئنافات التبعية", 
-        titleEn: "Procedure for interlocutory appeals", 
-        contentAr: "تحدد دائرة الاستئناف الإجراءات الواجب اتباعها في الاستئنافات التبعية.",
-        contentEn: "The Appeals Chamber shall determine the procedure to be followed in interlocutory appeals."
+        titleAr: "إجراءات الاستئناف", 
+        titleEn: "Procedure for the appeal", 
+        contentAr: "1 - بمجرد إيداع استئناف بموجب القاعدة 154 أو منح الإذن بالاستئناف بموجب القاعدة 155، يحيل المسجل إلى دائرة الاستئناف محضر الإجراءات المتعلقة بالقرار الذي أصدره القضاة الذين نظروا المسألة.\n2 - يخطر المسجل جميع الأطراف الذين شاركوا في الإجراءات أمام الدائرة التي أصدرت القرار المطعون فيه بإيداع الاستئناف، ما لم تكن قد صدرت أوامر بعدم الكشف عن ذلك من قبل الدائرة.\n3 - تكون إجراءات الاستئناف مكتوبة ما لم تقرر دائرة الاستئناف عقد جلسة استماع.\n4 - يُنظر في الاستئناف بأسرع وقت ممكن.",
+        contentEn: "1. As soon as an appeal has been filed under rule 154 or as soon as leave to appeal has been granted under rule 155, the Registrar shall transmit to the Appeals Chamber the record of the proceedings of the Chamber that made the decision that is the subject of the appeal.\n2. The Registrar shall give notice of the appeal to all parties who participated in the proceedings before the Chamber that gave the decision that is the subject of the appeal, unless they have been withheld by the Chamber pursuant to the Rules.\n3. The appeal proceedings shall be in writing unless the Appeals Chamber decides to convene a hearing.\n4. The appeal shall be heard as expeditiously as possible."
       },
       { 
         id: "rule-157", 
         number: "157", 
         titleAr: "التنازل عن الاستئناف", 
         titleEn: "Discontinuance of the appeal", 
-        contentAr: "يجوز لأي طرف قدم استئنافاً أن يتنازل عنه في أي وقت قبل صدور القرار.", 
-        contentEn: "Any party who has filed an appeal may discontinue the appeal at any time before the decision is issued."
+        contentAr: "يجوز لأي طرف قدم استئنافاً عملاً بالقاعدة 154 أو حصل على إذن من الدائرة لاستئناف قرار وفقاً للقاعدة 155 أن يتنازل عن الاستئناف في أي وقت قبل النطق بالحكم. وفي هذه الحالة، يودع ذلك الطرف لدى المسجل إشعاراً كتابياً بالتنازل عن استئنافه. ويقوم المسجل بإبلاغ الأطراف الأخرى بوقوع هذا الإيداع.", 
+        contentEn: "Any party who has filed an appeal under rule 154 or who has obtained the leave of a Chamber to appeal a decision under rule 155 may discontinue the appeal at any time before judgement has been delivered. In such a case, the party shall file with the Registrar a written notice of discontinuance of appeal. The Registrar shall inform the other parties that such a notice has been filed."
       },
       { 
         id: "rule-158", 
         number: "158", 
-        titleAr: "وقف الإجراءات", 
-        titleEn: "Stay of proceedings", 
-        contentAr: "يجوز لدائرة الاستئناف أن تأمر بوقف الإجراءات أمام الدائرة الابتدائية أثناء نظر الاستئناف.",
-        contentEn: "The Appeals Chamber may order a stay of proceedings before the Trial Chamber while the appeal is being considered."
+        titleAr: "الحكم في الاستئناف", 
+        titleEn: "Judgement on the appeal", 
+        contentAr: "1 - يجوز لدائرة الاستئناف التي تنظر في استئناف مشار إليه في هذا الفرع أن تؤيد القرار المطعون فيه أو أن تلغيه أو تعدله.\n2 - يصدر حكم دائرة الاستئناف وفقاً للفقرة 4 من المادة 83.",
+        contentEn: "1. An Appeals Chamber which considers an appeal referred to in this section may confirm, reverse or amend the decision appealed.\n2. The judgement of the Appeals Chamber shall be delivered in accordance with article 83, paragraph 4."
       },
       { 
         id: "rule-159", 
         number: "159", 
         titleAr: "طلب إعادة النظر", 
         titleEn: "Application for revision", 
-        contentAr: "تحدد هذه القاعدة شروط تقديم طلب إعادة النظر في الإدانة أو العقوبة، ويجب أن يكون الطلب كتابياً ومشفوعاً بالأدلة الجديدة.", 
-        contentEn: "This rule outlines the requirements for submitting an application for revision of a conviction or sentence. The application shall be in writing and accompanied by new evidence."
+        contentAr: "1 - يكون طلب إعادة النظر المنصوص عليه في الفقرة 1 من المادة 84 مكتوباً، ويبين الأسباب التي يلتمس على أساسها إعادة النظر. ويشفع الطلب، قدر المستطاع، بالمواد المؤيدة له.\n2 - يكون البت فيما إذا كان الطلب ذا وجاهة من اختصاص أغلبية قضاة دائرة الاستئناف، ويدعم القرار بأسباب مكتوبة.", 
+        contentEn: "1. An application for revision provided for in article 84, paragraph 1, shall be in writing and shall set out the grounds on which the revision is sought. It shall as far as possible be accompanied by supporting material.\n2. The determination on whether the application is meritorious shall be taken by a majority of the judges of the Appeals Chamber and shall be supported by reasons in writing."
       },
       { 
         id: "rule-160", 
         number: "160", 
         titleAr: "النقل لغرض إعادة النظر", 
         titleEn: "Transfer for the purpose of revision", 
-        contentAr: "تتواصل المحكمة مع الدولة المعنية لنقل الشخص لغرض إجراءات إعادة النظر إذا لزم الأمر.", 
-        contentEn: "The Court shall communicate with the State concerned for the transfer of a person for the purpose of revision proceedings if necessary."
+        contentAr: "1 - لإجراء جلسة الاستماع المنصوص عليها في القاعدة 161، تصدر الدائرة المختصة أمرها في وقت مبكر بما يكفي لتمكين نقل الشخص المحكوم عليه إلى مقر المحكمة، حسب الاقتضاء.\n2 - يبلغ قرار المحكمة دون تأخير إلى دولة التنفيذ.\n3 - تنطبق القاعدة الفرعية 3 من القاعدة 206.", 
+        contentEn: "1. For the conduct of the hearing provided for in rule 161, the relevant Chamber shall issue its order sufficiently in advance to enable the transfer of the sentenced person to the seat of the Court, as appropriate.\n2. The determination of the Court shall be communicated without delay to the State of enforcement.\n3. Rule 206, sub-rule 3, shall apply."
       },
       { 
         id: "rule-161", 
         number: "161", 
         titleAr: "البت في إعادة النظر", 
         titleEn: "Determination on revision", 
-        contentAr: "تحدد هذه القاعدة الإجراء المتبع للبت في طلب إعادة النظر، وتصدر دائرة الاستئناف قرارها مسبباً.", 
-        contentEn: "This rule sets out the procedure for the determination of an application for revision, and the Appeals Chamber shall issue a reasoned decision."
+        contentAr: "1 - في تاريخ تحدده الدائرة المختصة وتخطر به مقدم الطلب وجميع الأطراف الذين تلقوا الإخطار بموجب القاعدة الفرعية 1 من القاعدة 159، تعقد الدائرة جلسة لتقرير ما إذا كان ينبغي إعادة النظر في الإدانة أو العقوبة.\n2 - لممارسة الجلسة، تمارس الدائرة المختصة، مع مراعاة ما يقتضيه اختلاف الحال، جميع سلطات الدائرة الابتدائية وفقاً للباب 6 والقواعد المتعلقة به.\n3 - يتخذ القرار بشأن إعادة النظر وفقاً للأحكام الواجبة التطبيق من الفقرة 4 من المادة 83.", 
+        contentEn: "1. On a date which it shall determine and shall communicate to the applicant and to all those who have received notification under rule 159, sub-rule 1, the relevant Chamber shall hold a hearing to determine whether the conviction or sentence should be revised.\n2. For the conduct of the hearing, the relevant Chamber shall exercise, mutatis mutandis, all the powers of the Trial Chamber in accordance with Part 6 and the rules that apply thereto.\n3. The determination on revision shall be governed by the applicable provisions of article 83, paragraph 4."
       }
     ]
   },
@@ -1398,95 +1398,95 @@ export const rulesOfProcedureParts: Part[] = [
     labelAr: "الفصل 9",
     labelEn: "CHAPTER 9",
     titleAr: "الجرائم والأفعال المخلة بسير العدالة",
-    titleEn: "Offences and misconduct",
+    titleEn: "Offences and misconduct against the Court",
     articles: [
       { 
         id: "rule-162", 
         number: "162", 
         titleAr: "ممارسة الاختصاص", 
         titleEn: "Exercise of jurisdiction", 
-        contentAr: "تتعلق هذه القاعدة بكيفية ممارسة المحكمة لاختصاصها على الجرائم المخلة بسير العدالة بموجب المادة 70.", 
-        contentEn: "This rule concerns how the Court exercises its jurisdiction over offences against the administration of justice under article 70."
+        contentAr: "1 - قبل اتخاذ قرار بشأن ممارسة الاختصاص، يجوز للمحكمة التشاور مع الدول الأطراف التي قد يكون لها اختصاص على الجريمة.\n2 - لدى اتخاذ قرار بشأن ممارسة الاختصاص أو عدم ممارسته، يجوز للمحكمة أن تراعي بوجه خاص:\n(أ) مدى توافر وفعالية الملاحقة في الدولة الطرف؛\n(ب) خطورة الجريمة؛\n(ج) احتمال ضم التهم المرفوعة بموجب المادة 70 إلى التهم المرفوعة بموجب المواد 5 إلى 8 مكرراً؛\n(د) الحاجة إلى تعجيل الإجراءات؛\n(هـ) مصالح الضحايا والشهود؛\n(و) مسائل الإثبات.\n3 - تدرس المحكمة بإيجابية طلباً من الدولة المضيفة للتنازل عن سلطة المحكمة في ممارسة اختصاصها في القضايا التي ترى فيها الدولة المضيفة أن هذا التنازل له أهمية خاصة.\n4 - إذا قررت المحكمة عدم ممارسة اختصاصها، يجوز لها أن تطلب من دولة طرف ممارسة اختصاصها عملاً بالفقرة 4(ب) من المادة 70.", 
+        contentEn: "1. Before deciding whether to exercise jurisdiction, the Court may consult with States Parties that may have jurisdiction over the offence.\n2. In making a decision whether or not to exercise jurisdiction, the Court may consider, in particular:\n(a) The availability and effectiveness of prosecution in a State Party;\n(b) The seriousness of an offence;\n(c) The possible joinder of charges under article 70 with charges under articles 5 to 8 bis;\n(d) The need to expedite proceedings;\n(e) Links to an ongoing investigation or a trial before the Court; and\n(f) Evidentiary considerations.\n3. The Court shall give favourable consideration to a request from the host State for a waiver of the power of the Court to exercise jurisdiction in cases where the host State considers such a waiver to be of particular importance.\n4. If the Court decides not to exercise its jurisdiction, it may request a State Party to exercise jurisdiction pursuant to article 70, paragraph 4 (b)."
       },
       { 
         id: "rule-163", 
         number: "163", 
         titleAr: "تطبيق النظام الأساسي والقواعد", 
         titleEn: "Application of the Statute and the Rules", 
-        contentAr: "تحدد هذه القاعدة تطبيق النظام الأساسي والقواعد على الجرائم المخلة بسير العدالة.", 
-        contentEn: "This rule specifies the application of the Statute and the Rules to offences against the administration of justice."
+        contentAr: "1 - ما لم يُنص على خلاف ذلك في القواعد الفرعية 2 و3 من هذه القاعدة والقاعدة 162 والقواعد 164 إلى 169، ينطبق النظام الأساسي والقواعد، مع مراعاة ما يقتضيه اختلاف الحال، على تحقيق المحكمة وملاحقتها ومعاقبتها على الجرائم المحددة في المادة 70.\n2 - لا تنطبق أحكام الباب 2، وأي قواعد مترتبة عليه، باستثناء المادة 21.\n3 - لا تنطبق أحكام الباب 10، وأي قواعد مترتبة عليه، باستثناء المواد 103 و107 و109 و111.", 
+        contentEn: "1. Unless otherwise provided in sub-rules 2 and 3, rule 162 and rules 164 to 169, the Statute and the Rules shall apply mutatis mutandis to the Court’s investigation, prosecution and punishment of offences defined in article 70.\n2. The provisions of Part 2, and any rules thereunder, shall not apply, with the exception of article 21.\n3. The provisions of Part 10, and any rules thereunder, shall not apply, with the exception of articles 103, 107, 109 and 111."
       },
       { 
         id: "rule-164", 
         number: "164", 
         titleAr: "فترات التقادم", 
         titleEn: "Periods of limitation", 
-        contentAr: "تحدد هذه القاعدة فترات التقادم لملاحقة الجرائم المخلة بسير العدالة.", 
-        contentEn: "This rule addresses the periods of limitation for the prosecution of offences against the administration of justice."
+        contentAr: "1 - إذا مارست المحكمة اختصاصها وفقاً للقاعدة 162، فإنها تطبق فترات التقادم المحددة في هذه القاعدة.\n2 - تخضع الجرائم المنصوص عليها في المادة 70 لفترة تقادم مدتها خمس سنوات من تاريخ ارتكاب الجريمة، شريطة ألا يكون قد بُدئ خلال هذه الفترة في تحقيق أو مقاضاة.\n3 - تخضع عقوبة السجن المحكوم بها بموجب المادة 70 لفترة تقادم مدتها عشر سنوات من التاريخ الذي يصبح فيه الحكم نهائياً. ويتوقف سريان التقادم أثناء قضاء العقوبة.", 
+        contentEn: "1. If the Court exercises jurisdiction in accordance with rule 162, it shall apply the periods of limitation set forth in this rule.\n2. Offences defined in article 70 shall be subject to a period of limitation of five years from the date on which the offence was committed, provided that during this period no investigation or prosecution has been initiated.\n3. Sanctions of imprisonment imposed under article 70 shall be subject to a period of limitation of 10 years from the date on which the sanction has become final. The period of limitation shall be interrupted during the detention of the convicted person."
       },
       { 
         id: "rule-165", 
         number: "165", 
         titleAr: "التحقيق والملاحقة والمحاكمة", 
         titleEn: "Investigation, prosecution and trial", 
-        contentAr: "تفصل هذه القاعدة إجراءات التحقيق والملاحقة والمحاكمة في الجرائم المخلة بسير العدالة.", 
-        contentEn: "This rule details the procedures for the investigation, prosecution and trial of offences against the administration of justice."
+        contentAr: "1 - للمدعي العام أن يباشر ويجري تحقيقات فيما يتعلق بالجرائم المحددة في المادة 70 من تلقاء نفسه، أو على أساس معلومات مقدمة من دائرة أو أي مصدر موثوق.\n2 - لا تنطبق المادتان 53 و59، وأي قواعد مترتبة عليهما.\n3 - لأغراض المادة 61، يجوز للدائرة التمهيدية أن تتخذ أي قرار من القرارات المنصوص عليها في هذه المادة على أساس مذكرات مكتوبة، دون عقد جلسة استماع، ما لم تقتضِ مصلحة العدالة خلاف ذلك.\n4 - يجوز للدائرة الابتدائية، عند الاقتضاء ومع مراعاة حقوق الدفاع، أن تأمر بضم التهم المرفوعة بموجب المادة 70 إلى التهم المرفوعة بموجب المواد 5 إلى 8 مكرراً.", 
+        contentEn: "1. The Prosecutor may initiate and conduct investigations with respect to the offences defined in article 70 on his or her own initiative, on the basis of information communicated by a Chamber or any reliable source.\n2. Articles 53 and 59, and any rules thereunder, shall not apply.\n3. For purposes of article 61, the Pre-Trial Chamber may make any of the determinations set forth in that article on the basis of written submissions, without a hearing, unless the interests of justice otherwise require.\n4. A Trial Chamber may, where appropriate and taking into account the rights of the defence, direct that there be joinder of charges under article 70 with charges under articles 5 to 8 bis."
       },
       { 
         id: "rule-166", 
         number: "166", 
         titleAr: "الجزاءات بموجب المادة 70", 
         titleEn: "Sanctions under article 70", 
-        contentAr: "تحدد هذه القاعدة الجزاءات التي يمكن للمحكمة فرضها على الجرائم المخلة بسير العدالة.", 
-        contentEn: "This rule outlines the sanctions that can be imposed by the Court for offences against the administration of justice."
+        contentAr: "1 - تخضع الجزاءات المفروضة بموجب المادة 70 لهذه القاعدة ولا تنطبق أحكام المادة 77، وأي قواعد مترتبة عليها، باستثناء مصادرة العائدات والممتلكات والأصول المتأتية بصورة مباشرة أو غير مباشرة من الجريمة.\n2 - لا يجوز أن تتجاوز الغرامات المفروضة بموجب المادة 70 نسبة 50 في المائة من قيمة الأصول المالية والدخل السائل للمدان، بعد خصم مبلغ مناسب للوفاء بالاحتياجات المالية للمدان ولمن يعولهم. وتُفرض غرامة عن كل جريمة على حدة ويجوز أن تكون هذه الغرامات تراكمية.\n3 - يجوز دفع الغرامة دفعة واحدة أو على أقساط في غضون مهلة تحددها الدائرة.\n4 - إذا أخفق المدان في دفع الغرامة المفروضة وفقاً للشروط التي حددتها الدائرة، يجوز للمحكمة اتخاذ التدابير المناسبة عملاً بالقاعدتين 217 و218 ووفقاً للمادة 109. علاوة على ذلك، وفي حال استمرار عدم الدفع المتعمد، يجوز لهيئة الرئاسة، من تلقاء نفسها أو بناء على طلب المدعي العام، أن تفرض عقوبة السجن وفقاً للفقرة 3 من المادة 70.", 
+        contentEn: "1. Sanctions imposed by the Court under article 70 shall be governed by this rule and the provisions of article 77, and any rules thereunder, shall not apply, with the exception of an order of forfeiture under article 77, paragraph 2 (b), which may be ordered in addition to imprisonment or a fine or both.\n2.Each offence may be separately fined and those fines may be cumulative. Under no circumstances may the total amount exceed 50 per cent of the value of the convicted person’s identifiable assets, liquid or realizable, and property, after deduction of an appropriate amount that would satisfy the financial needs of the convicted person and his or her dependants.\n3. In imposing a fine, the Court shall allow the convicted person a reasonable period in which to pay the fine.\n4. If the convicted person does not pay a fine imposed in accordance with the conditions set forth by the Court, appropriate measures may be taken by the Court pursuant to rules 217 and 218 and in accordance with article 109. Moreover, in the event of a continued wilful non-payment, the Presidency, on its own motion or at the request of the Prosecutor, may impose a sentence of imprisonment in accordance with article 70, paragraph 3."
       },
       { 
         id: "rule-167", 
         number: "167", 
         titleAr: "التعاون الدولي والمساعدة القضائية", 
         titleEn: "International cooperation and judicial assistance", 
-        contentAr: "تتعلق هذه القاعدة بالتعاون الدولي والمساعدة القضائية فيما يتعلق بالجرائم المخلة بسير العدالة.", 
-        contentEn: "This rule pertains to international cooperation and judicial assistance in relation to offences against the administration of justice."
+        contentAr: "1 - فيما يتعلق بالجرائم المنصوص عليها في المادة 70، يجوز للمحكمة أن تطلب من دولة ما تقديم أي شكل من أشكال التعاون الدولي أو المساعدة القضائية المناظرة لتلك الأشكال المنصوص عليها في الباب 9.\n2 - تخضع شروط تقديم التعاون أو المساعدة القضائية للمحكمة فيما يتعلق بالجرائم المنصوص عليها في المادة 70 للقانون الداخلي للدولة الموجه إليها الطلب.", 
+        contentEn: "1. With regard to offences under article 70, the Court may request a State to provide any form of international cooperation or judicial assistance corresponding to those forms set forth in Part 9.\n2. The conditions for providing international cooperation or judicial assistance to the Court with respect to offences under article 70 shall be governed by the domestic law of the requested State."
       },
       { 
         id: "rule-168", 
         number: "168", 
         titleAr: "عدم جواز المحاكمة أو المعاقبة مرتين", 
         titleEn: "Ne bis in idem", 
-        contentAr: "يطبق مبدأ عدم جواز المحاكمة أو المعاقبة مرتين على الجرائم المخلة بسير العدالة.", 
-        contentEn: "The principle of ne bis in idem applies to offences against the administration of justice."
+        contentAr: "فيما يتعلق بالجرائم المنصوص عليها في المادة 70، لا يجوز محاكمة أي شخص أمام المحكمة عن أي سلوك شكل الأساس لجريمة سبق أن أدانته بها أو برأته منها المحكمة أو محكمة أخرى.", 
+        contentEn: "In respect of offences under article 70, no person shall be tried before the Court with respect to conduct which formed the basis of an offence for which the person has already been convicted or acquitted by the Court or another court."
       },
       { 
         id: "rule-169", 
         number: "169", 
         titleAr: "القبض الفوري", 
         titleEn: "Immediate arrest", 
-        contentAr: "تتناول هذه القاعدة القبض الفوري على الشخص المتهم بارتكاب جريمة مخلة بسير العدالة.", 
-        contentEn: "This rule addresses the immediate arrest of a person accused of an offence against the administration of justice."
+        contentAr: "في حالة ارتكاب جريمة مزعومة بموجب المادة 70 بحضور دائرة، يجوز للمدعي العام أن يطلب شفوياً من تلك الدائرة أن تأمر بالقبض الفوري على الشخص المعني.", 
+        contentEn: "In the case of an alleged offence under article 70 committed in the presence of a Chamber, the Prosecutor may orally request that Chamber to order the immediate arrest of the person concerned."
       },
       { 
         id: "rule-170", 
         number: "170", 
         titleAr: "تعطيل الإجراءات", 
         titleEn: "Disruption of proceedings", 
-        contentAr: "تتعلق هذه القاعدة بسلطات القاضي الرئيس عند قيام أي شخص بتعطيل الإجراءات.", 
-        contentEn: "This rule concerns the powers of the presiding judge when any person disrupts the proceedings."
+        contentAr: "مع مراعاة الفقرة 2 من المادة 63، يجوز للقاضي الرئيس في الدائرة التي تنظر في المسألة، بعد توجيه إنذار:\n(أ) أن يأمر أي شخص يعطل إجراءات المحكمة بمغادرة قاعة المحكمة، أو بترحيله منها في حال عدم الامتثال؛ أو\n(ب) في حالة تكرار سوء السلوك، أن يأمر بمنع ذلك الشخص من حضور الإجراءات.", 
+        contentEn: "Having regard to article 63, paragraph 2, the presiding judge of the Chamber dealing with the matter may, after giving a warning:\n(a) Order a person disrupting the proceedings of the Court to leave or be removed from the courtroom; or,\n(b) In case of repeated misconduct, order the interdiction of that person from attending the proceedings."
       },
       { 
         id: "rule-171", 
         number: "171", 
         titleAr: "رفض الامتثال لأمر صادر عن المحكمة", 
         titleEn: "Refusal to comply with a direction by the Court", 
-        contentAr: "تتناول هذه القاعدة الجزاءات المفروضة على رفض الامتثال لأمر أو توجيه صادر عن المحكمة.", 
-        contentEn: "This rule deals with sanctions for refusal to comply with a direction or order issued by the Court."
+        contentAr: "1 - عندما يقترن سوء السلوك برفض متعمد للامتثال لأمر شفوي أو كتابي صادر عن المحكمة، لا يكون من الطبيعة المنصوص عليها في القاعدة 170، ويكون ذلك الأمر مصحوباً بإنذار، يجوز للقاضي الرئيس في الدائرة التي تنظر في المسألة أن يأمر بمنع الشخص المعني من حضور الإجراءات لفترة لا تتجاوز 30 يوماً أو، إذا كان سوء السلوك ذا طبيعة أكثر خطورة، أن يفرض غرامة.\n2 - إذا كان الشخص الذي يرتكب سوء السلوك المبين في القاعدة الفرعية 1 مسؤولاً في المحكمة، أو محامي دفاع، أو ممثلاً قانونياً للضحايا، يجوز للقاضي الرئيس في الدائرة التي تنظر في المسألة أن يأمر أيضاً بمنع ذلك الشخص من ممارسة مهامه أمام المحكمة لفترة لا تتجاوز 30 يوماً.\n3 - لا يجوز أن تتجاوز الغرامة المنصوص عليها في القاعدة الفرعية 1 مبلغ 2,000 يورو، أو ما يعادله بأي عملة أخرى، شريطة أنه في حالات الاستمرار في سوء السلوك، يجوز فرض غرامة جديدة عن كل يوم يستمر فيه الإخلال بالواجب.\n4 - يُمنح الشخص المعني فرصة للاستماع إليه قبل فرض أي جزاء من الجزاءات المبينة في هذه القاعدة.\n5 - يحق للشخص أن يستأنف أمام دائرة الاستئناف أي جزاء يُفرض بموجب هذه القاعدة.", 
+        contentEn: "1. When the misconduct consists of deliberate refusal to comply with an oral or written direction by the Court, not covered by rule 170, and that direction is accompanied by a warning of sanctions in case of breach, the presiding judge of the Chamber dealing with the matter may order the interdiction of that person from the proceedings for a period not exceeding 30 days or, if the misconduct is of a more serious nature, impose a fine.\n2. If the person committing misconduct as described in sub-rule 1 is an official of the Court, or a defence counsel, or a legal representative of victims, the presiding judge of the Chamber dealing with the matter may also order the interdiction of that person from exercising his or her functions before the Court for a period not exceeding 30 days.\n3. A fine imposed under sub-rule 1 shall not exceed 2,000 euros, or the equivalent amount in any currency, provided that in cases of continuing misconduct, a new fine may be imposed on each day that the misconduct continues.\n4. The person concerned shall be given an opportunity to be heard before a sanction for misconduct, as described in this rule, is imposed.\n5. The person concerned may appeal to the Appeals Chamber against the imposition of any sanction under this rule."
       },
       { 
         id: "rule-172", 
         number: "172", 
         titleAr: "السلوك الذي تشمله المادتان 70 و 71", 
         titleEn: "Conduct covered by both articles 70 and 71", 
-        contentAr: "توضح هذه القاعدة كيفية التعامل مع السلوك الذي قد يندرج تحت كل من المادتين 70 و 71.", 
-        contentEn: "This rule clarifies how to address conduct that could fall under both article 70 and article 71."
+        contentAr: "إذا كان السلوك الذي يشكل محلاً للمادتين 70 و71 على السواء معروضاً على المحكمة، تختار المحكمة ما إذا كانت ستتصرف وفقاً للمادة 70 أو وفقاً للمادة 71.", 
+        contentEn: "If conduct covered by both articles 70 and 71 occurs before the Court, the Court shall choose whether to proceed in accordance with article 70 or article 71."
       }
     ]
   },
@@ -1494,32 +1494,32 @@ export const rulesOfProcedureParts: Part[] = [
     id: "chapter-10",
     labelAr: "الفصل 10",
     labelEn: "CHAPTER 10",
-    titleAr: "التعويض",
-    titleEn: "Compensation",
+    titleAr: "تعويض الشخص المقبوض عليه أو المدان",
+    titleEn: "Compensation to an arrested or convicted person",
     articles: [
       { 
         id: "rule-173", 
         number: "173", 
         titleAr: "طلب التعويض", 
         titleEn: "Request for compensation", 
-        contentAr: "تحدد هذه القاعدة إجراءات تقديم طلب التعويض من قبل شخص مقبوض عليه أو مدان ثبتت براءته أو وقع ضحية لخطأ قضائي.", 
-        contentEn: "This rule outlines the process for submitting a request for compensation by an arrested or convicted person who has been acquitted or was the victim of a miscarriage of justice."
+        contentAr: "1 - يحق لأي شخص يسعى للحصول على تعويض استناداً إلى أي من الأسباب المشار إليها في المادة 85 أن يقدم طلباً كتابياً إلى هيئة الرئاسة، التي تعين دائرة مؤلفة من ثلاثة قضاة للنظر في الطلب. ولا يجوز أن يكون أي من هؤلاء القضاة قد شارك في أي حكم سابق للمحكمة يتعلق بالشخص مقدم الطلب.\n2 - يقدم طلب التعويض في غضون فترة لا تتجاوز ستة أشهر من التاريخ الذي أُخطر فيه مقدم الطلب بقرار المحكمة بشأن:\n(أ) عدم مشروعية القبض أو الاحتجاز بموجب الفقرة 1 من المادة 85؛\n(ب) إلغاء الإدانة بموجب الفقرة 2 من المادة 85؛\n(ج) وجود خطأ قضائي جسيم وواضح بموجب الفقرة 3 من المادة 85.\n3 - يتضمن الطلب الأسباب والمبلغ المطلوب للتعويض.\n4 - يحق للشخص الذي يطلب التعويض أن يستعين بالمساعدة القانونية.", 
+        contentEn: "1. Anyone seeking compensation on any of the grounds indicated in article 85 shall submit a request, in writing, to the Presidency, which shall designate a Chamber composed of three judges to consider the request. These judges shall not have participated in any earlier judgement of the Court regarding the person making the request.\n2. The request for compensation shall be submitted not later than six months from the date the person making the request was notified of the decision of the Court concerning:\n(a) The unlawfulness of the arrest or detention under article 85, paragraph 1;\n(b) The reversal of the conviction under article 85, paragraph 2;\n(c) The existence of a grave and manifest miscarriage of justice under article 85, paragraph 3.\n3. The request shall contain the grounds and the amount of compensation requested.\n4. The person requesting compensation shall be entitled to legal assistance."
       },
       { 
         id: "rule-174", 
         number: "174", 
         titleAr: "إجراءات التماس التعويض", 
         titleEn: "Procedure for seeking compensation", 
-        contentAr: "تفصل هذه القاعدة الخطوات الإجرائية لالتماس التعويض بموجب المادة 85.", 
-        contentEn: "This rule details the procedural steps for seeking compensation under article 85."
+        contentAr: "1 - يحال طلب التعويض وأي ملاحظات مكتوبة أخرى يقدمها الشخص المطالب بالتعويض إلى المدعي العام، الذي تتاح له فرصة تقديم رد مكتوب إلى الدائرة المعينة بموجب القاعدة الفرعية 1 من القاعدة 173.\n2 - يجوز للدائرة المعينة بموجب القاعدة الفرعية 1 من القاعدة 173 إما أن تعقد جلسة استماع أو أن تقرر المسألة على أساس الطلب والملاحظات المكتوبة المقدمة من المدعي العام ومقدم الطلب. وتُعقد جلسة استماع إذا طلب ذلك المدعي العام أو الشخص المطالب بالتعويض.\n3 - يتخذ القرار بأغلبية القضاة، ويُبلّغ القرار إلى المدعي العام والشخص المطالب بالتعويض.", 
+        contentEn: "1. A request for compensation and any other written observations by the person filing the request shall be transmitted to the Prosecutor, who shall have an opportunity to respond in writing to the Chamber designated pursuant to rule 173, sub-rule 1.\n2. The Chamber designated pursuant to rule 173, sub-rule 1, may either hold a hearing or determine the matter on the basis of the request and any written observations by the Prosecutor and the person filing the request. A hearing shall be held if the Prosecutor or the person seeking compensation so requests.\n3. The decision shall be taken by the majority of the judges. The decision shall be notified to the Prosecutor and to the person filing the request."
       },
       { 
         id: "rule-175", 
         number: "175", 
         titleAr: "مبلغ التعويض", 
         titleEn: "Amount of compensation", 
-        contentAr: "تتناول هذه القاعدة تحديد مبلغ التعويض الذي سيتم منحه.", 
-        contentEn: "This rule addresses the determination of the amount of compensation to be awarded."
+        contentAr: "عند تحديد مبلغ التعويض عملاً بالفقرة 3 من المادة 85، تأخذ الدائرة المعينة بموجب القاعدة الفرعية 1 من القاعدة 173 في الاعتبار عواقب الخطأ القضائي الجسيم والواضح على الوضع الشخصي والعائلي والاجتماعي والمهني للشخص المطالب بالتعويض.", 
+        contentEn: "In establishing the amount of any compensation in conformity with article 85, paragraph 3, the Chamber designated pursuant to rule 173, sub-rule 1, shall take into consideration the consequences of the grave and manifest miscarriage of justice on the personal, family, social and professional situation of the person filing the request."
       }
     ]
   },
@@ -1528,295 +1528,416 @@ export const rulesOfProcedureParts: Part[] = [
     labelAr: "الفصل 11",
     labelEn: "CHAPTER 11",
     titleAr: "التعاون الدولي والمساعدة القضائية",
-    titleEn: "International cooperation",
+    titleEn: "International cooperation and judicial assistance",
     articles: [
       { 
         id: "rule-176", 
         number: "176", 
-        titleAr: "أجهزة المحكمة المسؤولة عن المراسلات", 
-        titleEn: "Organs of the Court responsible for communications", 
-        contentAr: "تحدد هذه القاعدة أجهزة المحكمة المسؤولة عن إرسال واستلام المراسلات المتعلقة بالتعاون الدولي.", 
-        contentEn: "This rule designates the organs of the Court responsible for the transmission and receipt of communications relating to international cooperation."
+        titleAr: "أجهزة المحكمة المسؤولة عن إرسال واستلام أي مراسلات تتعلق بالتعاون الدولي والمساعدة القضائية", 
+        titleEn: "Organs of the Court responsible for the transmission and receipt of any communications relating to international cooperation and judicial assistance", 
+        contentAr: "1 - لدى إنشاء المحكمة، يحصل المسجل من الأمين العام للأمم المتحدة على أي مراسلات تدلي بها الدول بموجب الفقرتين 1(أ) و2 من المادة 87.\n2 - يحيل المسجل طلبات التعاون الصادرة عن الدوائر ويتلقى الردود والمعلومات والوثائق الواردة من الدول الموجه إليها الطلب. ويكون مكتب المدعي العام مسؤولاً عن إرسال طلبات التعاون الصادرة عن المدعي العام وعن تلقي الردود والمعلومات والوثائق الواردة من الدول الموجه إليها الطلب.\n3 - يكون المسجل هو المتلقي لأي مراسلات تتعلق بتغيير لاحق في اختيار قنوات الاتصال أو اللغة التي تتواصل بها الدولة مع المحكمة، ويبلغ هيئة الرئاسة ومكتب المدعي العام على الفور بهذا التغيير.\n4 - تُطبق أحكام القاعدة الفرعية 2، حسب الاقتضاء، في حال قررت المحكمة طلب التعاون من منظمة حكومية دولية.", 
+        contentEn: "1. Upon and subsequent to the establishment of the Court, the Registrar shall obtain from the Secretary-General of the United Nations any communication made by States under article 87, paragraphs 1 (a) and 2.\n2. The Registrar shall transmit the requests for cooperation made by the Chambers and shall receive the responses, information and documents from requested States. The Office of the Prosecutor shall transmit the requests for cooperation made by the Prosecutor and shall receive the responses, information and documents from requested States.\n3. The Registrar shall be the recipient of any communication relating to subsequent changes in the designation of the national channels charged with receiving requests for cooperation, as well as of any change in the language in which requests for cooperation should be made, and shall, upon request, make such information available to States Parties as may be appropriate.\n4. The provisions of sub-rule 2 are applicable mutatis mutandis where the Court requests information, documents or other forms of cooperation and assistance from an intergovernmental organization."
       },
       { 
         id: "rule-177", 
         number: "177", 
         titleAr: "قنوات الاتصال", 
         titleEn: "Channels of communication", 
-        contentAr: "تحدد هذه القاعدة القنوات التي تتم من خلالها المراسلات المتعلقة بالتعاون الدولي.", 
-        contentEn: "This rule specifies the channels through which communications for international cooperation are to be made."
+        contentAr: "1 - تشمل المراسلات المتعلقة بالسلطة الوطنية المكلفة بتلقي طلبات التعاون والتي تتم عند التصديق أو القبول أو الموافقة أو الانضمام جميع المعلومات ذات الصلة عن هذه السلطات.\n2 - عند التماس مساعدة منظمة حكومية دولية بموجب الفقرة 6 من المادة 87، يحصل المسجل، عند الاقتضاء، على معلومات بشأن قناة الاتصال المعينة التابعة لها وجميع المعلومات ذات الصلة بها.", 
+        contentEn: "1. Communications concerning the national authority charged with receiving requests for cooperation made upon ratification, acceptance, approval or accession shall provide all relevant information about such authorities.\n2. When an intergovernmental organization is asked to assist the Court under article 87, paragraph 6, the Registrar shall, when necessary, ascertain its designated channel of communication and obtain all relevant information relating thereto."
       },
       { 
         id: "rule-178", 
         number: "178", 
-        titleAr: "اللغة التي تختارها الدول الأطراف", 
-        titleEn: "Language chosen by States Parties", 
-        contentAr: "تشير هذه القاعدة إلى اللغة التي تختارها الدول الأطراف لطلبات التعاون بموجب المادة 87.", 
-        contentEn: "This rule refers to the language chosen by States Parties for requests for cooperation under article 87."
+        titleAr: "اللغة التي تختارها الدول الأطراف بموجب الفقرة 2 من المادة 87", 
+        titleEn: "Language chosen by States Parties under article 87, paragraph 2", 
+        contentAr: "1 - عندما يكون للدولة الطرف الموجه إليها الطلب أكثر من لغة رسمية، يجوز لها أن تبين عند التصديق أو القبول أو الموافقة أو الانضمام أن طلبات التعاون والوثائق المؤيدة لها يمكن صياغتها بأي من اللغات الرسمية لتلك الدولة.\n2 - إذا لم تختر الدولة الطرف الموجه إليها الطلب لغة للاتصال بالمحكمة عند التصديق أو القبول أو الانضمام، يقدم طلب التعاون بإحدى لغتي العمل بالمحكمة أو يرفق بترجمة إليها عملاً بالفقرة 2 من المادة 87.", 
+        contentEn: "1. When a requested State Party has more than one official language, it may indicate upon ratification, acceptance, approval or accession that requests for cooperation and any supporting documents can be drafted in any one of its official languages.\n2. When the requested State Party has not chosen a language for communication with the Court upon ratification, acceptance, accession or approval, the request for cooperation shall either be in or be accompanied by a translation into one of the working languages of the Court pursuant to article 87, paragraph 2."
       },
       { 
         id: "rule-179", 
         number: "179", 
-        titleAr: "لغة الطلبات الموجهة إلى الدول غير الأطراف", 
-        titleEn: "Language of requests directed to States not party", 
-        contentAr: "تتناول هذه القاعدة اللغة التي يجب استخدامها في طلبات التعاون الموجهة إلى الدول غير الأطراف.", 
-        contentEn: "This rule addresses the language to be used in requests for cooperation directed to States that are not party to the Statute."
+        titleAr: "لغة الطلبات الموجهة إلى الدول غير الأطراف في النظام الأساسي", 
+        titleEn: "Language of requests directed to States not party to the Statute", 
+        contentAr: "إذا وافقت دولة غير طرف في النظام الأساسي على تقديم مساعدة للمحكمة بموجب الفقرة 5 من المادة 87 ولم تختر لغة لطلبات التعاون، تُقدّم طلبات التعاون بإحدى لغتي العمل بالمحكمة أو ترفق بترجمة إليها، ما لم تتفق المحكمة وتلك الدولة على خلاف ذلك.", 
+        contentEn: "If a State not party to the Statute has agreed to provide assistance to the Court under article 87, paragraph 5, and has not made a choice of language for such requests, the requests for cooperation shall either be in or be accompanied by a translation into one of the working languages of the Court, unless the Court and that State agree otherwise."
       },
       { 
         id: "rule-180", 
         number: "180", 
-        titleAr: "التغييرات في قنوات الاتصال أو اللغات", 
-        titleEn: "Changes in channels of communication or languages", 
-        contentAr: "تنص هذه القاعدة على الإجراءات المتعلقة بالتغييرات في قنوات الاتصال أو اللغات المستخدمة.", 
-        contentEn: "This rule provides for procedures regarding changes in the designated channels of communication or the languages used."
+        titleAr: "التغييرات في قنوات الاتصال أو اللغات المستخدمة في طلبات التعاون", 
+        titleEn: "Changes in the channels of communication or the languages used in requests for cooperation", 
+        contentAr: "1 - يُبلّغ المسجل في أقرب وقت ممكن كتابة بأي تغييرات تتعلق بقناة الاتصال أو باللغة التي اختارتها الدولة بموجب الفقرة 2 من المادة 87.\n2 - تسري هذه التغييرات في مواجهة المحكمة في وقت متفق عليه بين المحكمة والدولة، أو في حال عدم وجود مثل هذا الاتفاق، بعد 45 يوماً من تلقي المحكمة للمراسلات المتعلقة بالتغيير، وفي جميع الحالات دون المساس بالطلبات الجارية أو التي هي قيد الإرسال.", 
+        contentEn: "1. Changes concerning the channel of communication or the language a State has chosen under article 87, paragraph 2, shall be communicated in writing to the Registrar at the earliest opportunity.\n2. Such changes shall take effect in respect of the Court at a time agreed between the Court and the State or, in the absence of such an agreement, 45 days after the Court has received the communication and, in all cases, without prejudice to current requests or requests in progress."
+      },
+      { 
+        id: "rule-181", 
+        number: "181", 
+        titleAr: "الطعن في مقبولية قضية أمام محكمة وطنية", 
+        titleEn: "Challenge to admissibility of a case before a national court", 
+        contentAr: "عندما تنشأ الحالة الموصوفة في الفقرة 2 من المادة 89، ومع عدم الإخلال بأحكام المادة 19 والقاعدتين 58 و59 المتعلقة بالإجراءات المنطبقة على الطعون في اختصاص المحكمة أو مقبولية قضية ما، تتخذ الدائرة التي تنظر في القضية، إذا لم يكن قد صدر قرار بعد بشأن المقبولية، خطوات للحصول من الدولة الموجه إليها الطلب على جميع المعلومات ذات الصلة المتعلقة بالطعن المرفوع من الشخص في المقبولية.", 
+        contentEn: "When a situation described in article 89, paragraph 2, arises, and without prejudice to the provisions of article 19 and of rules 58 and 59 on procedures applicable to challenges to the jurisdiction of the Court or the admissibility of a case, the Chamber dealing with the case, if the admissibility ruling is still pending, shall take steps to obtain from the requested State all the relevant information about the ne bis in idem challenge brought by the person."
+      },
+      { 
+        id: "rule-182", 
+        number: "182", 
+        titleAr: "طلب النقل العابر بموجب الفقرة 3(هـ) من المادة 89", 
+        titleEn: "Request for transit under article 89, paragraph 3 (e)", 
+        contentAr: "1 - في الحالات الموصوفة في الفقرة 3(هـ) من المادة 89، يجوز للمحكمة أن تحيل طلب النقل العابر عبر أي وسيلة قادرة على تقديم سجل مكتوب.\n2 - عندما تنقضي المهلة المنصوص عليها في الفقرة 3(هـ) من المادة 89 ويُفرج عن الشخص المحتجز، لا يمس هذا الإفراج بإعادة القبض اللاحق على الشخص، استناداً إلى طلب يُقدم عملاً بالمادة 89 أو المادة 92.", 
+        contentEn: "1. In situations described in article 89, paragraph 3 (e), the Court may transmit the request for transit by any medium capable of delivering a written record.\n2. When the time limit provided for in article 89, paragraph 3 (e), has expired and the person concerned has been released, such a release is without prejudice to a subsequent arrest of the person in accordance with the provisions of article 89 or article 92."
+      },
+      { 
+        id: "rule-183", 
+        number: "183", 
+        titleAr: "إمكانية التقديم المؤقت", 
+        titleEn: "Possibility of temporary surrender", 
+        contentAr: "عقب المشاورات المشار إليها في الفقرة 4 من المادة 89، يجوز للدولة الموجه إليها الطلب أن تقدم الشخص المطلوب مؤقتاً وفقاً لشروط يتفق عليها بين المحكمة والدولة الموجه إليها الطلب. وفي هذه الحالة، يظل الشخص رهن الاحتجاز طوال فترة وجوده أمام المحكمة ويُنقل إلى الدولة الموجه إليها الطلب بمجرد انتهاء الغرض من حضوره أمام المحكمة، وفي موعد أقصاه انتهاء الإجراءات المقررة.", 
+        contentEn: "Following the consultations referred to in article 89, paragraph 4, the requested State may temporarily surrender the person sought in accordance with conditions determined between the Court and the requested State. In such case the person shall be kept in custody during his or her presence before the Court and shall be transferred to the requested State once his or her presence before the Court is no longer required, at the latest when the proceedings have been completed."
+      },
+      { 
+        id: "rule-184", 
+        number: "184", 
+        titleAr: "الترتيبات الخاصة بالتقديم", 
+        titleEn: "Arrangements for surrender", 
+        contentAr: "1 - تبلغ الدولة الموجه إليها الطلب المسجل على الفور عندما يصبح الشخص المطلوب من قبل المحكمة متاحاً للتقديم.\n2 - يُسلّم الشخص إلى المحكمة في الموعد وبالطريقة المتفق عليهما بين السلطات في الدولة الموجه إليها الطلب والمسجل.\n3 - إذا حالت الظروف دون تقديم الشخص في الموعد المتفق عليه، تتفق السلطات في الدولة الموجه إليها الطلب والمسجل على موعد جديد وطريقة جديدة لكيفية تسليم الشخص.\n4 - يظل المسجل على اتصال بالسلطات في الدولة الموجه إليها الطلب فيما يتعلق بالتقديم.", 
+        contentEn: "1. The requested State shall immediately inform the Registrar when the person sought by the Court is available for surrender.\n2. The person shall be surrendered to the Court by the date and in the manner agreed upon between the authorities of the requested State and the Registrar.\n3. If circumstances prevent the surrender of the person by the date agreed, the authorities of the requested State and the Registrar shall agree upon a new date and manner by which the person shall be surrendered.\n4. The Registrar shall maintain contact with the authorities of the requested State in relation to the surrender of the person."
+      },
+      { 
+        id: "rule-185", 
+        number: "185", 
+        titleAr: "الإفراج عن شخص من عهدة المحكمة لغير سبب إتمام العقوبة", 
+        titleEn: "Release of a person from the custody of the Court other than upon completion of sentence", 
+        contentAr: "1 - في أي حالة يُفرج فيها عن شخص من عهدة المحكمة لغير سبب إتمام العقوبة، تقوم المحكمة في أقرب وقت ممكن باتخاذ الترتيبات التي تراها مناسبة لنقل ذلك الشخص، مع أخذ آرائه في الاعتبار، إلى دولة تكون ملزمة باستقباله، أو إلى دولة أخرى توافق على استقباله، أو إلى دولة طلبت تسليمه بموافقة الدولة التي قدمته أصلاً.\n2 - عندما تقرر المحكمة أن القضية غير مقبولة بموجب الفقرة 1(أ) أو (ب) من المادة 17، ولم يكن قد نُقل الشخص بعد من الدولة التي قبضت عليه، تخطر المحكمة تلك الدولة، وإذا كان قد نُقل إلى المحكمة، تتخذ المحكمة ترتيبات، حسب الاقتضاء، لنقله إلى الدولة التي طُعن في الاختصاص لصالحها.", 
+        contentEn: "1. Subject to sub-rule 2, where a person surrendered to the Court is released from the custody of the Court because the Court does not have jurisdiction, the case is inadmissible under article 17, paragraph 1 (b), (c) or (d), the charges have not been confirmed under article 61, the person has been acquitted at trial or on appeal, or for any other reason, the Court shall, as soon as possible, make such arrangements as it considers appropriate for the transfer of the person, taking into account the views of the person, to a State which is obliged to receive him or her, to another State which agrees to receive him or her, or to a State which has requested his or her extradition with the consent of the State which surrendered him or her.\n2. Where the Court has determined that the case is inadmissible under article 17, paragraph 1 (a), the Court shall make arrangements, as appropriate, for the transfer of the person to a State whose investigation or prosecution has formed the basis of the successful challenge to admissibility, unless the State that originally surrendered the person requests his or her return."
+      },
+      { 
+        id: "rule-186", 
+        number: "186", 
+        titleAr: "الطلبات المتنافسة في سياق طعن في مقبولية القضية", 
+        titleEn: "Competing requests in the context of a challenge to the admissibility of the case", 
+        contentAr: "في الحالة الموصوفة في الفقرة 8 من المادة 90، تخطر الدولة الموجه إليها الطلب بقرار المحكمة إلى المدعي العام والدولة الطالبة بالتسليم.", 
+        contentEn: "In a situation described in article 90, paragraph 8, the requested State shall provide the notification of its decision to the Prosecutor in order to enable him or her to act in accordance with article 19, paragraph 10."
+      },
+      { 
+        id: "rule-187", 
+        number: "187", 
+        titleAr: "ترجمة الوثائق المرفقة بطلب التقديم", 
+        titleEn: "Translation of documents accompanying request for surrender", 
+        contentAr: "لأغراض الفقرة 1(أ) من المادة 67، ووفقاً للقاعدة الفرعية 1 من القاعدة 117، يجب أن يكون طلب القبض والتقديم مشفوعاً بترجمة لأمر القبض ولأحكام النظام الأساسي ذات الصلة إلى لغة يفهمها الشخص ويتحدث بها بطلاقة.", 
+        contentEn: "For the purposes of article 67, paragraph 1 (a), and in accordance with rule 117, sub-rule 1, the request under article 91 shall be accompanied, as appropriate, by a translation of the warrant of arrest and of the relevant provisions of the Statute into a language that the person fully understands and speaks."
+      },
+      { 
+        id: "rule-188", 
+        number: "188", 
+        titleAr: "المهلة الزمنية لتقديم الوثائق بعد القبض المؤقت", 
+        titleEn: "Time limit for submission of documents after provisional arrest", 
+        contentAr: "لأغراض الفقرة 3 من المادة 92، تكون المهلة الزمنية لتلقي الدولة الموجه إليها الطلب لطلب التقديم والوثائق المؤيدة للطلب هي 60 يوماً من تاريخ القبض المؤقت.", 
+        contentEn: "For the purposes of article 92, paragraph 3, the time limit for receipt by the requested State of the request for surrender and the documents supporting the request shall be 60 days from the date of the provisional arrest."
+      },
+      { 
+        id: "rule-189", 
+        number: "189", 
+        titleAr: "إرسال الوثائق المؤيدة للطلب", 
+        titleEn: "Transmission of documents supporting the request", 
+        contentAr: "عندما يكون شخص قد وافق على تقديمه وفقاً لأحكام الفقرة 3 من المادة 92 قبل تلقي الدولة الموجه إليها الطلب لطلب التقديم من المحكمة، لا يكون مطلوباً من المحكمة تقديم الوثائق المشار إليها في المادة 91 ما لم تطلب الدولة الموجه إليها الطلب ذلك.", 
+        contentEn: "When a person has consented to surrender in accordance with the provisions of article 92, paragraph 3, and the requested State proceeds to surrender the person to the Court, the Court shall not be required to provide the documents described in article 91 unless the requested State indicates otherwise."
+      },
+      { 
+        id: "rule-190", 
+        number: "190", 
+        titleAr: "التعليمات المتعلقة بتجريم الذات المرفقة بطلب مثول شاهد", 
+        titleEn: "Instruction on self-incrimination accompanying request for witness", 
+        contentAr: "عند تقديم طلب بموجب الفقرة 1(هـ) من المادة 93 فيما يتعلق بشاهد، ترفق المحكمة تعليمات بشأن القاعدة 74 المتعلقة بتجريم الذات، على أن تُسلّم إلى الشاهد المعني بلغة يفهمها ويتحدث بها بطلاقة.", 
+        contentEn: "When making a request under article 93, paragraph 1 (e), with respect to a witness, the Court shall attach an instruction on rule 74 relating to self-incrimination, to be provided to the witness in question, in a language that the person fully understands and speaks."
+      },
+      { 
+        id: "rule-191", 
+        number: "191", 
+        titleAr: "الضمان المقدم من المحكمة بموجب الفقرة 2 من المادة 93", 
+        titleEn: "Assurance provided by the Court under article 93, paragraph 2", 
+        contentAr: "للدائرة التي تنظر في القضية، من تلقاء نفسها أو بناء على طلب المدعي العام أو الدفاع أو الشاهد أو الخبير المعني، أن تقرر، بعد أخذ آراء المدعي العام والشاهد أو الخبير المعني في الاعتبار، تقديم الضمان المنصوص عليه في الفقرة 2 من المادة 93.", 
+        contentEn: "The Chamber dealing with the case, on its own motion or at the request of the Prosecutor, defence or witness or expert concerned, may decide, after taking into account the views of the Prosecutor and the witness or expert concerned, to provide the assurance described in article 93, paragraph 2."
+      },
+      { 
+        id: "rule-192", 
+        number: "192", 
+        titleAr: "نقل شخص رهن الاحتجاز", 
+        titleEn: "Transfer of a person in custody", 
+        contentAr: "1 - يُرتّب نقل شخص رهن الاحتجاز إلى المحكمة وفقاً للفقرة 7 من المادة 93 بواسطة السلطات الوطنية المعنية بالتعاون مع المسجل وسلطات الدولة المضيفة.\n2 - يضطلع المسجل بكفالة حسن سير النقل، بما في ذلك الإشراف على الشخص أثناء وجوده في عهدة المحكمة.\n3 - يحق للشخص الموجود في عهدة المحكمة إثارة المسائل المتعلقة بظروف احتجازه أمام الدائرة المختصة.\n4 - وفقاً للفقرة 7(ب) من المادة 93، عند تحقق أغراض النقل، يتخذ المسجل ترتيبات لإعادة الشخص الموجود في عهدة المحكمة إلى الدولة الموجه إليها الطلب.", 
+        contentEn: "1. The transfer of a person in custody to the Court in accordance with article 93, paragraph 7, shall be arranged by the national authorities concerned in liaison with the Registrar and the authorities of the host State.\n2. The Registrar shall ensure the proper conduct of the transfer, including the supervision of the person while in the custody of the Court.\n3. A person in the custody of the Court shall have the right to raise matters concerning the conditions of his or her detention with the relevant Chamber.\n4. In accordance with article 93, paragraph 7 (b), when the purposes of the transfer have been fulfilled, the Registrar shall arrange for the return of the person in the custody of the Court to the requested State."
+      },
+      { 
+        id: "rule-193", 
+        number: "193", 
+        titleAr: "النقل المؤقت من دولة التنفيذ", 
+        titleEn: "Temporary transfer from the State of enforcement", 
+        contentAr: "1 - للدائرة التي تنظر في القضية أن تأمر بالنقل المؤقت لشخص من دولة التنفيذ إلى مقر المحكمة لغرض الشهادة أو تقديم مساعدة أخرى للمحكمة. ولا تنطبق أحكام الفقرة 7 من المادة 93.\n2 - يكفل المسجل حسن سير النقل بالتنسيق مع سلطات دولة التنفيذ وسلطات الدولة المضيفة. وعندما تتحقق أغراض النقل، يعيد المسجل الشخص المحكوم عليه إلى دولة التنفيذ.\n3 - يُحتجز الشخص قيد الحبس أثناء وجوده أمام المحكمة. وتُخصم كامل الفترة التي يقضيها رهن الاحتجاز لدى المحكمة من العقوبة المتبقية التي يتعين قضاؤها.", 
+        contentEn: "1. The Chamber that is dealing with the case may order the temporary transfer from the State of enforcement to the seat of the Court of any person sentenced by the Court whose testimony or other assistance is required by the Court. The provisions of article 93, paragraph 7, do not apply.\n2. The Registrar shall ensure the proper conduct of the transfer in liaison with the authorities of the State of enforcement and the authorities of the host State. When the purposes of the transfer have been fulfilled, the Court shall return the sentenced person to the State of enforcement.\n3. The person shall be kept in custody during his or her presence before the Court. The entire period of detention spent at the seat of the Court shall be deducted from the sentence remaining to be served."
+      },
+      { 
+        id: "rule-194", 
+        number: "194", 
+        titleAr: "التعاون المطلوب من المحكمة", 
+        titleEn: "Cooperation requested from the Court", 
+        contentAr: "1 - وفقاً للفقرة 10 من المادة 93، وبما يتسق مع المادة 96، مع مراعاة ما يقتضيه اختلاف الحال، يجوز لدولة ما أن تحيل إلى المحكمة طلباً للتعاون أو المساعدة إلى المسجل، ويكون مصحوباً بترجمة إلى إحدى لغتي العمل بالمحكمة.\n2 - تُحال الطلبات الموصوفة في القاعدة الفرعية 1 إلى المسجل، الذي يرسلها، حسب الاقتضاء، إما إلى المدعي العام أو إلى الدائرة المعنية.\n3 - إذا كانت تدابير الحماية قد اعتُمدت بمعنى المادة 68، يُحال مثل هذا الطلب إلى الدائرة التي أمرت بالتدابير وأيضاً إلى الدائرة المعنية قبل اتخاذ قرار بشأن الطلب.\n4 - إذا كان الطلب يتعلق بأدلة قدمت بسرية بموجب الفقرة 3(هـ) من المادة 54 أو الفقرة 2 من المادة 93، ترفض المحكمة الطلب ما لم يوافق مقدم الأدلة على ذلك.", 
+        contentEn: "1. In accordance with article 93, paragraph 10, and consistent with article 96, mutatis mutandis, a State may transmit to the Court a request for cooperation or assistance to the Registrar, accompanied by a translation into one of the working languages of the Court.\n2. Requests described in sub-rule 1 are to be sent to the Registrar, who shall transmit them, as appropriate, either to the Prosecutor or to the Chamber concerned.\n3. If protective measures within the meaning of article 68 have been adopted, the Prosecutor or Chamber, as appropriate, shall consider the views of the Chamber that ordered the measures as well as those of the relevant victim or witness, before deciding on the request.\n4. If the request relates to documents or evidence as described in article 93, paragraph 10 (b) (ii), the Prosecutor or Chamber, as appropriate, shall obtain the written consent of the relevant State before proceeding with the request."
       },
       { 
         id: "rule-195", 
         number: "195", 
-        titleAr: "الإجراء الخاص بالفقرة 1 من المادة 103", 
-        titleEn: "Procedure for article 103, paragraph 1", 
-        contentAr: "تحدد هذه القاعدة الإجراء الواجب اتباعه عندما تطلب المحكمة من دولة أن تكون دولة تنفيذ.", 
-        contentEn: "This rule specifies the procedure to be followed when the Court requests a State to be a State of enforcement under article 103, paragraph 1."
+        titleAr: "تقديم المعلومات", 
+        titleEn: "Provision of information", 
+        contentAr: "1 - عندما تخطر دولة طرف المحكمة بأن طلباً للتقديم أو المساعدة يثير مشكلة قد تعوق تنفيذه لأن من شأنه أن يقتضي منها الإخلال بالتزاماتها التعاهدية القائمة تجاه دولة أخرى بموجب الفقرة 2 من المادة 98، يتعين على الدولة الطرف الموجه إليها الطلب تقديم جميع المعلومات ذات الصلة لمساعدة المحكمة في تطبيق المادة 98. ويجوز للدولة الثالثة المعنية تقديم معلومات إضافية لمساعدة المحكمة.\n2 - لا يجوز للمحكمة أن تمضي قدماً في طلب لتسليم شخص دون موافقة الدولة المرسلة إذا كان من شأن هذا الطلب، بموجب الفقرة 2 من المادة 98، أن يتعارض مع التزامات الدولة الموجه إليها الطلب بموجب اتفاقات دولية تقتضي موافقة الدولة المرسلة قبل تسليم شخص تابع لتلك الدولة إلى المحكمة.", 
+        contentEn: "1. When a requested State notifies the Court that a request for surrender or assistance raises a problem of execution in respect of article 98, the requested State shall provide any information relevant to assist the Court in the application of article 98. Any concerned third State or sending State may provide additional information to assist the Court.\n2. The Court may not proceed with a request for the surrender of a person without the consent of a sending State if, under article 98, paragraph 2, such a request would be inconsistent with obligations under an international agreement pursuant to which the consent of a sending State is required prior to the surrender of a person of that State to the Court."
       },
       { 
         id: "rule-196", 
         number: "196", 
-        titleAr: "معلومات عن مكان وجود الشخص لتنفيذ العقوبات", 
-        titleEn: "Information on location of the person for enforcement of sentences", 
-        contentAr: "يبلغ المسجل المحكمة بمكان وجود الشخص المحكوم عليه لأغراض تنفيذ العقوبة.", 
-        contentEn: "The Registrar shall inform the Court of the location of the sentenced person for the purposes of enforcing the sentence."
+        titleAr: "إبداء الآراء بشأن الفقرة 1 من المادة 101", 
+        titleEn: "Provision of views on article 101, paragraph 1", 
+        contentAr: "يحق للشخص المقدم إلى المحكمة أن يبدي آراءه بشأن وقوع إخلال ملحوظ بأحكام الفقرة 1 من المادة 101.", 
+        contentEn: "A person surrendered to the Court may provide views on a perceived violation of the provisions of article 101, paragraph 1."
       },
       { 
         id: "rule-197", 
         number: "197", 
-        titleAr: "معلومات عن مكان وجود الشخص لتنفيذ الغرامات أو المصادرة", 
-        titleEn: "Information on location of the person for enforcement of fines, forfeitures or reparation measures", 
-        contentAr: "يتم جمع المعلومات اللازمة لتنفيذ أوامر الغرامات والمصادرة وجبر الضرر.", 
-        contentEn: "Necessary information shall be collected to enforce orders for fines, forfeitures and reparations."
-      },
+        titleAr: "تمديد نطاق التقديم", 
+        titleEn: "Extension of the surrender", 
+        contentAr: "عندما تطلب المحكمة تنازلاً عن الشروط المنصوص عليها في الفقرة 1 من المادة 101، يجوز للدولة الموجه إليها الطلب أن تطلب إلى المحكمة الحصول على آراء الشخص الذي قدم إلى المحكمة وإحالتها إليها.", 
+        contentEn: "When the Court has requested a waiver of the requirements of article 101, paragraph 1, the requested State may ask the Court to obtain and provide the views of the person surrendered to the Court."
+      }
+    ]
+  },
+  {
+    id: "chapter-12",
+    labelAr: "الفصل 12",
+    labelEn: "CHAPTER 12",
+    titleAr: "التنفيذ",
+    titleEn: "Enforcement",
+    articles: [
       { 
         id: "rule-198", 
         number: "198", 
-        titleAr: "الإجراء الخاص بالفقرة 1 من المادة 107", 
-        titleEn: "Procedure for article 107, paragraph 1", 
-        contentAr: "تحدد هذه القاعدة الإجراء الواجب اتباعه عند نقل الشخص إلى دولة التنفيذ.", 
-        contentEn: "This rule specifies the procedure to be followed when transferring a person to the State of enforcement."
+        titleAr: "المراسلات بين المحكمة والدول", 
+        titleEn: "Communications between the Court and States", 
+        contentAr: "ما لم يقتضِ السياق خلاف ذلك، تحكم المادة 87 والقواعد 176 إلى 180، حسب الاقتضاء، المراسلات بين المحكمة والدولة فيما يتعلق بالمسائل المتصلة بتنفيذ العقوبات.", 
+        contentEn: "Unless the context otherwise requires, article 87 and rules 176 to 180 shall govern, as appropriate, communications between the Court and a State on matters relating to enforcement of sentences."
       },
       { 
         id: "rule-199", 
         number: "199", 
-        titleAr: "طلب الملاحقة أو تنفيذ حكم عن سلوك سابق", 
-        titleEn: "Request to prosecute or enforce a sentence for prior conduct", 
-        contentAr: "تحدد هذه القاعدة شروط ملاحقة الشخص عن جرائم ارتكبت قبل نقله إلى دولة التنفيذ.", 
-        contentEn: "This rule outlines the conditions for prosecuting a person for offences committed prior to their transfer to the State of enforcement."
+        titleAr: "الجهاز المسؤول بموجب الباب 10", 
+        titleEn: "Organ responsible under Part 10", 
+        contentAr: "ما لم يُنص على خلاف ذلك في القواعد، تمارس هيئة الرئاسة مهام المحكمة بموجب الباب 10.", 
+        contentEn: "Unless provided otherwise in the Rules, the functions of the Court under Part 10 shall be exercised by the Presidency."
       },
       { 
         id: "rule-200", 
         number: "200", 
-        titleAr: "القرار بشأن طلب الملاحقة أو تنفيذ العقوبة", 
-        titleEn: "Decision on request to prosecute or enforce a sentence", 
-        contentAr: "تتخذ المحكمة قرارها بشأن طلب الملاحقة عن سلوك سابق.", 
-        contentEn: "The Court shall make its decision on the request to prosecute for prior conduct."
+        titleAr: "قائمة دول التنفيذ", 
+        titleEn: "List of States of enforcement", 
+        contentAr: "1 - تُعدّ هيئة الرئاسة وتحتفظ بقائمة للدول التي أبدت استعدادها لقبول الأشخاص المحكوم عليهم. وتُبقي هذه القائمة سرية ما لم تقرر هيئة الرئاسة خلاف ذلك.\n2 - لا تدرج هيئة الرئاسة دولة في القائمة المشار إليها في الفقرة 1(أ) من المادة 103 إذا لم تكن تتفق مع شروط هذا القبول.\n3 - قبل اتخاذ قرار بشأن تعيين دولة للتنفيذ، تستشير هيئة الرئاسة الدولة المعنية بشأن ما إذا كانت مستعدة لقبول الشخص المحكوم عليه.\n4 - يجوز لهيئة الرئاسة أن تبرم ترتيبات ثنائية مع الدول من أجل إرساء إطار لقبول السجناء المحكوم عليهم من قبل المحكمة. وتكون هذه الترتيبات متسقة مع النظام الأساسي.", 
+        contentEn: "1. The Presidency shall establish and maintain a list of States that have indicated their willingness to accept sentenced persons.\n2. The Presidency shall not include a State on the list of States provided for in article 103, paragraph 1 (a), if it does not agree with the conditions that such a State attaches to its acceptance. The Presidency may request any additional information from that State prior to taking a decision.\n3. A State that has attached conditions of acceptance may at any time withdraw such conditions. Any amendments or additions to such conditions shall be subject to confirmation by the Presidency.\n4. A State may at any time inform the Registrar of its withdrawal from the list. Such withdrawal shall not affect the enforcement of the sentences in respect of persons that the State has already accepted.\n5. The Court may enter into bilateral arrangements with States with a view to establishing a framework for the acceptance of prisoners sentenced by the Court. Such arrangements shall be consistent with the Statute."
       },
       { 
         id: "rule-201", 
         number: "201", 
-        titleAr: "معلومات عن التنفيذ", 
-        titleEn: "Information on enforcement", 
-        contentAr: "تقدم دولة التنفيذ معلومات منتظمة للمحكمة عن حالة تنفيذ العقوبة.", 
-        contentEn: "The State of enforcement shall provide regular information to the Court on the status of the enforcement of the sentence."
+        titleAr: "مبادئ التوزيع المنصف", 
+        titleEn: "Principles of equitable distribution", 
+        contentAr: "تشمل مبادئ التوزيع المنصف لأغراض الفقرة 3 من المادة 103 ما يلي:\n(أ) مبدأ التوزيع الجغرافي المنصف؛\n(ب) الحاجة إلى منح كل دولة في القائمة فرصة لقبول الأشخاص المحكوم عليهم؛\n(ج) عدد الأشخاص المحكوم عليهم الذين قبلتهم بالفعل تلك الدولة والدول الأخرى المدرجة في القائمة؛\n(د) أي عوامل أخرى ذات صلة.", 
+        contentEn: "Principles of equitable distribution for purposes of article 103, paragraph 3, shall include:\n(a) The principle of equitable geographical distribution;\n(b) The need to afford each State on the list an opportunity to receive sentenced persons;\n(c) The number of sentenced persons already received by that State and other States of enforcement;\n(d) Any other relevant factors."
       },
       { 
         id: "rule-202", 
         number: "202", 
-        titleAr: "تغيير دولة التنفيذ", 
-        titleEn: "Change of the State of enforcement", 
-        contentAr: "تحدد هذه القاعدة الإجراءات المتبعة عند تغيير الدولة التي يتم فيها تنفيذ العقوبة.", 
-        contentEn: "This rule outlines the procedures for changing the designated State of enforcement."
+        titleAr: "توقيت تسليم الشخص المحكوم عليه إلى دولة التنفيذ", 
+        titleEn: "Timing of delivery of the sentenced person to the State of enforcement", 
+        contentAr: "لا يُسلّم الشخص المحكوم عليه إلى دولة التنفيذ ما لم يصبح قرار الإدانة وقرار فرض العقوبة نهائيين.", 
+        contentEn: "The delivery of a sentenced person from the Court to the designated State of enforcement shall not take place unless the decision on the conviction and the decision on the sentence have become final."
       },
       { 
         id: "rule-203", 
         number: "203", 
-        titleAr: "شروط السجن", 
-        titleEn: "Conditions of imprisonment", 
-        contentAr: "تحدد هذه القاعدة المعايير الواجب توفرها في ظروف السجن في دولة التنفيذ.", 
-        contentEn: "This rule specifies the standards to be met for the conditions of imprisonment in the State of enforcement."
+        titleAr: "آراء الشخص المحكوم عليه", 
+        titleEn: "Views of the sentenced person", 
+        contentAr: "1 - توجه هيئة الرئاسة إشعاراً كتابياً إلى الشخص المحكوم عليه بأنها بصدد تعيين دولة لتنفيذ العقوبة.\n2 - يقدم الشخص المحكوم عليه، في غضون المهلة التي تحددها هيئة الرئاسة، آراءه كتابة إلى هيئة الرئاسة بشأن المسألة. ويجوز لهيئة الرئاسة السماح بتقديم عروض شفوية.", 
+        contentEn: "1. The Presidency shall give notice in writing to the sentenced person that it is addressing the designation of a State of enforcement.\n2. The sentenced person shall, within the time limit that the Presidency shall prescribe, submit in writing his or her views on the question to the Presidency.\n3. The Presidency may allow the sentenced person to make oral presentations."
       },
       { 
         id: "rule-204", 
         number: "204", 
-        titleAr: "الإشراف على تنفيذ العقوبات", 
-        titleEn: "Supervision of enforcement of sentences", 
-        contentAr: "تشرف المحكمة على تنفيذ عقوبات السجن بالتعاون مع دولة التنفيذ.", 
-        contentEn: "The Court shall supervise the enforcement of sentences of imprisonment in cooperation with the State of enforcement."
+        titleAr: "المعلومات المتعلقة بالتعيين", 
+        titleEn: "Information relating to designation", 
+        contentAr: "عندما تخطر هيئة الرئاسة الدولة المعينة بقرارها، تحيل أيضاً المعلومات والوثائق التالية:\n(أ) اسم وجنسية وتاريخ ومكان ميلاد الشخص المحكوم عليه؛\n(ب) نسخة من الحكم النهائي بالإدانة ومن العقوبة المفروضة؛\n(ج) مدة وتاريخ بدء العقوبة والوقت المتبقي الذي يتعين قضاؤه؛\n(د) بعد التشاور مع الشخص المحكوم عليه، أي معلومات ضرورية عن حالة صحته، بما في ذلك أي علاج طبي يتلقاه.", 
+        contentEn: "When the Presidency notifies the designated State of its decision, it shall also transmit the following information and documents:\n(a) The name, nationality, date and place of birth of the sentenced person;\n(b) A copy of the final judgement of conviction and of the sentence imposed;\n(c) The length and commencement date of the sentence and the time remaining to be served;\n(d) After having heard the views of the sentenced person, any necessary information concerning the state of his or her health, including any medical treatment that he or she is receiving."
       },
       { 
         id: "rule-205", 
         number: "205", 
-        titleAr: "النقل لغرض تنفيذ العقوبة", 
-        titleEn: "Transfer for the purpose of enforcement of sentence", 
-        contentAr: "تحدد هذه القاعدة إجراءات نقل الشخص المحكوم عليه من المحكمة إلى دولة التنفيذ.", 
-        contentEn: "This rule details the procedures for transferring a sentenced person from the Court to the State of enforcement."
+        titleAr: "رفض التعيين في قضية معينة", 
+        titleEn: "Rejection of designation in a particular case", 
+        contentAr: "إذا رفضت دولة ما، في قضية معينة، التعيين الذي أجرته هيئة الرئاسة، يجوز لهيئة الرئاسة تعيين دولة أخرى.", 
+        contentEn: "Where a State in a particular case rejects the designation by the Presidency, the Presidency may designate another State."
       },
       { 
         id: "rule-206", 
         number: "206", 
-        titleAr: "الهروب", 
-        titleEn: "Escape", 
-        contentAr: "تحدد هذه القاعدة الإجراءات الواجب اتخاذها في حالة هروب الشخص المحكوم عليه.", 
-        contentEn: "This rule outlines the measures to be taken in the event of an escape of a sentenced person."
+        titleAr: "تسليم الشخص المحكوم عليه إلى دولة التنفيذ", 
+        titleEn: "Delivery of the sentenced person to the State of enforcement", 
+        contentAr: "1 - يبلغ المسجل المدعي العام والشخص المحكوم عليه بتعيين دولة التنفيذ.\n2 - يُسلّم الشخص المحكوم عليه إلى دولة التنفيذ في أقرب وقت ممكن بعد قبول دولة التنفيذ المعينة.\n3 - يكفل المسجل حسن سير عملية التسليم بالتشاور مع سلطات دولة التنفيذ والدولة المضيفة.", 
+        contentEn: "1. The Registrar shall inform the Prosecutor and the sentenced person of the designation of the State of enforcement.\n2. The sentenced person shall be delivered to the State of enforcement as soon as possible after the designated State of enforcement accepts.\n3. The Registrar shall ensure the proper conduct of the delivery of the person in consultation with the authorities of the State of enforcement and the host State."
       },
       { 
         id: "rule-207", 
         number: "207", 
-        titleAr: "طلب العفو أو تخفيف العقوبة أو الإفراج المشروط", 
-        titleEn: "Request for pardon, commutation of sentence or parole", 
-        contentAr: "تحدد هذه القاعدة الإجراءات المتبعة عند تقديم طلب للعفو أو تخفيف العقوبة.", 
-        contentEn: "This rule specifies the procedure for requesting pardon, commutation of sentence or parole."
+        titleAr: "النقل العابر", 
+        titleEn: "Transit", 
+        contentAr: "1 - لا يلزم الحصول على إذن إذا نُقل الشخص المحكوم عليه بطريق الجو ولم يكن من المقرر الهبوط في إقليم دولة العبور. وإذا حدث هبوط غير مقرر في إقليم دولة العبور، تقدم تلك الدولة، بقدر ما تسمح به إجراءاتها بموجب القانون الوطني، بحجز الشخص المحكوم عليه إلى أن يُتلقى طلب للنقل العابر كما هو منصوص عليه في القاعدة الفرعية 2 أو طلب بموجب الفقرة 1(ب) من المادة 89 أو المادة 92.\n2 - بقدر ما تتيح إجراءاتها بموجب القانون الوطني، تأذن الدول الأطراف بعبور شخص محكوم عليه عبر إقليمها وتطبق أحكام الفقرات 3(ب) و(ج) و(هـ) من المادة 89 والمادتين 105 و108 وأي قواعد تتعلق بها، حسب الاقتضاء. وتكون نسخة من الحكم النهائي بالإدانة ومن العقوبة المفروضة مرفقة بطلب النقل العابر.", 
+        contentEn: "1. No authorization is required if the sentenced person is transported by air and no landing is scheduled on the territory of the transit State. If an unscheduled landing occurs on the territory of the transit State, that State shall, to the extent possible under the procedure of national law, keep the sentenced person in custody until a request for transit as provided in sub-rule 2 or a request under article 89, paragraph 1, or article 92 is received.\n2. To the extent possible under the procedure of national law, a State Party shall authorize the transit of a sentenced person through its territory and the provisions of article 89, paragraph 3 (b) and (c), and articles 105 and 108 and any rules relating thereto shall, as appropriate, apply. A copy of the final judgement of conviction and of the sentence imposed shall be attached to such request for transit."
       },
       { 
         id: "rule-208", 
         number: "208", 
-        titleAr: "المراجعة من قبل المحكمة", 
-        titleEn: "Review by the Court", 
-        contentAr: "تراجع المحكمة حالة الشخص المحكوم عليه لغرض النظر في تخفيف العقوبة.", 
-        contentEn: "The Court shall review the situation of the sentenced person for the purpose of considering a reduction of sentence."
+        titleAr: "التكاليف", 
+        titleEn: "Costs", 
+        contentAr: "1 - تتحمل دولة التنفيذ التكاليف العادية المتعلقة بتنفيذ العقوبة في إقليمها.\n2 - تتحمل المحكمة التكاليف الأخرى، بما في ذلك تكاليف نقل الشخص المحكوم عليه وتلك المشار إليها في الفقرة 1(ج) و(د) و(هـ) من المادة 100.", 
+        contentEn: "1. The ordinary costs for the enforcement of the sentence in the territory of the State of enforcement shall be borne by that State.\n2. Other costs, including those for the transport of the sentenced person and those referred to in article 100, paragraph 1 (c), (d) and (e), shall be borne by the Court."
       },
       { 
         id: "rule-209", 
         number: "209", 
-        titleAr: "معايير المراجعة", 
-        titleEn: "Criteria for review", 
-        contentAr: "تحدد هذه القاعدة المعايير التي تراعيها المحكمة عند مراجعة العقوبة.", 
-        contentEn: "This rule specifies the criteria that the Court considers when reviewing a sentence."
+        titleAr: "تغيير تعيين دولة التنفيذ", 
+        titleEn: "Change in designation of State of enforcement", 
+        contentAr: "1 - يجوز لهيئة الرئاسة، في أي وقت، أن تتصرف من تلقاء نفسها أو بناء على طلب الشخص المحكوم عليه أو المدعي العام، على نحو ما هو منصوص عليه في الفقرة 1 من المادة 104. وتقدم مثل هذه الطلبات كتابة وتبين الأسباب التي يُلتمس على أساسها النقل.\n2 - قبل اتخاذ قرار بتغيير دولة التنفيذ، يجوز لهيئة الرئاسة:\n(أ) التماس آراء دولة التنفيذ؛\n(ب) النظر في العروض المكتوبة أو الشفوية التي يقدمها الشخص المحكوم عليه والمدعي العام؛\n(ج) النظر في الآراء المكتوبة أو الشفوية للخبراء فيما يتعلق، ضمن جملة أمور، بالشخص المحكوم عليه؛\n(د) الحصول على جميع المعلومات ذات الصلة من أي مصادر أخرى موثوقة.", 
+        contentEn: "1. The Presidency, acting on its own motion or at the request of the sentenced person or the Prosecutor, may at any time act in accordance with article 104, paragraph 1. Such requests shall be made in writing and shall set out the grounds upon which the transfer is sought.\n2. Before deciding to change the designation of a State of enforcement, the Presidency may:\n(a) Solicit views from the State of enforcement;\n(b) Consider written or oral presentations of the sentenced person and the Prosecutor;\n(c) Consider written or oral expert opinion concerning, inter alia, the sentenced person;\n(d) Obtain any other relevant information from any reliable sources."
       },
       { 
         id: "rule-210", 
         number: "210", 
-        titleAr: "إجراءات المراجعة", 
-        titleEn: "Procedure for review", 
-        contentAr: "تحدد هذه القاعدة الخطوات الإجرائية لمراجعة العقوبة.", 
-        contentEn: "This rule details the procedural steps for reviewing a sentence."
+        titleAr: "الإجراء المتبع لتغيير تعيين دولة التنفيذ", 
+        titleEn: "Procedure for change in the designation of a State of enforcement", 
+        contentAr: "1 - قبل اتخاذ قرار بتغيير تعيين دولة التنفيذ، تخطر هيئة الرئاسة دولة التنفيذ بنية تعيين دولة أخرى وتستفسر من الدولة المحددة وفقاً للقاعدة الفرعية 3 من القاعدة 200.\n2 - تنطبق أحكام القواعد 206 و207، حسب الاقتضاء.\n3 - إذا قررت هيئة الرئاسة عدم تغيير تعيين دولة التنفيذ، فإنها تبلغ الشخص المحكوم عليه، والمدعي العام، والمسجل، ودولة التنفيذ في أقرب وقت ممكن بقرارها وبالأسباب التي استند إليها.", 
+        contentEn: "1. Before deciding to change the designation of a State of enforcement, the Presidency shall inform the State of enforcement of its intention to designate another State and shall inquire of the State identified in accordance with rule 200, sub-rule 3.\n2. The provisions of rules 206 and 207 shall apply, as appropriate.\n3. If the Presidency refuses to change the designation of the State of enforcement, it shall, as soon as possible, inform the sentenced person, the Prosecutor and the Registrar of its decision and of the reasons therefor. It shall also inform the State of enforcement."
       },
       { 
         id: "rule-211", 
         number: "211", 
-        titleAr: "التعاون في تنفيذ الغرامات", 
-        titleEn: "Cooperation in enforcement of fines", 
-        contentAr: "تتعاون الدول مع المحكمة في تنفيذ أوامر الغرامات.", 
-        contentEn: "States shall cooperate with the Court in the enforcement of orders for fines."
+        titleAr: "الإشراف على تنفيذ العقوبات وظروف السجن", 
+        titleEn: "Supervision of enforcement of sentences and conditions of imprisonment", 
+        contentAr: "1 - من أجل إشراف المحكمة على تنفيذ عقوبات السجن، تقوم هيئة الرئاسة بما يلي:\n(أ) تكفل، بالتشاور مع دولة التنفيذ، احترام أحكام الفقرة 3 من المادة 106 عند اتخاذ الترتيبات لتسهيل المراسلات بين الشخص المحكوم عليه والمحكمة بحرية وسرية؛\n(ب) يجوز لها، عند الضرورة، أن تطلب تقديم معلومات أو تقرير أو رأي خبير من دولة التنفيذ أو من أي مصادر موثوقة؛\n(ج) يجوز لها، حسب الاقتضاء، أن تنتدب قاضياً من المحكمة أو موظفاً في المحكمة ليتولى، بعد إخطار دولة التنفيذ، الاجتماع بالشخص المحكوم عليه والاستماع إلى آرائه دون حضور السلطات الوطنية.\n2 - عندما يتلقى الشخص المحكوم عليه مؤهلاً لبرنامج سجن أو لميزة متاحة بموجب القانون الوطني لدولة التنفيذ قد تنطوي على بعض النشاط خارج مرفق السجن، تبلغ دولة التنفيذ هيئة الرئاسة بذلك، مشفوعاً بأي معلومات أو ملاحظات ذات صلة، لتمكين المحكمة من ممارسة إشرافها.", 
+        contentEn: "1. In order to supervise the enforcement of sentences of imprisonment, the Presidency:\n(a) Shall, in consultation with the State of enforcement, ensure that in establishing appropriate arrangements for the exercise by any sentenced person of his or her right to communicate with the Court about the conditions of imprisonment, the provisions of article 106, paragraph 3, shall be respected;\n(b) May, when necessary, request any information, report or expert opinion from the State of enforcement or from any reliable sources;\n(c) May, where appropriate, delegate a judge of the Court or a member of the staff of the Court who will be responsible, after notifying the State of enforcement, for meeting the sentenced person and hearing his or her views, without the presence of national authorities.\n2. When a sentenced person is eligible for a prison programme or benefit available under the domestic law of the State of enforcement which may entail some activity outside the prison facility, the State of enforcement shall communicate that fact to the Presidency, together with any relevant information or observation, to enable the Court to exercise its supervisory function."
       },
       { 
         id: "rule-212", 
         number: "212", 
-        titleAr: "التعاون في تنفيذ أوامر المصادرة", 
-        titleEn: "Cooperation in enforcement of forfeiture orders", 
-        contentAr: "تتعاون الدول مع المحكمة في تنفيذ أوامر المصادرة.", 
-        contentEn: "States shall cooperate with the Court in the enforcement of forfeiture orders."
+        titleAr: "معلومات عن مكان وجود الشخص لأغراض تنفيذ الغرامات والمصادرة وتدابير جبر الضرر", 
+        titleEn: "Information on location of the person for enforcement of fines, forfeitures or reparation measures", 
+        contentAr: "لغرض تنفيذ أوامر الغرامات والمصادرة وتدابير جبر الضرر، يجوز لهيئة الرئاسة، في أي وقت أو قبل ما لا يقل عن 30 يوماً من الموعد المقرر لإتمام العقوبة من قبل الشخص المحكوم عليه، أن تطلب إلى دولة التنفيذ إحالة المعلومات ذات الصلة بشأن اعتزام تلك الدولة الإذن للشخص بالبقاء في إقليمها أو بشأن الموقع الذي تعتزم نقله إليه.", 
+        contentEn: "For the purpose of enforcement of fines and forfeiture measures and of reparation measures ordered by the Court, the Presidency may, at any time or at least 30 days before the scheduled completion of the sentence served by the sentenced person, request the State of enforcement to transmit to it the relevant information concerning the intention of that State to authorize the person to remain in its territory or the location where it intends to transfer the person."
       },
       { 
         id: "rule-213", 
         number: "213", 
-        titleAr: "التعاون في تنفيذ أوامر جبر الضرر", 
-        titleEn: "Cooperation in enforcement of reparation orders", 
-        contentAr: "تتعاون الدول مع المحكمة في تنفيذ أوامر جبر الضرر.", 
-        contentEn: "States shall cooperate with the Court in the enforcement of reparation orders."
+        titleAr: "الإجراء المتعلق بالفقرة 3 من المادة 107", 
+        titleEn: "Procedure for article 107, paragraph 3", 
+        contentAr: "فيما يتعلق بالفقرة 3 من المادة 107، ينطبق الإجراء المبين في القاعدتين 214 و215، حسب الاقتضاء.", 
+        contentEn: "With respect to article 107, paragraph 3, the procedure set out in rules 214 and 215 shall apply, as appropriate."
       },
       { 
         id: "rule-214", 
         number: "214", 
-        titleAr: "توزيع الأصول", 
-        titleEn: "Distribution of assets", 
-        contentAr: "تحدد هذه القاعدة كيفية توزيع الأصول المصادرة على الضحايا.", 
-        contentEn: "This rule specifies how confiscated assets are to be distributed to victims."
+        titleAr: "طلب المقاضاة أو تنفيذ عقوبة عن سلوك سابق", 
+        titleEn: "Request to prosecute or enforce a sentence for prior conduct", 
+        contentAr: "1 - لتطبيق المادة 108، عندما ترغب دولة التنفيذ في مقاضاة الشخص المحكوم عليه أو تنفيذ عقوبة عليه عن أي سلوك ارتكب قبل نقله، تخطر هيئة الرئاسة وتقدم إليها الوثائق التالية:\n(أ) بيان بوقائع القضية وتكييفها القانوني؛\n(ب) نسخة من أي أحكام قانونية واجبة التطبيق، بما في ذلك الأحكام المتعلقة بالتقادم والعقوبات الواجبة التطبيق؛\n(ج) نسخة من أي حكم أو أمر بالقبض أو وثيقة أخرى لها نفس القوة، أو أي وثيقة أخرى تعتزم الدولة إنفاذها؛\n(د) بروتوكول يتضمن آراء الشخص المحكوم عليه التي يتم الحصول عليها بعد إبلاغ الشخص بما فيه الكفاية بالإجراءات.\n2 - في حالة تقديم طلب تسليم من قبل دولة أخرى، تحيل دولة التنفيذ ذلك الطلب بكامله إلى هيئة الرئاسة، مشفوعاً ببروتوكول يتضمن آراء الشخص المحكوم عليه التي تم الحصول عليها بعد إبلاغ الشخص بما فيه الكفاية بطلب التسليم.\n3 - يجوز لهيئة الرئاسة في جميع الحالات التماس أي وثيقة أو معلومات إضافية من دولة التنفيذ أو الدولة طالبة التسليم.\n4 - إذا كان الشخص قد قدم إلى المحكمة من قبل دولة أخرى غير دولة التنفيذ أو الدولة طالبة التسليم، تتشاور هيئة الرئاسة مع الدولة التي قدمت الشخص وتأخذ في الاعتبار أي آراء تحيلها تلك الدولة.", 
+        contentEn: "1. For the application of article 108, when the State of enforcement wishes to prosecute or enforce a sentence against the sentenced person for any conduct engaged in prior to the transfer of the person, it shall notify its intention to the Presidency and transmit to it the following documents:\n(a) A statement of the facts of the case and their legal characterization;\n(b) A copy of any applicable legal provisions, including those concerning the statute of limitation and the applicable penalties;\n(c) A copy of any sentence, warrant of arrest or other document having the same force, or of any other legal writ which the State intends to enforce;\n(d) A protocol containing views of the sentenced person obtained after the person has been informed sufficiently about the proceedings.\n2. In the event of a request for extradition made by another State, the State of enforcement shall transmit the entire request to the Presidency with a protocol containing the views of the sentenced person obtained after informing the person sufficiently about the extradition request.\n3. The Presidency may in all cases solicitate any document or additional information from the State of enforcement or the State requesting the extradition.\n4. If the person was surrendered to the Court by a State other than the State of enforcement or the State seeking extradition, the Presidency shall consult with the State that surrendered the person and take into account any views expressed by that State."
       },
       { 
         id: "rule-215", 
         number: "215", 
-        titleAr: "عدم تعديل أوامر جبر الضرر", 
-        titleEn: "Non-modification of orders for reparation", 
-        contentAr: "لا يجوز تعديل أوامر جبر الضرر بعد صدورها.", 
-        contentEn: "Orders for reparation shall not be modified after they are issued."
+        titleAr: "القرار بشأن طلب المقاضاة أو تنفيذ عقوبة", 
+        titleEn: "Decision on request to prosecute or enforce a sentence", 
+        contentAr: "1 - لا تتخذ هيئة الرئاسة قراراً بالموافقة على مقاضاة الشخص المحكوم عليه أو تنفيذ عقوبة عليه إلا بعد دراسة المعلومات والوثائق المحالة بموجب القاعدة 214، ولها أن تطلب عقد جلسة استماع لهذه الغاية.\n2 - إذا كان الطلب يتعلق بتسليم الشخص إلى دولة ثالثة، لا توافق هيئة الرئاسة على التسليم إلا إذا ضمنت الدولة طالبة التسليم عدم تسليم الشخص المحكوم عليه إلى دولة أخرى لغير السلوك الذي وافقت عليه المحكمة.", 
+        contentEn: "1. The Presidency shall make a determination as soon as possible. This determination shall be notified to all those who have participated in the proceedings.\n2. If the request submitted under sub-rules 1 or 2 of rule 214 concerns the enforcement of a sentence, the sentenced person may serve that sentence in the State designated by the Court to enforce the sentence pronounced by it or be extradited to a third State only after having served the full sentence pronounced by the Court, subject to the provisions of article 110."
       },
       { 
         id: "rule-216", 
         number: "216", 
-        titleAr: "عدم تعديل الأحكام التي فرضت فيها غرامات", 
-        titleEn: "Non-modification of judgements in which fines were imposed", 
-        contentAr: "تظل الأحكام التي تتضمن غرامات نافذة.", 
-        contentEn: "Judgements imposing fines shall remain in force."
+        titleAr: "المعلومات المتعلقة بالتنفيذ", 
+        titleEn: "Information on enforcement", 
+        contentAr: "تطلب هيئة الرئاسة إلى دولة التنفيذ إبلاغها بأي أحداث هامة تتعلق بالشخص المحكوم عليه، وبأي ملاحقة لذلك الشخص عن أحداث لاحقة لنقله.", 
+        contentEn: "The Presidency shall request the State of enforcement to inform it of any important event concerning the sentenced person, and of any prosecution of that person for events subsequent to his or her transfer."
       },
       { 
         id: "rule-217", 
         number: "217", 
-        titleAr: "القرار بشأن التصرف في الممتلكات", 
-        titleEn: "Decision on disposition of property", 
-        contentAr: "تتخذ المحكمة قراراً بشأن كيفية التصرف في الممتلكات المصادرة.", 
-        contentEn: "The Court shall make a decision on how to dispose of confiscated property."
+        titleAr: "التعاون والتدابير لإنفاذ الغرامات أو المصادرة أو أوامر جبر الضرر", 
+        titleEn: "Cooperation and measures for enforcement of fines, forfeiture or reparation orders", 
+        contentAr: "لتنفيذ أوامر الغرامات أو المصادرة أو جبر الضرر، تقوم هيئة الرئاسة، حسب الاقتضاء، بطلب التعاون وتدابير الإنفاذ وفقاً للباب 9، وتحيل نسخاً من الأوامر ذات الصلة إلى أية دولة يظهر أن للشخص المحكوم عليه صلة بها من حيث الممتلكات أو الأصول.", 
+        contentEn: "For the enforcement of orders of fines, forfeiture or reparation, the Presidency shall, as appropriate, seek cooperation and measures for enforcement in accordance with Part 9, as well as transmit copies of relevant orders to any State with which the sentenced person appears to have direct connection by reason of either nationality, domicile or habitual residence or by virtue of the location of the sentenced person’s assets and property or with which the victim has such connection."
       },
       { 
         id: "rule-218", 
         number: "218", 
-        titleAr: "المساعدة في التبليغ", 
-        titleEn: "Assistance in service", 
-        contentAr: "تطلب المحكمة مساعدة الدول في تبليغ المستندات.", 
-        contentEn: "The Court shall request the assistance of States in serving documents."
+        titleAr: "أوامر المصادرة وجبر الضرر", 
+        titleEn: "Orders for forfeiture and reparations", 
+        contentAr: "1 - لتمكين الدول من إنفاذ أمر بالمصادرة، يحدد الأمر هوية الشخص الصادر بحقه الأمر، ويحدد العائدات أو الممتلكات أو الأصول التي أُمر بمصادرتها من قبل المحكمة، وينص على أنه في حال تعذر مصادرة العائدات أو الممتلكات أو الأصول، يُسترد ما يعادل قيمتها.\n2 - في طلب التعاون وتدابير الإنفاذ، تقدم المحكمة أيضاً المعلومات المتاحة عن موقع العائدات والممتلكات والأصول المشمولة بأمر المصادرة.\n3 - لتمكين الدول من إنفاذ أمر بجبر الضرر، يحدد الأمر هوية الشخص الصادر بحقه الأمر، وفيما يتعلق بجبر الضرر ذي الطابع المالي، يحدد هوية الضحايا الذين مُنحوا جبر الضرر الفردي، وعندما يودع مبلغ جبر الضرر في الصندوق الاستئماني، يبين تفاصيل حساب الصندوق الاستئماني لإيداع المبلغ فيه، ويحدد نطاق وشكل جبر الضرر الذي أمرت به المحكمة.", 
+        contentEn: "1. In order to enable States to give effect to an order for forfeiture, the order shall specify:\n(a) The identity of the person against whom the order has been issued;\n(b) The proceeds, property and assets that have been ordered by the Court to be forfeited; and\n(c) That if the State Party is unable to give effect to the order for forfeiture in relation to the specified proceeds, property or assets, it shall take measures to recover the value of the same.\n2. In the request for cooperation and measures for enforcement, the Court shall also provide available information as to the location of the proceeds, property and assets that are covered by the order for forfeiture.\n3. In order to enable States to give effect to an order for reparations, the order shall specify:\n(a) The identity of the person against whom the order has been issued;\n(b) In respect of reparations of a financial nature, the identity of the victims to whom individual reparations have been granted, and, where the award for reparations shall be deposited with the Trust Fund, the particulars of the Trust Fund for the deposit of the award; and\n(c) The scope and nature of the reparations ordered by the Court, including, where applicable, the property and assets for which restitution has been ordered."
       },
       { 
         id: "rule-219", 
         number: "219", 
-        titleAr: "المراجعة لغرض تخفيف العقوبة", 
-        titleEn: "Review for reduction of sentence", 
-        contentAr: "لأغراض المادة 110، الفقرتين 3 و5، تقوم هيئة الرئاسة بتعيين ثلاثة قضاة من دائرة الاستئناف لإجراء المراجعة لتحديد ما إذا كان ينبغي تخفيف العقوبة.", 
-        contentEn: "For the purposes of article 110, paragraphs 3 and 5, the Presidency shall assign three judges of the Appeals Chamber to conduct the review to determine whether the sentence should be reduced."
+        titleAr: "عدم تعديل أوامر جبر الضرر", 
+        titleEn: "Non-modification of orders for reparation", 
+        contentAr: "تبلغ هيئة الرئاسة، عند إحالة نسخ من الأوامر المتعلقة بجبر الضرر إلى الدول الأطراف بموجب القاعدة 217، تلك الدول بأنه عند إنفاذ أمر بجبر الضرر، لا يجوز للسلطات الوطنية تعديل جبر الضرر المحدد من قبل المحكمة، أو نطاق أو مدى أي ضرر أو خسارة أو أذى حددته المحكمة فيه، وعليها تسهيل إنفاذ هذا الأمر.", 
+        contentEn: "The Presidency shall, when transmitting copies of orders for reparations to States Parties under rule 217, inform them that, in giving effect to an order for reparations, the national authorities shall not modify the reparations specified by the Court, the scope or the extent of any damage, loss or injury determined by the Court or the principles stated in the order, and shall facilitate the enforcement of such order."
       },
       { 
         id: "rule-220", 
         number: "220", 
-        titleAr: "إجراءات المراجعة", 
-        titleEn: "Procedure for review", 
-        contentAr: "1 - لغرض المراجعة بموجب المادة 110، الفقرة 3، يرسل المسجل إشعاراً إلى هيئة الرئاسة، وإلى الشخص المحكوم عليه، وإلى المدعي العام، وإلى دولة التنفيذ قبل الموعد المقرر للمراجعة بسبعة أشهر على الأقل.\n2 - للمراجعة بموجب المادة 110، الفقرة 5، يقدم الشخص المحكوم عليه طلباً إلى هيئة الرئاسة مشفوعاً بالأدلة اللازمة.", 
-        contentEn: "1. For the purpose of the review under article 110, paragraph 3, the Registrar shall send a notification to the Presidency, the sentenced person, the Prosecutor and the State of enforcement at least seven months before the date of the review.\n2. For the review under article 110, paragraph 5, the sentenced person shall submit an application to the Presidency accompanied by necessary evidence."
+        titleAr: "عدم تعديل الأحكام التي فُرضت فيها غرامات", 
+        titleEn: "Non-modification of judgements in which fines were imposed", 
+        contentAr: "عند إحالة نسخ من الأحكام التي فُرضت فيها غرامات إلى الدول الأطراف لغرض الإنفاذ وفقاً للمادة 109 والقاعدة 217، تبلغ هيئة الرئاسة تلك الدول بأنه عند إنفاذ الغرامات المفروضة، لا يجوز للسلطات الوطنية تعديلها.", 
+        contentEn: "When transmitting copies of judgements in which fines were imposed to States Parties for the purpose of enforcement in accordance with article 109 and rule 217, the Presidency shall inform them that in enforcing the fines imposed, the national authorities shall not modify them."
       },
       { 
         id: "rule-221", 
         number: "221", 
-        titleAr: "الملاحظات وجلسة الاستماع", 
-        titleEn: "Observations and hearing", 
-        contentAr: "1 - يجوز لقضاة دائرة الاستئناف الثلاثة دعوة الشخص المحكوم عليه، والمدعي العام، ودولة التنفيذ، والضحايا، لتقديم ملاحظات مكتوبة.\n2 - يجوز للقضاة، إذا رأوا ذلك مناسباً، عقد جلسة استماع يحضرها الشخص المحكوم عليه والمدعي العام.", 
-        contentEn: "1. The three judges of the Appeals Chamber may invite the sentenced person, the Prosecutor, the State of enforcement and the victims to submit written observations.\n2. The judges may, if they consider it appropriate, hold a hearing at which the sentenced person and the Prosecutor shall be present."
+        titleAr: "القرار بشأن التصرف في الممتلكات أو الأصول أو تخصيصها", 
+        titleEn: "Decision on disposition or allocation of property or assets", 
+        contentAr: "1 - تقرر هيئة الرئاسة، بعد التشاور، حسب الاقتضاء، مع المدعي العام، والشخص المحكوم عليه، والضحايا أو ممثليهم القانونيين، والسلطات الوطنية للدولة المنفذة أو أي طرف ثالث ذي مصلحة، أو مع ممثلي الصندوق الاستئماني الاستشاري المنصوص عليه في المادة 79، في شأن جميع المسائل المتعلقة بالتصرف في الممتلكات أو الأصول أو تخصيصها مما تحصل عليه المحكمة عملاً بأمر صادر بموجب المادة 75 أو الفقرة 2 من المادة 77.\n2 - في جميع الحالات، عندما تقرر هيئة الرئاسة بشأن التصرف في الممتلكات أو الأصول أو تخصيصها مما هو مملوك للشخص المحكوم عليه، فإنها تعطي الأولوية لتنفيذ التدابير المتعلقة بجبر الضرر للضحايا.", 
+        contentEn: "1. The Presidency shall, after having consulted, as appropriate, with the Prosecutor, the sentenced person, the victims or their legal representatives, the national authorities of the State of enforcement or any relevant third party, or representatives of the Trust Fund provided for in article 79, decide on all matters related to the disposition or allocation of property or assets realized through enforcement of an order of the Court.\n2. In all cases, when the Presidency decides on the disposition or allocation of property or assets belonging to the sentenced person, it shall give priority to the enforcement of measures concerning reparations to victims."
       },
       { 
         id: "rule-222", 
         number: "222", 
-        titleAr: "القرار بشأن تخفيف العقوبة", 
-        titleEn: "Decision on reduction of sentence", 
-        contentAr: "1 - يصدر قضاة دائرة الاستئناف الثلاثة قراراً معللاً بشأن تخفيف العقوبة.\n2 - يبلغ القرار إلى المسجل الذي يقوم بإبلاغ الشخص المحكوم عليه والمدعي العام ودولة التنفيذ.", 
-        contentEn: "1. The three judges of the Appeals Chamber shall issue a reasoned decision on whether to reduce the sentence.\n2. The decision shall be communicated to the Registrar, who shall inform the sentenced person, the Prosecutor and the State of enforcement."
+        titleAr: "المساعدة فيما يتعلق بالتبليغ أو أي تدبير آخر لتيسير التنفيذ", 
+        titleEn: "Assistance for service or any other measure to facilitate the enforcement", 
+        contentAr: "تقدم هيئة الرئاسة المساعدة للدولة في تنفيذ أوامر الغرامات أو المصادرة أو جبر الضرر، بناء على طلبها، وذلك فيما يتعلق بالتبليغ بأي إخطار ذي صلة إلى الشخص المحكوم عليه أو إلى أشخاص آخرين أو فيما يتعلق بأي تدابير أخرى لتيسير تنفيذ الأمر حيثما يكون الشخص المحكوم عليه في إقليم دولة أخرى.", 
+        contentEn: "The Presidency shall assist the State in the enforcement of fines, forfeiture or reparation orders, as requested, with the service of any relevant notification on the sentenced person or any other relevant persons, or the carrying out of any other measures necessary for the enforcement of the order under the procedure of the national law of the enforcing State."
       },
       { 
         id: "rule-223", 
         number: "223", 
         titleAr: "معايير المراجعة لغرض تخفيف العقوبة", 
-        titleEn: "Criteria for review for reduction of sentence", 
+        titleEn: "Criteria for review concerning reduction of sentence", 
         contentAr: "عند إعمال الفقرة 4 من المادة 110، يراعي قضاة دائرة الاستئناف الثلاثة المعايير التالية:\n(أ) سلوك الشخص المحكوم عليه أثناء احتجازه، مما يدل على تنصله بصدق من جريمته؛\n(ب) احتمالات إعادة الاندماج الاجتماعي وإعادة التوطين الناجح للشخص المحكوم عليه؛\n(ج) ما إذا كان الإفراج المبكر عن الشخص المحكوم عليه من شأنه أن يسبب عدم استقرار اجتماعي كبير؛\n(د) أي إجراء هام اتخذه الشخص المحكوم عليه لصالح الضحايا، فضلاً عن أي أثر على الضحايا وعائلاتهم نتيجة للإفراج المبكر؛\n(هـ) الظروف الفردية للشخص المحكوم عليه، بما في ذلك تدهور حالته الصحية البدنية أو العقلية أو تقدمه في السن.", 
-        contentEn: "In the application of article 110, paragraph 4, the three judges of the Appeals Chamber shall take into account the following criteria:\n(a) The conduct of the sentenced person while in detention, which shows a genuine dissociation from his or her crime;\n(b) The prospect of the resocialization and successful resettlement of the sentenced person;\n(c) Whether the early release of the sentenced person would give rise to significant social instability;\n(d) Any significant action taken by the sentenced person for the benefit of the victims as well as any impact on the victims and their families as a result of the early release;\n(e) Individual circumstances of the sentenced person, including a worsening state of physical or mental health or advanced age."
+        contentEn: "In examining the question of the reduction of sentence pursuant to article 110, paragraphs 3 and 5, the three judges of the Appeals Chamber shall take into account the criteria listed in article 110, paragraph 4 (a) and (b), and the following criteria:\n(a) The conduct of the sentenced person while in detention, which shows a genuine dissociation from his or her crime;\n(b) The prospect of the resocialization and successful resettlement of the sentenced person;\n(c) Whether the early release of the sentenced person would give rise to significant social instability;\n(d) Any significant action taken by the sentenced person for the benefit of the victims as well as any impact on the victims and their families as a result of the early release;\n(e) Individual circumstances of the sentenced person, including a worsening state of physical or mental health or advanced age."
       },
       { 
         id: "rule-224", 
         number: "224", 
-        titleAr: "إجراءات المراجعة اللاحقة", 
-        titleEn: "Procedure for subsequent review", 
-        contentAr: "إذا قرر قضاة دائرة الاستئناف الثلاثة عدم تخفيف العقوبة، فإنهم يحددون موعد المراجعة التالية، التي لا يجوز أن تكون قبل مرور ثلاث سنوات، ما لم يكن هناك تغيير كبير في الظروف يبرر مراجعة مبكرة.", 
-        contentEn: "If the three judges of the Appeals Chamber decide not to reduce the sentence, they shall determine when the next review shall take place, which shall not be for at least three years, unless there is a significant change in circumstances warranting an earlier review."
+        titleAr: "إجراءات المراجعة المتعلقة بتخفيف العقوبة", 
+        titleEn: "Procedure for review concerning reduction of sentence", 
+        contentAr: "1 - لتطبيق الفقرة 3 من المادة 110، يعقد ثلاثة قضاة من دائرة الاستئناف تعينهم تلك الدائرة جلسة استماع، ما لم يقرروا خلاف ذلك استثنائياً في قضية معينة ولأسباب معللة. وتُعقد الجلسة بحضور الشخص المحكوم عليه، الذي يجوز أن يساعده محاميه، مع توفير ترجمة شفوية عند الضرورة. ويدعو القضاة الثلاثة المدعي العام، ودولة التنفيذ لأي عقوبة فُرضت بموجب المادة 77 أو المادة 70، والضحايا أو ممثليهم القانونيين الذين شاركوا في الإجراءات، للمشاركة في جلسة الاستماع أو لتقديم ملاحظات مكتوبة.\n2 - يبلغ القضاة الثلاثة قرارهم والأسباب التي استند إليها إلى جميع الذين شاركوا في إجراءات المراجعة في أقرب وقت ممكن.\n3 - لتطبيق الفقرة 5 من المادة 110، يستعرض ثلاثة قضاة من دائرة الاستئناف تعينهم تلك الدائرة مسألة تخفيف العقوبة كل ثلاث سنوات، ما لم يحددوا فترة أقصر في قرار يُتخذ عملاً بالفقرة 3 من المادة 110. وفي حالة حدوث تغيير كبير في الظروف، يجوز لهؤلاء القضاة الثلاثة أن يأذنوا للشخص المحكوم عليه بتقديم طلب لإجراء مراجعة في غضون فترة الثلاث سنوات أو أي فترة أقصر يكون القضاة الثلاثة قد حددوها.", 
+        contentEn: "1. For the application of article 110, paragraph 3, three judges of the Appeals Chamber appointed by that Chamber shall conduct a hearing, unless they decide otherwise in a particular case, for exceptional reasons. The hearing shall be conducted with the sentenced person, who may be assisted by his or her counsel, with interpretation, as may be required. Those three judges shall invite the Prosecutor, the State of enforcement of any penalty under article 77 or any relevant penalty under article 70 and, to the extent possible, the victims or their legal representatives who participated in the proceedings, to participate in the hearing or to submit written observations.\n2. The same three judges shall communicate the decision and the reasons for it to all those who participated in the review proceedings as soon as possible.\n3. For the application of article 110, paragraph 5, three judges of the Appeals Chamber appointed by that Chamber shall review the question of reduction of sentence every three years, unless it establishes a shorter interval in its decision taken pursuant to article 110, paragraph 3. In case of a significant change in circumstances, those three judges may permit the sentenced person to apply for a review within the three-year period or such shorter period as may have been set by the three judges."
       },
       { 
         id: "rule-225", 
         number: "225", 
         titleAr: "تدابير بموجب المادة 111 في حالة الفرار", 
         titleEn: "Measures under article 111 in the event of escape", 
-        contentAr: "1 - إذا فر الشخص المحكوم عليه، تقوم دولة التنفيذ، في أقرب وقت ممكن، بإبلاغ المسجل بأي وسيلة قادرة على تقديم سجل مكتوب. ثم تمضي هيئة الرئاسة قدماً وفقاً للباب 9.\n2 - ومع ذلك، إذا كانت الدولة التي يوجد فيها الشخص دولة طرفاً في النظام الأساسي، فعليها أن تقوم، بناءً على طلب المحكمة وبالتشاور معها، بنقل الشخص إلى المحكمة أو تسليمه للدولة التي كان يقضي فيها عقوبته.", 
-        contentEn: "1. If the sentenced person has escaped, the State of enforcement shall, as soon as possible, advise the Registrar by any medium capable of delivering a written record. The Presidency shall then proceed in accordance with Part 9.\n2. However, if the State in which the person is located is a State Party to the Statute, it shall, at the request of the Court and after consultation with the Court, either surrender the person to the Court or, if the Court so requests, to the State in which he or she was serving the sentence."
+        contentAr: "1 - إذا فر الشخص المحكوم عليه، تقوم دولة التنفيذ، في أقرب وقت ممكن، بإبلاغ المسجل بأي وسيلة قادرة على تقديم سجل مكتوب. ثم تمضي هيئة الرئاسة قدماً وفقاً للباب 9.\n2 - ومع ذلك، إذا كانت الدولة التي يوجد فيها الشخص دولة طرفاً في النظام الأساسي، فعليها أن تقوم، بناءً على طلب المحكمة وبالتشاور معها، بنقل الشخص إلى المحكمة أو تسليمه للدولة التي كان يقضي فيها عقوبته.\n3 - إذا أعيد القبض على الشخص المحكوم عليه ونُقل إلى المحكمة، يجوز للمحكمة نقله إلى الدولة التي كان يقضي فيها عقوبته أو إلى دولة أخرى تعينها وفقاً للمادة 103.", 
+        contentEn: "1. If the sentenced person has escaped, the State of enforcement shall, as soon as possible, advise the Registrar by any medium capable of delivering a written record. The Presidency shall then proceed in accordance with Part 9.\n2. However, if the State in which the person is located is a State Party to the Statute, it shall, at the request of the Court and after consultation with the Court, either surrender the person to the Court or, if the Court so requests, to the State in which he or she was serving the sentence.\n3. If the sentenced person is surrendered to the Court, the Court shall transfer him or her to the State in which he or she was serving the sentence or to another State designated in accordance with article 103."
       }
     ]
   }

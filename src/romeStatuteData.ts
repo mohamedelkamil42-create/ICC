@@ -3,8 +3,8 @@ import { Part } from './RomeStatuteViewer';
 export const romeStatuteParts: Part[] = [
   {
     id: "part-1",
-    labelAr: "الفصل 1",
-    labelEn: "CHAPTER 1",
+    labelAr: "الباب 1",
+    labelEn: "PART 1",
     titleAr: "إنشاء المحكمة",
     titleEn: "ESTABLISHMENT OF THE COURT",
     articles: [
@@ -21,7 +21,7 @@ export const romeStatuteParts: Part[] = [
         number: "2",
         titleAr: "علاقة المحكمة بالأمم المتحدة",
         titleEn: "Relationship of the Court with the United Nations",
-        contentAr: "تُنظّم العلاقة بين المحكمة بالأمم المتحدة بموجب اتفاق تعتمده جمعية الدول الأطراف في هذا النظام الأساسي ويبرمه بعد ذلك رئيس المحكمة نيابة عنها.",
+        contentAr: "تُنظّم العلاقة بين المحكمة والأمم المتحدة بموجب اتفاق تعتمده جمعية الدول الأطراف في هذا النظام الأساسي ويبرمه بعد ذلك رئيس المحكمة نيابة عنها.",
         contentEn: "The Court shall be brought into relationship with the United Nations through an agreement to be approved by the Assembly of States Parties to this Statute and thereafter concluded by the President of the Court on its behalf."
       },
       {
@@ -44,8 +44,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-2",
-    labelAr: "الفصل 2",
-    labelEn: "CHAPTER 2",
+    labelAr: "الباب 2",
+    labelEn: "PART 2",
     titleAr: "الاختصاص والمقبولية والقانون الواجب التطبيق",
     titleEn: "JURISDICTION, ADMISSIBILITY AND APPLICABLE LAW",
     articles: [
@@ -86,8 +86,8 @@ export const romeStatuteParts: Part[] = [
         number: "8 مكرراً",
         titleAr: "جريمة العدوان",
         titleEn: "Crime of aggression",
-        contentAr: "1- لأغراض هذا النظام الأساسي تعني “جريمة العدوان” قيام شخص ما في وضع يتيح له التحكم بالفعل في العمل السياسي أو العسكري للدولة أو توجيهه بتخطيط أو إعداد أو شن أو تنفيذ عمل عدواني من شأنه، بحكم خصائصه وخطورته ونطاقه، أن يعد انتهاكا واضحا لميثاق الأمم المتحدة.",
-        contentEn: "1. For the purpose of this Statute, “crime of aggression” means the planning, preparation, initiation or execution, by a person in a position effectively to exercise control over or to direct the political or military action of a State, of an act of aggression."
+        contentAr: "1 - لأغراض هذا النظام الأساسي، تعني “جريمة العدوان” قيام شخص ما في وضع يتيح له التحكم بالفعل في العمل السياسي أو العسكري للدولة أو توجيهه بتخطيط أو إعداد أو شن أو تنفيذ عمل عدواني من شأنه، بحكم خصائصه وخطورته ونطاقه، أن يعد انتهاكاً واضحاً لميثاق الأمم المتحدة.\n2 - لأغراض الفقرة 1، يعني “العمل العدواني” استعمال القوة المسلحة من جانب دولة ما ضد سيادة دولة أخرى أو سلامتها الإقليمية أو استقلالها السياسي، أو بأية صورة أخرى تتنافى مع ميثاق الأمم المتحدة. وتنطبق صفة العمل العدواني على أي عمل من الأعمال التالية، سواء بإعلان حرب أو بدونه، وذلك طبقاً لقرار الجمعية العامة للأمم المتحدة 3314 (د-29) المؤرخ 14 كانون الأول/ديسمبر 1974:\n(أ) قيام القوات المسلحة لدولة ما بغزو إقليم دولة أخرى أو الهجوم عليه، أو أي احتلال عسكري، ولو كان مؤقتاً، ينجم عن مثل هذا الغزو أو الهجوم، أو أي ضم لإقليم دولة أخرى أو لجزء منه باستعمال القوة؛\n(ب) قيام القوات المسلحة لدولة ما بقصف إقليم دولة أخرى بالقنابل، أو استعمال دولة ما أية أسلحة ضد إقليم دولة أخرى؛\n(ج) ضرب حصار على موانئ دولة ما أو على سواحلها من جانب القوات المسلحة لدولة أخرى؛\n(د) قيام القوات المسلحة لدولة ما بمهاجمة القوات المسلحة البرية أو البحرية أو الجوية أو الأسطولين التجاريين البحري والجوي لدولة أخرى؛\n(ه) قيام دولة ما باستعمال قواتها المسلحة الموجودة داخل إقليم دولة أخرى بموافقة الدولة المضيفة، على وجه يتعارض مع الشروط التي ينص عليها الاتفاق، أو أي تمديد لوجودها في ذلك الإقليم إلى ما بعد نهاية الاتفاق؛\n(و) سماح دولة ما وضعت إقليمها تحت تصرف دولة أخرى بأن تستخدمه هذه الدولة الأخرى لارتكاب عمل عدواني ضد دولة ثالثة؛\n(ز) إرسال عصابات أو جماعات مسلحة أو قوات غير نظامية أو مرتزقة من جانب دولة ما أو باسمها تقوم بأعمال من أعمال القوة المسلحة ضد دولة أخرى تكون من الخطورة بحيث تعادل الأعمال المذكورة أعلاه، أو اشتراك الدولة بدور ملموس في ذلك.",
+        contentEn: "1. For the purpose of this Statute, “crime of aggression” means the planning, preparation, initiation or execution, by a person in a position effectively to exercise control over or to direct the political or military action of a State, of an act of aggression which, by its character, gravity and scale, constitutes a manifest violation of the Charter of the United Nations.\n2. For the purpose of paragraph 1, “act of aggression” means the use of armed force by a State against the sovereignty, territorial integrity or political independence of another State, or in any other manner inconsistent with the Charter of the United Nations. Any of the following acts, regardless of a declaration of war, shall, in accordance with United Nations General Assembly resolution 3314 (XXIX) of 14 December 1974, qualify as an act of aggression:\n(a) The invasion or attack by the armed forces of a State of the territory of another State, or any military occupation, however temporary, resulting from such invasion or attack, or any annexation by the use of force of the territory of another State or part thereof;\n(b) Bombardment by the armed forces of a State against the territory of another State or the use of any weapons by a State against the territory of another State;\n(c) The blockade of the ports or coasts of a State by the armed forces of another State;\n(d) An attack by the armed forces of a State on the land, sea or air forces, or marine and air fleets of another State;\n(e) The use of armed forces of one State which are within the territory of another State with the agreement of the receiving State, in contravention of the conditions provided for in the agreement or any extension of their presence in such territory beyond the termination of the agreement;\n(f) The action of a State in allowing its territory, which it has placed at the disposal of another State, to be used by that other State for perpetrating an act of aggression against a third State;\n(g) The sending by or on behalf of a State of armed bands, groups, irregulars or mercenaries, which carry out acts of armed force against another State of such gravity as to amount to the acts listed above, or its substantial involvement therein."
       },
       {
         id: "art-9",
@@ -110,7 +110,7 @@ export const romeStatuteParts: Part[] = [
         number: "11",
         titleAr: "الاختصاص الزمني",
         titleEn: "Jurisdiction ratione temporis",
-        contentAr: "1 - ليس للمحكمة اختصاص إلا فيما يتعلق بالجرائم التي ترتكب بعد بدء نفاذ هذا النظام الأساسي.\n2 - إذا أصبحت دولة من الدول طرفا في هذا النظام الأساسي بعد بدء نفاذه، لا يجوز للمحكمة أن تمارس اختصاصها إلا فيما يتعلق بالجرائم التي تُرتكب بعـد بـدء نفـاذ هذا النظام بالنسبة لتلك الدولـة، ما لم تكن الدولة قد أصدرت إعلانا بموجب الفقرة 3 من المادة 12.",
+        contentAr: "1 - ليس للمحكمة اختصاص إلا فيما يتعلق بالجرائم التي ترتكب بعد بدء نفاذ هذا النظام الأساسي.\n2 - إذا أصبحت دولة من الدول طرفا في هذا النظام الأساسي بعد بدء نفاذه، لا يجوز للمحكمة أن تمارس اختصاصها إلا فيما يتعلق بالجرائم التي تُرتكب بعد بدء نفاذ هذا النظام بالنسبة لتلك الدولة، ما لم تكن الدولة قد أصدرت إعلانا بموجب الفقرة 3 من المادة 12.",
         contentEn: "1. The Court has jurisdiction only with respect to crimes committed after the entry into force of this Statute.\n2. If a State becomes a Party to this Statute after its entry into force, the Court may exercise its jurisdiction only with respect to crimes committed after its entry into force for that State."
       },
       {
@@ -144,6 +144,22 @@ export const romeStatuteParts: Part[] = [
         titleEn: "Prosecutor",
         contentAr: "1 - للمدعي العام أن يباشر التحقيقات من تلقاء نفسه على أساس المعلومات المتعلقة بجرائم تدخل في اختصاص المحكمة.\n2 - يقوم المدعي العام بتحليل جدية المعلومات المتلقاة. ويجوز له، لهذا الغرض، التماس معلومات إضافية من الدول، أو أجهزة الأمم المتحدة، أو المنظمات الحكومية الدولية أو غير الحكومية.\n3 - إذا استنتج المدعي العام أن هناك أساسا معقولا للشروع في إجراء تحقيق، يقدم إلى الدائرة التمهيدية طلبا للإذن بإجراء تحقيق.",
         contentEn: "1. The Prosecutor may initiate investigations proprio motu on the basis of information on crimes within the jurisdiction of the Court."
+      },
+      {
+        id: "art-15-bis",
+        number: "15 مكرراً",
+        titleAr: "ممارسة الاختصاص على جريمة العدوان (إحالة من دولة، أو بمبادرة من المدعي العام)",
+        titleEn: "Exercise of jurisdiction over the crime of aggression (State referral, proprio motu)",
+        contentAr: "1 - للمحكمة أن تمارس اختصاصها على جريمة العدوان وفقاً للفقرتين (أ) و(ج) من المادة 13، رهناً بأحكام هذه المادة.\n4 - للمحكمة، وفقاً للمادة 12، أن تمارس اختصاصها على جريمة عدوان تنجم عن عمل عدواني ترتكبه دولة طرف، ما لم تكن الدولة الطرف قد أعلنت مسبقاً أنها لا تقبل هذا الاختصاص عن طريق إيداع إعلان لدى المسجل.\n5 - فيما يتعلق بدولة ليست طرفاً في هذا النظام الأساسي، لا تمارس المحكمة اختصاصها على جريمة العدوان عندما يرتكبها رعايا تلك الدولة أو ترتكب في إقليمها.\n6 - إذا استنتج المدعي العام أن هناك أساساً معقولاً للشروع في تحقيق في جريمة عدوان، يتأكد أولاً مما إذا كان مجلس الأمن قد اتخذ قراراً بوقوع عمل عدواني ارتكبته الدولة المعنية.\n8 - في حالة عدم اتخاذ هذا القرار في غضون ستة أشهر بعد تاريخ الإبلاغ، يجوز للمدعي العام أن يباشر التحقيق في جريمة العدوان، بشرط أن تكون الشعبة التمهيدية قد أذنت ببدء التحقيق في جريمة العدوان وفقاً للإجراءات الواردة في المادة 15.",
+        contentEn: "1. The Court may exercise jurisdiction over the crime of aggression in accordance with article 13, paragraphs (a) and (c), subject to the provisions of this article.\n4. The Court may, in accordance with article 12, exercise jurisdiction over a crime of aggression, arising from an act of aggression committed by a State Party, unless that State Party has previously declared that it does not accept such jurisdiction by lodging a declaration with the Registrar.\n5. In respect of a State that is not a party to this Statute, the Court shall not exercise its jurisdiction over the crime of aggression when committed by that State’s nationals or on its territory.\n6. Where the Prosecutor concludes that there is a reasonable basis to proceed with an investigation in respect of a crime of aggression, he or she shall first ascertain whether the Security Council has made a determination of an act of aggression committed by the State concerned.\n8. Where no such determination is made within six months after the date of notification, the Prosecutor may proceed with the investigation in respect of a crime of aggression, provided that the Pre-Trial Division has authorized the commencement of the investigation in respect of a crime of aggression in accordance with the procedure contained in article 15."
+      },
+      {
+        id: "art-15-ter",
+        number: "15 مكرراً ثانياً",
+        titleAr: "ممارسة الاختصاص على جريمة العدوان (إحالة من مجلس الأمن)",
+        titleEn: "Exercise of jurisdiction over the crime of aggression (Security Council referral)",
+        contentAr: "1 - للمحكمة أن تمارس اختصاصها على جريمة العدوان وفقاً للفقرة (ب) من المادة 13، رهناً بأحكام هذه المادة.\n2 - لا يجوز للمحكمة أن تمارس اختصاصها إلا على جرائم العدوان التي تُرتكب بعد سنة واحدة من تصديق أو قبول ثلاثين دولة طرفاً للتعديلات.\n3 - تمارس المحكمة اختصاصها على جريمة العدوان وفقاً لهذه المادة رهناً بقرار يُتخذ بعد 1 كانون الثاني/يناير 2017 بنفس أغلبية الدول الأطراف المطلوبة لاعتماد تعديل على النظام الأساسي.\n4 - القرار الذي يحدد بموجبه جهاز خارج المحكمة وقوع عمل عدواني لا يخل باستنتاجات المحكمة ذاتها بموجب هذا النظام الأساسي.",
+        contentEn: "1. The Court may exercise jurisdiction over the crime of aggression in accordance with article 13, paragraph (b), subject to the provisions of this article.\n2. The Court may exercise jurisdiction only with respect to crimes of aggression committed one year after the ratification or acceptance of the amendments by thirty States Parties.\n3. The Court shall exercise jurisdiction over the crime of aggression in accordance with this article, subject to a decision to be taken after 1 January 2017 by the same majority of States Parties as is required for the adoption of an amendment to the Statute.\n4. A determination of an act of aggression by an organ outside the Court shall be without prejudice to the Court’s own findings under this Statute."
       },
       {
         id: "art-16",
@@ -197,8 +213,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-3",
-    labelAr: "الفصل 3",
-    labelEn: "CHAPTER 3",
+    labelAr: "الباب 3",
+    labelEn: "PART 3",
     titleAr: "المبادئ العامة للقانون الجنائي",
     titleEn: "GENERAL PRINCIPLES OF CRIMINAL LAW",
     articles: [
@@ -302,8 +318,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-4",
-    labelAr: "الفصل 4",
-    labelEn: "CHAPTER 4",
+    labelAr: "الباب 4",
+    labelEn: "PART 4",
     titleAr: "تكوين المحكمة وإدارتها",
     titleEn: "COMPOSITION AND ADMINISTRATION OF THE COURT",
     articles: [
@@ -328,8 +344,8 @@ export const romeStatuteParts: Part[] = [
         number: "36",
         titleAr: "مؤهلات القضاة وترشيحهم وانتخابهم",
         titleEn: "Qualifications, nomination and election of judges",
-        contentAr: "1 - رهنا بأحكام الفقرة 2، يكون عدد قضاة المحكمة 18 قاضيا.\n3 - (أ) يختار القضاة من بين أشخاص يتمتعون بسيرة أخلاقية رفيعة وبالنزاهة والاستقامة.",
-        contentEn: "1. Subject to the provisions of paragraph 2, there shall be 18 judges of the Court."
+        contentAr: "1 - رهناً بأحكام الفقرة 2، يكون عدد قضاة المحكمة 18 قاضياً.\n2 - (أ) لهيئة الرئاسة، متصرفة نيابة عن المحكمة، أن تقترح زيادة عدد القضاة المحدد في الفقرة 1، مبينة الأسباب التي تجعل ذلك ضرورياً ومناسباً.\n3 - (أ) يُختار القضاة من بين أشخاص يتمتعون بسيرة أخلاقية رفيعة وبالنزاهة والاستقامة وتتوافر فيهم المؤهلات المطلوبة في دولهم للتعيين في أعلى المناصب القضائية.\n(ب) يجب في كل مرشح للانتخاب لعضوية المحكمة أن تتوافر لديه كفاءة مشهود بها في مجال القانون الجنائي والإجراءات الجنائية، أو في مجالات القانون الدولي ذات الصلة، وإجادة تامة وطلاقة في إحدى لغتي العمل بالمحكمة على الأقل.",
+        contentEn: "1. Subject to the provisions of paragraph 2, there shall be 18 judges of the Court.\n2. (a) The Presidency, acting on behalf of the Court, may propose an increase in the number of judges specified in paragraph 1, indicating the reasons why this is considered necessary and appropriate.\n3. (a) The judges shall be chosen from among persons of high moral character, impartiality and integrity who possess the qualifications required in their respective States for appointment to the highest judicial offices.\n(b) Every candidate for election to the Court shall have established competence in criminal law and procedure, or in relevant areas of international law, and have an excellent knowledge of and be fluent in at least one of the working languages of the Court."
       },
       {
         id: "art-37",
@@ -350,9 +366,9 @@ export const romeStatuteParts: Part[] = [
       {
         id: "art-39",
         number: "39",
-        titleAr: "الشُعب والدواير",
+        titleAr: "الشُعب والدوائر",
         titleEn: "Chambers",
-        contentAr: "1 - تنظم المحكمة وظائفها القضائية في شُعب هي: شعبة الاستئناف، الشعبة الابتدائية، والشعبة التمهيدية.",
+        contentAr: "1 - تنظم المحكمة وظائفها القضائية في شُعب هي: شعبة الاستئناف، والشعبة الابتدائية، والشعبة التمهيدية.",
         contentEn: "1. As soon as possible after the election of the judges, the Court shall organize itself into the appropriate divisions."
       },
       {
@@ -406,9 +422,9 @@ export const romeStatuteParts: Part[] = [
       {
         id: "art-46",
         number: "46",
-        titleAr: "النحي عن المنصب",
+        titleAr: "العزل من المنصب",
         titleEn: "Removal from office",
-        contentAr: "1 - ينحى القاضي أو المدعي العام أو نائبه أو المسجل أو نائبه من منصبه إذا تقرر أنه ارتكب سوء سلوك جسيما أو إخلالا جسيما بواجباته.",
+        contentAr: "1 - يُعزل القاضي أو المدعي العام أو نائبه أو المسجل أو نائبه من منصبه إذا تقرر أنه ارتكب سوء سلوك جسيما أو إخلالا جسيما بواجباته.",
         contentEn: "1. A judge, the Prosecutor, a Deputy Prosecutor, the Registrar or the Deputy Registrar shall be removed from office if a decision is made in accordance with paragraph 2."
       },
       {
@@ -463,8 +479,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-5",
-    labelAr: "الفصل 5",
-    labelEn: "CHAPTER 5",
+    labelAr: "الباب 5",
+    labelEn: "PART 5",
     titleAr: "التحقيق والمقاضاة",
     titleEn: "INVESTIGATION AND PROSECUTION",
     articles: [
@@ -538,14 +554,14 @@ export const romeStatuteParts: Part[] = [
         titleAr: "اعتماد التهم قبل المحاكمة",
         titleEn: "Confirmation of the charges before trial",
         contentAr: "1 - تعقد الدائرة التمهيدية، في غضون فترة زمنية معقولة بعد تقديم الشخص إلى المحكمة أو مثوله طواعية أمامها، جلسة لاعتماد التهم التي يسعى المدعي العام إلى إجراء المحاكمة على أساسها.",
-        contentEn: "1. Subject to the provisions of paragraph 2, within a reasonable person after the person's surrender or voluntary appearance before the Court, the Pre-Trial Chamber shall hold a hearing to confirm the charges."
+        contentEn: "1. Subject to the provisions of paragraph 2, within a reasonable time after the person's surrender or voluntary appearance before the Court, the Pre-Trial Chamber shall hold a hearing to confirm the charges."
       }
     ]
   },
   {
     id: "part-6",
-    labelAr: "الفصل 6",
-    labelEn: "CHAPTER 6",
+    labelAr: "الباب 6",
+    labelEn: "PART 6",
     titleAr: "المحاكمة",
     titleEn: "THE TRIAL",
     articles: [
@@ -594,7 +610,7 @@ export const romeStatuteParts: Part[] = [
         number: "67",
         titleAr: "حقوق المتهم",
         titleEn: "Rights of the accused",
-        contentAr: "1 - عند البت في أي تهمة، يكون للمتـهم الحـق فـي أن يحاكـم محاكمـة علنية، مع مراعاة أحكام هذا النظام الأساسي، وفي أن تكون المحاكمة منصفة وتجري على نحو نزيه.\n2 - للمتهم الحق في أن يبلغ فورا وبالتفصيل بطبيعة التهمة الموجهة إليه، وفي أن يمنح الوقت الكافي لتحضير دفاعه، وفي أن يحاكم دون تأخير غير مبرر، وفي أن يستعين بمحام من اختياره.",
+        contentAr: "1 - عند البت في أي تهمة، يكون للمتهم الحق في أن يحاكم محاكمة علنية، مع مراعاة أحكام هذا النظام الأساسي، وفي أن تكون المحاكمة منصفة وتجري على نحو نزيه.\n2 - للمتهم الحق في أن يبلغ فورا وبالتفصيل بطبيعة التهمة الموجهة إليه، وفي أن يمنح الوقت الكافي لتحضير دفاعه، وفي أن يحاكم دون تأخير غير مبرر، وفي أن يستعين بمحام من اختياره.",
         contentEn: "1. In the determination of any charge, the accused shall be entitled to a public hearing, having regard to the provisions of this Statute, to a fair hearing conducted impartially."
       },
       {
@@ -673,8 +689,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-7",
-    labelAr: "الفصل 7",
-    labelEn: "CHAPTER 7",
+    labelAr: "الباب 7",
+    labelEn: "PART 7",
     titleAr: "العقوبات",
     titleEn: "PENALTIES",
     articles: [
@@ -707,15 +723,15 @@ export const romeStatuteParts: Part[] = [
         number: "80",
         titleAr: "عدم المساس بالتطبيق الوطني للعقوبات والقوانين الوطنية",
         titleEn: "Non-prejudice to national application of penalties and national laws",
-        contentAr: "ليس في هذا الباب من النظام الأساسي ما يمس بتطبيق الدول للعقوبات المنصوص عليها في قوانينها الوطنية.",
-        contentEn: "Nothing in this Part affecting the application of penalties by States, nor the law of States which does not provide for penalties prescribed in this Part."
+        contentAr: "ليس في هذا الباب من النظام الأساسي ما يمس بتطبيق الدول للعقوبات المنصوص عليها في قوانينها الوطنية، ولا بقوانين الدول التي لا تنص على العقوبات المحددة في هذا الباب.",
+        contentEn: "Nothing in this Part affects the application by States of penalties prescribed by their national law, nor the law of States which do not provide for penalties prescribed in this Part."
       }
     ]
   },
   {
     id: "part-8",
-    labelAr: "الفصل 8",
-    labelEn: "CHAPTER 8",
+    labelAr: "الباب 8",
+    labelEn: "PART 8",
     titleAr: "الاستئناف وإعادة النظر",
     titleEn: "APPEAL AND REVISION",
     articles: [
@@ -763,8 +779,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-9",
-    labelAr: "الفصل 9",
-    labelEn: "CHAPTER 9",
+    labelAr: "الباب 9",
+    labelEn: "PART 9",
     titleAr: "التعاون الدولي والمساعدة القضائية",
     titleEn: "INTERNATIONAL COOPERATION AND JUDICIAL ASSISTANCE",
     articles: [
@@ -773,7 +789,7 @@ export const romeStatuteParts: Part[] = [
         number: "86",
         titleAr: "الالتزام العام بالتعاون",
         titleEn: "General obligation to cooperate",
-        contentAr: "تتعاون الدول الأطراف، وفقا لأحكام هذا النظام الأساسي، تعاونــا تاما مع المحكمة فيما تجريه، في إطار اختصاص المحكمة، من تحقيقات في الجرائم والمقاضاة عليها.",
+        contentAr: "تتعاون الدول الأطراف، وفقا لأحكام هذا النظام الأساسي، تعاونا تاما مع المحكمة فيما تجريه، في إطار اختصاص المحكمة، من تحقيقات في الجرائم والمقاضاة عليها.",
         contentEn: "States Parties shall, in accordance with the provisions of this Statute, cooperate fully with the Court in its investigation and prosecution of crimes."
       },
       {
@@ -908,8 +924,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-10",
-    labelAr: "الفصل 10",
-    labelEn: "CHAPTER 10",
+    labelAr: "الباب 10",
+    labelEn: "PART 10",
     titleAr: "التنفيذ",
     titleEn: "ENFORCEMENT",
     articles: [
@@ -989,8 +1005,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-11",
-    labelAr: "الفصل 11",
-    labelEn: "CHAPTER 11",
+    labelAr: "الباب 11",
+    labelEn: "PART 11",
     titleAr: "جمعية الدول الأطراف",
     titleEn: "ASSEMBLY OF STATES PARTIES",
     articles: [
@@ -1006,8 +1022,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-12",
-    labelAr: "الفصل 12",
-    labelEn: "CHAPTER 12",
+    labelAr: "الباب 12",
+    labelEn: "PART 12",
     titleAr: "التمويل",
     titleEn: "FINANCING",
     articles: [
@@ -1063,8 +1079,8 @@ export const romeStatuteParts: Part[] = [
   },
   {
     id: "part-13",
-    labelAr: "الفصل 13",
-    labelEn: "CHAPTER 13",
+    labelAr: "الباب 13",
+    labelEn: "PART 13",
     titleAr: "الأحكام الختامية",
     titleEn: "FINAL CLAUSES",
     articles: [

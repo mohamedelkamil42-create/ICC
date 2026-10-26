@@ -1,6 +1,8 @@
 // Comprehensive Bilingual Legal Lexicon & Foundational Vocabulary for the ICC Rome Statute
 // Guarantees that any legal or common word in the texts has an accurate Arabic and English translation and context.
 
+import { iccCorpusVocabulary } from './iccCorpusVocabulary';
+
 export interface LegalVocabEntry {
   en: string;
   ar: string;
@@ -10,7 +12,7 @@ export interface LegalVocabEntry {
   categoryEn?: string;
 }
 
-export const comprehensiveLegalVocab: Record<string, LegalVocabEntry> = {
+const baseComprehensiveLegalVocab: Record<string, LegalVocabEntry> = {
 shall: {
     en: "Shall",
     ar: "يجب / يتعين",
@@ -3370,84 +3372,133 @@ shall: {
   satisfied: { en: "Satisfied", ar: "يتحقق من / يقتنع", explanationAr: "تأكد الدائرة من استيفاء الشروط القانونية (مثل المادة 19).", explanationEn: "The Chamber's confirmation that legal conditions have been met." },
 };
 
+export const comprehensiveLegalVocab: Record<string, LegalVocabEntry> = {
+  ...iccCorpusVocabulary,
+  ...baseComprehensiveLegalVocab,
+};
+
 /**
  * Normalization helper for English dictionary lookup
  */
 export function normalizeKey(str: string): string {
   return str
     .toLowerCase()
-    .replace(/[()[\]{}"'״”؛،,:.;?!]/g, '')
+    .replace(/[()[\]{}"'“”‘’״؛،,:.;?!«»]/g, '')
     .trim();
 }
 
+function normalizeArKey(s: string): string {
+  return s
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, '') // remove tashkeel & tatweel
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/ؤ/g, 'و')
+    .replace(/ئ/g, 'ي')
+    .replace(/[()[\]{}"'“”‘’״؛،,:.;?!«»]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Pre-indexed O(1) lookup maps for instantaneous 0ms resolution
+const enVocabIndex = new Map<string, LegalVocabEntry>();
+const arVocabIndex = new Map<string, LegalVocabEntry>();
+
+(function buildVocabIndices() {
+  for (const [key, entry] of Object.entries(comprehensiveLegalVocab)) {
+    const normKey = normalizeKey(key);
+    if (normKey && !enVocabIndex.has(normKey)) {
+      enVocabIndex.set(normKey, entry);
+    }
+
+    // Index English forms (full, without parentheticals, and slashed options)
+    const baseEn = entry.en.replace(/\s*\([^)]*\)/g, '').trim();
+    const enVariants = [entry.en, baseEn, ...baseEn.split(/\s*\/\s*/)];
+    for (const v of enVariants) {
+      const nk = normalizeKey(v);
+      if (nk && !enVocabIndex.has(nk)) {
+        enVocabIndex.set(nk, entry);
+      }
+    }
+
+    // Index Arabic forms (full, without parentheticals, slashed options, and with/without ال)
+    if (/[\u0600-\u06FF]/.test(key)) {
+      const nkAr = normalizeArKey(key);
+      if (nkAr && !arVocabIndex.has(nkAr)) {
+        arVocabIndex.set(nkAr, entry);
+      }
+    }
+
+    const baseAr = entry.ar.replace(/\s*\([^)]*\)/g, '').trim();
+    const arOptions = [entry.ar, baseAr, ...baseAr.split(/\s*(?:\/|أو)\s*/)];
+    for (const opt of arOptions) {
+      const cleanAr = normalizeArKey(opt);
+      if (!cleanAr) continue;
+      if (!arVocabIndex.has(cleanAr)) arVocabIndex.set(cleanAr, entry);
+      const withAl = cleanAr.startsWith('ال') ? cleanAr : 'ال' + cleanAr;
+      const withoutAl = cleanAr.startsWith('ال') && cleanAr.length > 3 ? cleanAr.slice(2) : cleanAr;
+      if (!arVocabIndex.has(withAl)) arVocabIndex.set(withAl, entry);
+      if (!arVocabIndex.has(withoutAl)) arVocabIndex.set(withoutAl, entry);
+
+      // Also index bare verb if followed by a preposition (e.g. 'ينص على' -> 'ينص', 'يتعلق ب' -> 'يتعلق')
+      const words = cleanAr.split(' ');
+      if (words.length === 2 && ['علي', 'ب', 'عن', 'في', 'الي', 'من', 'مع', 'ل'].includes(words[1])) {
+        if (!arVocabIndex.has(words[0])) arVocabIndex.set(words[0], entry);
+      }
+    }
+  }
+
+  // Second pass: index head-nouns of compound Arabic entries if not already mapped
+  for (const entry of Object.values(comprehensiveLegalVocab)) {
+    const baseAr = entry.ar.replace(/\s*\([^)]*\)/g, '').trim();
+    const firstOption = baseAr.split(/\s*\/\s*/)[0].trim();
+    const words = normalizeArKey(firstOption).split(' ');
+    if (words.length >= 2 && words[0].length >= 3) {
+      const head = words[0];
+      const headWithoutAl = head.startsWith('ال') && head.length > 3 ? head.slice(2) : head;
+      const headWithAl = head.startsWith('ال') ? head : 'ال' + head;
+      if (!arVocabIndex.has(head)) arVocabIndex.set(head, entry);
+      if (!arVocabIndex.has(headWithoutAl)) arVocabIndex.set(headWithoutAl, entry);
+      if (!arVocabIndex.has(headWithAl)) arVocabIndex.set(headWithAl, entry);
+    }
+  }
+})();
+
 /**
- * High-speed lookup across the comprehensive legal dictionary
+ * High-speed O(1) lookup across the comprehensive legal dictionary
  */
 export function lookupComprehensiveVocab(word: string, targetIsArabic: boolean): LegalVocabEntry | null {
-  const norm = normalizeKey(word);
-  if (!norm) return null;
+  if (!word) return null;
 
-  // 1. Direct key match
-  if (comprehensiveLegalVocab[norm]) {
-    return comprehensiveLegalVocab[norm];
-  }
+  if (targetIsArabic) {
+    const norm = normalizeKey(word);
+    if (!norm) return null;
 
-  // 2. Singular/plural match (strip trailing 's', 'es', 'ies')
-  if (norm.endsWith('ies') && norm.length > 5) {
-    const sing = norm.slice(0, -3) + 'y';
-    if (comprehensiveLegalVocab[sing]) return comprehensiveLegalVocab[sing];
-  } else if (norm.endsWith('es') && norm.length > 4) {
-    const sing = norm.slice(0, -2);
-    if (comprehensiveLegalVocab[sing]) return comprehensiveLegalVocab[sing];
-  } else if (norm.endsWith('s') && !norm.endsWith('ss') && norm.length > 3) {
-    const sing = norm.slice(0, -1);
-    if (comprehensiveLegalVocab[sing]) return comprehensiveLegalVocab[sing];
-  }
+    if (enVocabIndex.has(norm)) return enVocabIndex.get(norm)!;
 
-  // 3. Search in values
-  for (const entry of Object.values(comprehensiveLegalVocab)) {
-    if (normalizeKey(entry.en) === norm) {
-      return entry;
+    if (norm.endsWith('ies') && norm.length > 5) {
+      const sing = norm.slice(0, -3) + 'y';
+      if (enVocabIndex.has(sing)) return enVocabIndex.get(sing)!;
+    } else if (norm.endsWith('es') && norm.length > 4) {
+      const sing = norm.slice(0, -2);
+      if (enVocabIndex.has(sing)) return enVocabIndex.get(sing)!;
+    } else if (norm.endsWith('s') && !norm.endsWith('ss') && norm.length > 3) {
+      const sing = norm.slice(0, -1);
+      if (enVocabIndex.has(sing)) return enVocabIndex.get(sing)!;
     }
-  }
+    return null;
+  } else {
+    const cleanAr = normalizeArKey(word);
+    if (!cleanAr) return null;
 
-  // 4. Reverse Arabic search - exact whole term or option with article handling
-  if (!targetIsArabic) {
-    const normalizeAr = (s: string) => s
-      .replace(/[\u064B-\u065F\u0670\u0640]/g, '') // remove tashkeel
-      .replace(/[أإآٱ]/g, 'ا')
-      .replace(/ة/g, 'ه')
-      .replace(/ى/g, 'ي')
-      .replace(/ؤ/g, 'و')
-      .replace(/ئ/g, 'ي')
-      .trim();
-
-    const cleanAr = normalizeAr(word);
+    if (arVocabIndex.has(cleanAr)) return arVocabIndex.get(cleanAr)!;
     const withAl = cleanAr.startsWith('ال') ? cleanAr : 'ال' + cleanAr;
-    const withoutAl = (cleanAr.startsWith('ال') && cleanAr.length > 3) ? cleanAr.slice(2) : cleanAr;
+    if (arVocabIndex.has(withAl)) return arVocabIndex.get(withAl)!;
+    const withoutAl = cleanAr.startsWith('ال') && cleanAr.length > 3 ? cleanAr.slice(2) : cleanAr;
+    if (arVocabIndex.has(withoutAl)) return arVocabIndex.get(withoutAl)!;
 
-    // Direct match with or without article
-    for (const entry of Object.values(comprehensiveLegalVocab)) {
-      const entryArClean = normalizeAr(entry.ar);
-      if (entryArClean === cleanAr || entryArClean === withAl || entryArClean === withoutAl) {
-        return entry;
-      }
-      // Check slashed alternatives
-      const options = entry.ar.split(/\s*\/\s*/).map(p => normalizeAr(p.trim()));
-      if (options.includes(cleanAr) || options.includes(withAl) || options.includes(withoutAl)) {
-        return entry;
-      }
-    }
-
-    // Compound phrase head-noun check
-    for (const entry of Object.values(comprehensiveLegalVocab)) {
-      const entryArClean = entry.ar.replace(/[\u064B-\u065F\u0670\u0640]/g, '').trim();
-      if (entryArClean.startsWith(cleanAr + ' ') || entryArClean.startsWith(withAl + ' ')) {
-        return entry;
-      }
-    }
+    return null;
   }
-
-  return null;
 }
+
 

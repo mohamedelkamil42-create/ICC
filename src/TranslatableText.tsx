@@ -35,6 +35,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
   const containerRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const lastOpenTimeRef = useRef<number>(0);
+  const requestIdRef = useRef<number>(0);
 
   // Close popup gracefully on genuine outside click/pointerdown and stop active speech
   useEffect(() => {
@@ -139,8 +140,12 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
     setCustomSelection(null);
 
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const clean = term.trim();
+    const clean = term
+      .replace(/^[()[\]{}"'“”‘’«»״”؛،,:.;?!\-_]+|[()[\]{}"'“”‘’«»״”؛،,:.;?!\-_]+$/g, '')
+      .trim();
     if (!clean) return;
+
+    const currentReqId = ++requestIdRef.current;
 
     // 1. Instant 0ms resolution via lightweight offline legal translation engine and persistent cache
     const offlineResult = translateLegalTermOffline(clean, isAr);
@@ -159,22 +164,24 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
       translation: resolvedTranslation,
     });
     
-    // Only show loading state if it is not a certified lexicon match and we are online
-    const needsFetch = !offlineResult.isCertified && typeof navigator !== 'undefined' && navigator.onLine;
-    setIsLoadingExplanation(needsFetch);
+    // Only show loading state if we don't yet have a certified translation and we are online
+    const needsFetch = (!offlineResult.isCertified || !resolvedTranslation) && typeof navigator !== 'undefined' && navigator.onLine;
+    setIsLoadingExplanation(needsFetch && !resolvedTranslation);
 
     // 2. Background async enrichment if online and term was not certified from local corpus
     if (needsFetch) {
       fetchLegalTranslation(clean, text, isAr)
         .then((result) => {
+          if (requestIdRef.current !== currentReqId) return;
           if (result && result.translation) {
             setApiResult(result);
+            setSelectedTerm(prev => prev ? { ...prev, localTranslation: result.translation } : prev);
           }
           setIsLoadingExplanation(false);
         })
         .catch(() => {
+          if (requestIdRef.current !== currentReqId) return;
           setIsLoadingExplanation(false);
-          // Offline result already active
         });
     }
   }, [text]);
@@ -318,7 +325,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
       }
 
       if (isEnglish) {
-        const tokens = node.split(/(\s+|[.,;!?:()"'/«»\[\]\-_]+)/);
+        const tokens = node.split(/(\s+|[.,;!?:()"'“”‘’/«»\[\]_]+)/);
         tokens.forEach((t) => {
           if (/[a-zA-Z]{2,}/.test(t)) {
             finalNodes.push(
@@ -336,7 +343,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
           }
         });
       } else {
-        const tokens = node.split(/([\s،؛.:؟!()"'/«»\[\]\-_]+)/);
+        const tokens = node.split(/([\s،؛.:؟!()"'“”‘’/«»\[\]\-_]+)/);
         tokens.forEach((t) => {
           if (/[\u0600-\u06FF]{2,}/.test(t)) {
             finalNodes.push(
@@ -538,8 +545,8 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
                       );
                     }
 
-                    // Loading / resolving state - NEVER return Arabic for Arabic input!
-                    return targetIsArabic ? 'جاري استرجاع المعنى...' : 'Translating...';
+                    // Final guaranteed target-language fallback when offline and rare term
+                    return targetIsArabic ? 'مصطلح قانوني في نظام روما الأساسي' : 'ICC Statutory Legal Term';
                   })()}
                 </span>
                 {selectedTerm.isArabic && (apiResult?.translation || selectedTerm.localTranslation) && (

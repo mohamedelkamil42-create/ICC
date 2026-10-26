@@ -39,7 +39,7 @@ export const allPhrasesListAr: string[] = [];
 export function normalizeEnglish(str: string): string {
   return str
     .toLowerCase()
-    .replace(/[()[\]{}"'״”؛،,:.;?!]/g, ' ')
+    .replace(/[()[\]{}"'“”‘’«»״”؛،,:.;?!]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -55,54 +55,195 @@ export function normalizeArabic(str: string): string {
     .replace(/ى/g, 'ي')
     .replace(/ؤ/g, 'و')
     .replace(/ئ/g, 'ي')
-    .replace(/[()[\]{}"'״”؛،,:.;?!]/g, ' ')
+    .replace(/[()[\]{}"'“”‘’«»״”؛،,:.;?!]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
 /**
- * Safe Arabic word normalization without truncating or mutilating root letters.
- * Preserves the entire word and only checks safe whole-word prefixes.
+ * Comprehensive Arabic morphological variant generator for ICC statutory terminology.
+ * Handles proclitics (و، ف، ب، ل، ك، س، ال), enclitic pronouns (ها، ه، هم، هما، هن، كم، نا),
+ * feminine/nisba endings (ة/ه، ية/يه), tanween alef (ا), sound plurals (ات، ين، ون),
+ * duals (ان، تان، تين), and verb conjugations (تـ -> يـ، ت، وا، ون).
  */
 export function getSafeArabicVariants(word: string): string[] {
   const norm = normalizeArabic(word);
-  const variants = new Set<string>([norm]);
+  const variants = new Set<string>();
+  if (!norm) return [];
+  variants.add(norm);
 
-  if (norm.length < 3) return Array.from(variants);
+  if (norm.length < 2) return Array.from(variants);
 
-  // 1. Basic 'ال' handling
-  if (norm.startsWith('ال') && norm.length >= 4) {
-    variants.add(norm.slice(2));
-  } else if (!norm.startsWith('ال') && norm.length >= 3) {
-    variants.add('ال' + norm);
-  }
+  const baseStems = new Set<string>([norm]);
 
-  // 2. Multi-letter & Nested Prefixes (handled before single letters to catch longer matches)
-  const multiPrefixes = ['بال', 'وال', 'كال', 'لل', 'فلل', 'وبال', 'وفل', 'ولل'];
+  // Helper to register a stem with and without definite article 'ال'
+  const addStemAndAl = (s: string) => {
+    if (!s || s.length < 2) return;
+    baseStems.add(s);
+    variants.add(s);
+    if (s.startsWith('ال') && s.length >= 4) {
+      baseStems.add(s.slice(2));
+      variants.add(s.slice(2));
+    } else if (!s.startsWith('ال') && s.length >= 2) {
+      baseStems.add('ال' + s);
+      variants.add('ال' + s);
+    }
+  };
+
+  addStemAndAl(norm);
+
+  // 1. Multi-letter & Nested Proclitics
+  const multiPrefixes = [
+    'وبال', 'فبال', 'وكال', 'فكال', 'ولل', 'فلل',
+    'وال', 'فال', 'بال', 'كال', 'لل',
+    'وس', 'فس', 'سي', 'ست', 'سن', 'لي', 'لت', 'ول', 'فل', 'وب', 'فب', 'وك', 'فك'
+  ];
   for (const mp of multiPrefixes) {
-    if (norm.startsWith(mp) && norm.length > mp.length + 2) {
+    if (norm.startsWith(mp) && norm.length >= mp.length + 2) {
       const stem = norm.slice(mp.length);
-      variants.add(stem);
-      variants.add('ال' + stem);
+      addStemAndAl(stem);
+      if (mp === 'سي' || mp === 'لي' || mp === 'ست' || mp === 'لت') {
+        // Restore imperfect verb prefix 'ي' or 'ت'
+        addStemAndAl('ي' + stem);
+        addStemAndAl('ت' + stem);
+      }
     }
   }
 
-  // 3. Common single-letter prefixes: ب, و, ف, ل, ك
-  const singlePrefixes = ['ب', 'و', 'ف', 'ل', 'ك'];
+  // 2. Common single-letter proclitics: و, ف, ب, ل, ك, س
+  const singlePrefixes = ['و', 'ف', 'ب', 'ل', 'ك', 'س'];
   for (const p of singlePrefixes) {
-    if (norm.startsWith(p) && norm.length >= 4) {
+    if (norm.startsWith(p) && norm.length >= 3) {
       const stripped = norm.slice(1);
-      variants.add(stripped);
-      
-      // Handle nested single prefixes (e.g., 'وبـ')
+      addStemAndAl(stripped);
+
       for (const p2 of singlePrefixes) {
-        if (stripped.startsWith(p2) && stripped.length >= 4) {
-          variants.add(stripped.slice(1));
+        if (stripped.startsWith(p2) && stripped.length >= 3) {
+          addStemAndAl(stripped.slice(1));
         }
       }
+    }
+  }
 
-      if (!stripped.startsWith('ال') && stripped.length >= 3) {
-        variants.add('ال' + stripped);
+  // 3. Process suffixes (enclitic pronouns, plurals, duals, feminine/nisba, verb inflections) on all baseStems
+  const currentStems = Array.from(baseStems);
+  const encliticPronouns = ['هما', 'كم', 'هم', 'هن', 'ها', 'نا', 'ه', 'ك', 'ي'];
+
+  const addWithAl = (s: string) => {
+    if (!s || s.length < 2) return;
+    variants.add(s);
+    if (s.startsWith('ال') && s.length >= 4) {
+      variants.add(s.slice(2));
+    } else if (!s.startsWith('ال') && s.length >= 2) {
+      variants.add('ال' + s);
+    }
+  };
+
+  for (const stem of currentStems) {
+    // 3a. Enclitic pronouns (e.g., محاكمته -> محاكمة، سلطتها -> سلطة، مرتكبيها -> مرتكب، أحكامها -> أحكام)
+    for (const pron of encliticPronouns) {
+      if (stem.endsWith(pron) && stem.length >= pron.length + 2) {
+        const noPron = stem.slice(0, -pron.length);
+        addWithAl(noPron);
+
+        // If feminine taa marbuta turned into 'ت' before pronoun (e.g., محاكمت + ه -> محاكمه)
+        if (noPron.endsWith('ت') && noPron.length >= 3) {
+          addWithAl(noPron.slice(0, -1) + 'ه');
+          // Also check feminine plural -ات before pronoun (e.g., إجراءاتها -> إجراءات -> إجراء)
+          if (noPron.endsWith('ات') && noPron.length >= 4) {
+            const singFromAt = noPron.slice(0, -2);
+            addWithAl(singFromAt);
+            addWithAl(singFromAt + 'ه');
+          }
+        }
+
+        // If sound masculine plural lost 'ن' before pronoun (e.g., مرتكبيها -> مرتكبي -> مرتكب، ممثليهم -> ممثل)
+        if ((noPron.endsWith('ي') || noPron.endsWith('و')) && noPron.length >= 4) {
+          addWithAl(noPron.slice(0, -1));
+          addWithAl(noPron.slice(0, -1) + 'ون');
+          addWithAl(noPron.slice(0, -1) + 'ين');
+        }
+
+        // If verb + pronoun (e.g., تقررها -> تقرر -> يقرر)
+        if (!noPron.startsWith('ال') && noPron.startsWith('ت') && noPron.length >= 4) {
+          variants.add('ي' + noPron.slice(1));
+        }
+      }
+    }
+
+    // 3b. Sound feminine plural '-ات' (e.g., الإجراءات -> الإجراء، السلطات -> السلطة، الجلسات -> الجلسة)
+    if (stem.endsWith('ات') && stem.length >= 4) {
+      const sing = stem.slice(0, -2);
+      addWithAl(sing);
+      addWithAl(sing + 'ه');
+      if (sing.endsWith('ي') && sing.length >= 3) {
+        addWithAl(sing.slice(0, -1));
+      }
+    }
+
+    // 3c. Duals '-تين', '-تان', '-ان' (e.g., المادتين -> المادة، الفقرتين -> الفقرة، الدولتان -> الدولة، الطرفين -> الطرف)
+    if ((stem.endsWith('تين') || stem.endsWith('تان')) && stem.length >= 5) {
+      const femSing = stem.slice(0, -3) + 'ه';
+      addWithAl(femSing);
+      addWithAl(stem.slice(0, -3));
+    }
+    if (stem.endsWith('ان') && stem.length >= 4) {
+      const sing = stem.slice(0, -2);
+      addWithAl(sing);
+      addWithAl(sing + 'ه');
+    }
+
+    // 3d. Sound masculine plural / dual oblique '-ين', '-ون' (e.g., المتهمين -> المتهم، القانونيين -> القانوني)
+    if ((stem.endsWith('ين') || stem.endsWith('ون')) && stem.length >= 4) {
+      const sing = stem.slice(0, -2);
+      addWithAl(sing);
+      addWithAl(sing + 'ه');
+      if (!sing.startsWith('ال') && sing.startsWith('ت') && sing.length >= 4) {
+        variants.add('ي' + sing.slice(1));
+      }
+    }
+
+    // 3e. Feminine & Nisba endings '-يه', '-ه' (e.g., القضائية -> القضائي -> القضاء، مقبولة -> مقبول)
+    if (stem.endsWith('يه') && stem.length >= 4) {
+      addWithAl(stem.slice(0, -1)); // masculine nisba 'ي'
+      addWithAl(stem.slice(0, -2)); // base noun
+      addWithAl(stem.slice(0, -2) + 'ه');
+    } else if (stem.endsWith('ه') && stem.length >= 4) {
+      addWithAl(stem.slice(0, -1)); // masculine adjective/noun without 'ة'
+    }
+
+    // 3f. Tanween fatha '-ا' / '-يا' (e.g., وفقا -> وفق، قانونا -> قانون، شخصيا -> شخصي، فورا -> فور)
+    if (stem.endsWith('ا') && stem.length >= 4) {
+      const noAlef = stem.slice(0, -1);
+      addWithAl(noAlef);
+      addWithAl(noAlef + 'ه');
+      if (noAlef.endsWith('ي') && noAlef.length >= 3) {
+        addWithAl(noAlef.slice(0, -1));
+        addWithAl(noAlef.slice(0, -1) + 'ه');
+      }
+    }
+
+    // 3g. Verb conjugations (feminine/plural imperfect & past tense)
+    if (!stem.startsWith('ال') && stem.length >= 4) {
+      // Feminine/2nd-person imperfect 'تـ...' -> masculine 'يـ...' (e.g., تقرر -> يقرر، تأمر -> يأمر، تطلب -> يطلب)
+      if (stem.startsWith('ت') || stem.startsWith('ن') || stem.startsWith('ا')) {
+        variants.add('ي' + stem.slice(1));
+      }
+      // Feminine past tense '...ت' -> masculine past or imperfect (e.g., قررت -> قرر / يقرر، كانت -> كان، صدرت -> صدر)
+      if (stem.endsWith('ت')) {
+        const pastMasc = stem.slice(0, -1);
+        variants.add(pastMasc);
+        variants.add('ي' + pastMasc);
+      }
+      // Plural past tense '...وا' -> masculine past or imperfect (e.g., ارتكبوا -> ارتكب / يرتكب، قدموا -> قدم)
+      if (stem.endsWith('وا') && stem.length >= 5) {
+        const pastMasc = stem.slice(0, -2);
+        variants.add(pastMasc);
+        variants.add('ي' + pastMasc);
+      }
+      // Subjunctive/Jussive dropped 'وا' -> '...و' or imperfect '...ي'
+      if (stem.startsWith('ي') && stem.length >= 4) {
+        variants.add(stem.slice(1)); // past tense from imperfect (e.g., يقرر -> قرر)
       }
     }
   }
@@ -111,17 +252,185 @@ export function getSafeArabicVariants(word: string): string[] {
 }
 
 /**
- * Safe English word inflections without mutilating root letters
+ * Comprehensive English morphological variant generator for ICC statutory terminology.
+ * Handles plurals (-ies, -ves, -es, -s), past/participles (-ied, -ed, doubled consonants),
+ * gerunds (-ying, -ing), adverbs (-ily, -ally, -ly), nominalizations (-ation, -tion, -ment),
+ * and UK/US spelling normalization (defence/defense, authorise/authorize, etc.).
  */
 export function getSafeEnglishVariants(word: string): string[] {
   const norm = normalizeEnglish(word);
-  const variants = new Set<string>([norm]);
+  const variants = new Set<string>();
+  if (!norm) return [];
+  variants.add(norm);
 
-  if (norm.endsWith('ies') && norm.length > 5) variants.add(norm.slice(0, -3) + 'y');
-  if (norm.endsWith('es') && norm.length > 4) variants.add(norm.slice(0, -2));
-  if (norm.endsWith('s') && !norm.endsWith('ss') && norm.length > 3) variants.add(norm.slice(0, -1));
+  const addCandidate = (w: string) => {
+    if (w && w.length >= 2) variants.add(w);
+  };
+
+  // 1. UK <-> US Spelling Normalization
+  const ukUsPairs: [RegExp, string][] = [
+    [/defence/g, 'defense'],
+    [/defense/g, 'defence'],
+    [/offence/g, 'offense'],
+    [/offense/g, 'offence'],
+    [/licence/g, 'license'],
+    [/license/g, 'licence'],
+    [/practise/g, 'practice'],
+    [/centre/g, 'center'],
+    [/center/g, 'centre'],
+    [/wilful/g, 'willful'],
+    [/willful/g, 'wilful'],
+    [/fulfilment/g, 'fulfillment'],
+    [/fulfillment/g, 'fulfilment'],
+    [/fulfil/g, 'fulfill'],
+    [/instalment/g, 'installment'],
+    [/installment/g, 'instalment'],
+    [/our\b/g, 'or'],
+    [/ours\b/g, 'ors'],
+    [/oured\b/g, 'ored'],
+    [/ouring\b/g, 'oring'],
+    [/ise\b/g, 'ize'],
+    [/ize\b/g, 'ise'],
+    [/ises\b/g, 'izes'],
+    [/izes\b/g, 'ises'],
+    [/ised\b/g, 'ized'],
+    [/ized\b/g, 'ised'],
+    [/ising\b/g, 'izing'],
+    [/izing\b/g, 'ising'],
+    [/isation/g, 'ization'],
+    [/ization/g, 'isation'],
+    [/yse\b/g, 'yze'],
+    [/yze\b/g, 'yse'],
+    [/ysed\b/g, 'yzed'],
+    [/yzed\b/g, 'ysed'],
+  ];
+
+  for (const [pattern, replacement] of ukUsPairs) {
+    if (pattern.test(norm)) {
+      addCandidate(norm.replace(pattern, replacement));
+    }
+  }
+
+  // Hyphenated word alternatives
+  if (norm.includes('-')) {
+    addCandidate(norm.replace(/-/g, ' '));
+    addCandidate(norm.replace(/-/g, ''));
+  }
+
+  const baseForms = Array.from(variants);
+
+  for (const form of baseForms) {
+    // 2. Plurals (-ies, -ves, -es, -s)
+    if (form.endsWith('ies') && form.length > 4) {
+      addCandidate(form.slice(0, -3) + 'y');
+    }
+    if (form.endsWith('ves') && form.length > 4) {
+      addCandidate(form.slice(0, -3) + 'f');
+      addCandidate(form.slice(0, -3) + 'fe');
+    }
+    if (form.endsWith('es') && form.length > 3) {
+      addCandidate(form.slice(0, -2));
+      addCandidate(form.slice(0, -1));
+    }
+    if (form.endsWith('s') && !form.endsWith('ss') && !form.endsWith('us') && !form.endsWith('is') && form.length > 3) {
+      addCandidate(form.slice(0, -1));
+    }
+
+    // 3. Past Tense & Past Participles (-ied, -ed)
+    if (form.endsWith('ied') && form.length > 4) {
+      addCandidate(form.slice(0, -3) + 'y');
+    }
+    if (form.endsWith('ed') && form.length > 4) {
+      const stem = form.slice(0, -2);
+      const stemE = form.slice(0, -1); // e.g., decided -> decide, accused -> accuse
+      addCandidate(stem);
+      addCandidate(stemE);
+      // Doubled consonant before -ed (e.g., committed -> commit, referred -> refer, submitted -> submit)
+      if (stem.length >= 3 && stem[stem.length - 1] === stem[stem.length - 2]) {
+        addCandidate(stem.slice(0, -1));
+      }
+    }
+
+    // 4. Present Participles & Gerunds (-ying, -ing)
+    if (form.endsWith('ying') && form.length > 5) {
+      addCandidate(form.slice(0, -4) + 'ie');
+      addCandidate(form.slice(0, -3));
+    }
+    if (form.endsWith('ing') && form.length > 5) {
+      const stem = form.slice(0, -3);
+      addCandidate(stem);
+      addCandidate(stem + 'e'); // e.g., making -> make, issuing -> issue, ruling -> rule
+      if (stem.length >= 3 && stem[stem.length - 1] === stem[stem.length - 2]) {
+        addCandidate(stem.slice(0, -1)); // e.g., committing -> commit, sitting -> sit
+      }
+    }
+
+    // 5. Adverbs (-ily, -ally, -bly, -ly)
+    if (form.endsWith('ily') && form.length > 5) {
+      addCandidate(form.slice(0, -3) + 'y'); // voluntarily -> voluntary
+    }
+    if (form.endsWith('ally') && form.length > 6) {
+      addCandidate(form.slice(0, -2)); // criminally -> criminal
+      addCandidate(form.slice(0, -4)); // specifically -> specific
+    }
+    if (form.endsWith('bly') && form.length > 5) {
+      addCandidate(form.slice(0, -1) + 'e'); // reasonably -> reasonable, forcibly -> forcible
+    }
+    if (form.endsWith('ly') && form.length > 4) {
+      const stem = form.slice(0, -2);
+      addCandidate(stem);
+      addCandidate(stem + 'e'); // duly -> due, truly -> true, wholly -> whole
+    }
+
+    // 6. Common Nominalizations & Agent Nouns (-ation, -tion, -ment, -ity, -ness, -or, -er)
+    if (form.endsWith('ation') && form.length > 7) {
+      addCandidate(form.slice(0, -5));
+      addCandidate(form.slice(0, -5) + 'e');
+      addCandidate(form.slice(0, -3) + 'e');
+    }
+    if (form.endsWith('tion') && form.length > 6) {
+      addCandidate(form.slice(0, -4));
+      addCandidate(form.slice(0, -3) + 'e');
+    }
+    if (form.endsWith('ment') && form.length > 6) {
+      addCandidate(form.slice(0, -4));
+      addCandidate(form.slice(0, -4) + 'e');
+    }
+    if (form.endsWith('ity') && form.length > 6) {
+      addCandidate(form.slice(0, -3));
+      addCandidate(form.slice(0, -3) + 'e');
+    }
+    if ((form.endsWith('or') || form.endsWith('er')) && form.length > 5) {
+      const stem = form.slice(0, -2);
+      addCandidate(stem);
+      addCandidate(stem + 'e');
+      if (stem.length >= 3 && stem[stem.length - 1] === stem[stem.length - 2]) {
+        addCandidate(stem.slice(0, -1));
+      }
+    }
+  }
 
   return Array.from(variants);
+}
+
+// Helper to index Arabic term with and without definite article 'ال'
+function indexArabicEntry(rawAr: string, termObj: LocalLegalTerm) {
+  const normAr = normalizeArabic(rawAr);
+  if (!normAr) return;
+  if (!arExactMap.has(normAr)) arExactMap.set(normAr, termObj);
+  if (normAr.startsWith('ال') && normAr.length >= 4) {
+    const noAl = normAr.slice(2);
+    if (!arExactMap.has(noAl)) arExactMap.set(noAl, termObj);
+  } else if (!normAr.startsWith('ال') && normAr.length >= 2) {
+    const withAl = 'ال' + normAr;
+    if (!arExactMap.has(withAl)) arExactMap.set(withAl, termObj);
+  }
+}
+
+function indexEnglishEntry(rawEn: string, termObj: LocalLegalTerm) {
+  const normEn = normalizeEnglish(rawEn);
+  if (!normEn) return;
+  if (!enExactMap.has(normEn)) enExactMap.set(normEn, termObj);
 }
 
 // Self-initializing index builder
@@ -148,11 +457,8 @@ export function getSafeEnglishVariants(word: string): string[] {
             explanationEn: `Official legal term recognized by the ICC under "${catEn}".`,
           };
 
-          const fullNormEn = normalizeEnglish(termObj.en);
-          const fullNormAr = normalizeArabic(termObj.ar);
-
-          enExactMap.set(fullNormEn, termObj);
-          arExactMap.set(fullNormAr, termObj);
+          indexEnglishEntry(termObj.en, termObj);
+          indexArabicEntry(termObj.ar, termObj);
 
           // Register multi-word legal expressions separately (indivisible units)
           if (termObj.en.includes(' ') && !multiWordPhrasesEn.includes(termObj.en)) {
@@ -166,17 +472,21 @@ export function getSafeEnglishVariants(word: string): string[] {
           const baseEn = termObj.en.replace(/\s*\([^)]*\)/g, '').trim();
           const baseAr = termObj.ar.replace(/\s*\([^)]*\)/g, '').trim();
           if (baseEn && baseEn !== termObj.en) {
-            enExactMap.set(normalizeEnglish(baseEn), termObj);
+            indexEnglishEntry(baseEn, termObj);
             if (baseEn.includes(' ') && !multiWordPhrasesEn.includes(baseEn)) {
               multiWordPhrasesEn.push(baseEn);
             }
           }
           if (baseAr && baseAr !== termObj.ar) {
-            arExactMap.set(normalizeArabic(baseAr), termObj);
+            indexArabicEntry(baseAr, termObj);
             if (baseAr.includes(' ') && !multiWordPhrasesAr.includes(baseAr)) {
               multiWordPhrasesAr.push(baseAr);
             }
           }
+
+          // Index slashed options
+          baseEn.split(/\s*\/\s*/).forEach(opt => indexEnglishEntry(opt, termObj));
+          baseAr.split(/\s*\/\s*/).forEach(opt => indexArabicEntry(opt, termObj));
 
           if (!enSeen.has(termObj.en)) {
             enSeen.add(termObj.en);
@@ -203,13 +513,12 @@ export function getSafeEnglishVariants(word: string): string[] {
         explanationAr: lex.explanationAr,
       };
 
-      const normEn = normalizeEnglish(lex.en);
-      const normKey = normalizeEnglish(key);
-      const normAr = normalizeArabic(lex.ar);
+      indexEnglishEntry(lex.en, termObj);
+      indexEnglishEntry(key, termObj);
+      indexArabicEntry(lex.ar, termObj);
 
-      if (!enExactMap.has(normEn)) enExactMap.set(normEn, termObj);
-      if (!enExactMap.has(normKey)) enExactMap.set(normKey, termObj);
-      if (!arExactMap.has(normAr)) arExactMap.set(normAr, termObj);
+      lex.en.split(/\s*\/\s*/).forEach(opt => indexEnglishEntry(opt, termObj));
+      lex.ar.split(/\s*\/\s*/).forEach(opt => indexArabicEntry(opt, termObj));
 
       if (termObj.en.includes(' ') && !multiWordPhrasesEn.includes(termObj.en)) {
         multiWordPhrasesEn.push(termObj.en);
@@ -255,8 +564,9 @@ export function getSafeEnglishVariants(word: string): string[] {
       explanationEn: expEn,
       explanationAr: expAr,
     };
-    enExactMap.set(normalizeEnglish(en), termObj);
-    arExactMap.set(normalizeArabic(ar), termObj);
+    indexEnglishEntry(en, termObj);
+    indexArabicEntry(ar, termObj);
+    ar.split(/\s*\/\s*/).forEach(opt => indexArabicEntry(opt, termObj));
     if (!enSeen.has(en)) {
       enSeen.add(en);
       allPhrasesListEn.push(en);
@@ -310,8 +620,8 @@ export function getSafeEnglishVariants(word: string): string[] {
       explanationEn: expEn,
       explanationAr: expAr,
     };
-    enExactMap.set(normalizeEnglish(en), termObj);
-    arExactMap.set(normalizeArabic(ar), termObj);
+    indexEnglishEntry(en, termObj);
+    indexArabicEntry(ar, termObj);
     if (!enSeen.has(en)) {
       enSeen.add(en);
       allPhrasesListEn.push(en);
@@ -328,7 +638,7 @@ export function getSafeEnglishVariants(word: string): string[] {
     }
   });
 
-  // 5. Comprehensive Legal & Statutory Vocabulary (Modals, Verbs, Nouns, Drafter terms)
+  // 5. Comprehensive Legal & Statutory Vocabulary (Modals, Verbs, Nouns, Drafter terms, Corpus Vocabulary)
   if (typeof comprehensiveLegalVocab === 'object') {
     Object.entries(comprehensiveLegalVocab).forEach(([key, v]: [string, LegalVocabEntry]) => {
       const termObj: LocalLegalTerm = {
@@ -340,21 +650,18 @@ export function getSafeEnglishVariants(word: string): string[] {
         explanationAr: v.explanationAr,
       };
 
-      const normEn = normalizeEnglish(v.en);
-      const normKey = normalizeEnglish(key);
-      const normAr = normalizeArabic(v.ar);
+      indexEnglishEntry(v.en, termObj);
+      indexEnglishEntry(key, termObj);
+      indexArabicEntry(v.ar, termObj);
 
-      if (!enExactMap.has(normEn)) enExactMap.set(normEn, termObj);
-      if (!enExactMap.has(normKey)) enExactMap.set(normKey, termObj);
-      if (!arExactMap.has(normAr)) arExactMap.set(normAr, termObj);
-
-      // Also index individual slashed options if any (e.g., 'يجب / يتعين')
-      const arOptions = v.ar.split(/\s*\/\s*/).map(p => p.trim());
-      arOptions.forEach(opt => {
-        const normOpt = normalizeArabic(opt);
-        if (normOpt && !arExactMap.has(normOpt)) {
-          arExactMap.set(normOpt, termObj);
-        }
+      // Index individual slashed options in both English and Arabic
+      v.en.split(/\s*\/\s*/).forEach(opt => {
+        const cleanOpt = opt.replace(/\s*\([^)]*\)/g, '').trim();
+        indexEnglishEntry(cleanOpt, termObj);
+      });
+      v.ar.split(/\s*\/\s*/).forEach(opt => {
+        const cleanOpt = opt.replace(/\s*\([^)]*\)/g, '').trim();
+        indexArabicEntry(cleanOpt, termObj);
       });
 
       if (!enSeen.has(v.en)) {
@@ -397,10 +704,8 @@ export function getSafeEnglishVariants(word: string): string[] {
           explanationEn: `Chapter or Part title within ${catEn}.`,
           explanationAr: `عنوان فصل أو باب ضمن ${catAr}.`,
         };
-        const nEn = normalizeEnglish(part.titleEn);
-        const nAr = normalizeArabic(part.titleAr);
-        if (!enExactMap.has(nEn)) enExactMap.set(nEn, termObj);
-        if (!arExactMap.has(nAr)) arExactMap.set(nAr, termObj);
+        indexEnglishEntry(part.titleEn, termObj);
+        indexArabicEntry(part.titleAr, termObj);
         if (part.titleEn.includes(' ') && !multiWordPhrasesEn.includes(part.titleEn)) multiWordPhrasesEn.push(part.titleEn);
         if (part.titleAr.includes(' ') && !multiWordPhrasesAr.includes(part.titleAr)) multiWordPhrasesAr.push(part.titleAr);
       }
@@ -417,10 +722,8 @@ export function getSafeEnglishVariants(word: string): string[] {
               explanationEn: `Article or Provision title within ${catEn}.`,
               explanationAr: `عنوان مادة أو حكم ضمن ${catAr}.`,
             };
-            const nEn = normalizeEnglish(art.titleEn);
-            const nAr = normalizeArabic(art.titleAr);
-            if (!enExactMap.has(nEn)) enExactMap.set(nEn, termObj);
-            if (!arExactMap.has(nAr)) arExactMap.set(nAr, termObj);
+            indexEnglishEntry(art.titleEn, termObj);
+            indexArabicEntry(art.titleAr, termObj);
             if (art.titleEn.includes(' ') && !multiWordPhrasesEn.includes(art.titleEn)) multiWordPhrasesEn.push(art.titleEn);
             if (art.titleAr.includes(' ') && !multiWordPhrasesAr.includes(art.titleAr)) multiWordPhrasesAr.push(art.titleAr);
           }
@@ -463,14 +766,97 @@ function buildAuthoritativeExplanation(
 }
 
 /**
+ * Helper to look up a single word using all morphological variants
+ */
+function findSingleTermMatch(word: string, isSourceArabic: boolean): LocalLegalTerm | null {
+  if (isSourceArabic) {
+    const norm = normalizeArabic(word);
+    if (arExactMap.has(norm)) return arExactMap.get(norm)!;
+
+    const variants = getSafeArabicVariants(word);
+    for (const v of variants) {
+      if (arExactMap.has(v)) {
+        return arExactMap.get(v)!;
+      }
+    }
+
+    for (const v of variants) {
+      const vocab = lookupComprehensiveVocab(v, false);
+      if (vocab) {
+        return {
+          en: vocab.en,
+          ar: vocab.ar,
+          categoryEn: vocab.categoryEn || 'Statutory Vocabulary',
+          categoryAr: vocab.categoryAr || 'المصطلحات التشريعية والإجرائية',
+          explanationEn: vocab.explanationEn,
+          explanationAr: vocab.explanationAr,
+        };
+      }
+    }
+
+    const lex = lookupLexicon(word, false);
+    if (lex) {
+      return {
+        en: lex.en,
+        ar: lex.ar,
+        categoryEn: 'ICC Legal Lexicon',
+        categoryAr: 'القاموس القانوني لنظام روما',
+        explanationEn: lex.explanationEn,
+        explanationAr: lex.explanationAr,
+      };
+    }
+  } else {
+    const norm = normalizeEnglish(word);
+    if (enExactMap.has(norm)) return enExactMap.get(norm)!;
+
+    const variants = getSafeEnglishVariants(word);
+    for (const v of variants) {
+      if (enExactMap.has(v)) {
+        return enExactMap.get(v)!;
+      }
+    }
+
+    for (const v of variants) {
+      const vocab = lookupComprehensiveVocab(v, true);
+      if (vocab) {
+        return {
+          en: vocab.en,
+          ar: vocab.ar,
+          categoryEn: vocab.categoryEn || 'Statutory Vocabulary',
+          categoryAr: vocab.categoryAr || 'المصطلحات التشريعية والإجرائية',
+          explanationEn: vocab.explanationEn,
+          explanationAr: vocab.explanationAr,
+        };
+      }
+    }
+
+    const lex = lookupLexicon(word, true);
+    if (lex) {
+      return {
+        en: lex.en,
+        ar: lex.ar,
+        categoryEn: 'ICC Legal Lexicon',
+        categoryAr: 'القاموس القانوني لنظام روما',
+        explanationEn: lex.explanationEn,
+        explanationAr: lex.explanationAr,
+      };
+    }
+  }
+
+  return null;
+}
+
+/**
  * Synchronous offline legal translation resolver.
- * Guaranteed to NEVER truncate words or split compound expressions.
+ * Guaranteed to NEVER truncate words or return the source language as its own translation.
  */
 export function translateLegalTermOffline(
   term: string, 
   isSourceArabic: boolean
 ): LegalTranslationResult {
-  const clean = term.trim();
+  const clean = term
+    .replace(/^[()[\]{}"'“”‘’«»״”؛،,:.;?!\-_]+|[()[\]{}"'“”‘’«»״”؛،,:.;?!\-_]+$/g, '')
+    .trim();
   const targetIsArabic = !isSourceArabic;
   const targetLang = targetIsArabic ? 'ar' : 'en';
 
@@ -489,69 +875,43 @@ export function translateLegalTermOffline(
     return cached;
   }
 
-  let match: LocalLegalTerm | null = null;
+  let match: LocalLegalTerm | null = findSingleTermMatch(clean, isSourceArabic);
+  let isCompositional = false;
 
-  if (isSourceArabic) {
-    const norm = normalizeArabic(clean);
-    // 1. Direct whole-word or whole-phrase match
-    if (arExactMap.has(norm)) {
-      match = arExactMap.get(norm)!;
-    }
+  // If multi-word or hyphenated term was not matched as a whole unit, compose translation from constituent words
+  if (!match && (/[\s\-]/.test(clean))) {
+    const tokens = clean.split(/[\s\-]+/).filter(Boolean);
+    if (tokens.length > 1 && tokens.length <= 25) {
+      const translatedParts: string[] = [];
+      let matchedCount = 0;
+      let primaryExplanationMatch: LocalLegalTerm | null = null;
 
-    // 2. Safe whole-word variant (e.g. with/without 'ال')
-    if (!match) {
-      const variants = getSafeArabicVariants(clean);
-      for (const v of variants) {
-        if (arExactMap.has(v)) {
-          match = arExactMap.get(v)!;
-          break;
+      for (const token of tokens) {
+        const tokenMatch = findSingleTermMatch(token, isSourceArabic);
+        if (tokenMatch) {
+          matchedCount++;
+          const rawTrans = isSourceArabic ? tokenMatch.en : tokenMatch.ar;
+          // Pick first concise option before '/' for smooth phrase composition
+          const conciseTrans = rawTrans.split(/\s*\/\s*/)[0].replace(/\s*\([^)]*\)/g, '').trim();
+          if (conciseTrans && conciseTrans !== translatedParts[translatedParts.length - 1]) {
+            translatedParts.push(conciseTrans);
+          }
+          if (!primaryExplanationMatch || token.length > 4) {
+            primaryExplanationMatch = tokenMatch;
+          }
         }
       }
-    }
 
-    // 3. Lexicon & comprehensive vocabulary lookup for Arabic
-    if (!match) {
-      const lex = lookupLexicon(clean, false);
-      if (lex) {
+      if (matchedCount > 0 && translatedParts.length > 0) {
+        const composedText = translatedParts.join(' ');
+        isCompositional = true;
         match = {
-          en: lex.en,
-          ar: lex.ar,
-          categoryEn: 'ICC Legal Lexicon',
-          categoryAr: 'القاموس القانوني لنظام روما',
-          explanationEn: lex.explanationEn,
-          explanationAr: lex.explanationAr,
-        };
-      }
-    }
-  } else {
-    const norm = normalizeEnglish(clean);
-    // 1. Direct whole-word or whole-phrase match
-    if (enExactMap.has(norm)) {
-      match = enExactMap.get(norm)!;
-    }
-
-    // 2. Safe whole-word plural/singular variant
-    if (!match) {
-      const variants = getSafeEnglishVariants(clean);
-      for (const v of variants) {
-        if (enExactMap.has(v)) {
-          match = enExactMap.get(v)!;
-          break;
-        }
-      }
-    }
-
-    // 3. Lexicon direct lookup
-    if (!match) {
-      const lex = lookupLexicon(clean, true);
-      if (lex) {
-        match = {
-          en: lex.en,
-          ar: lex.ar,
-          categoryEn: 'ICC Legal Lexicon',
-          categoryAr: 'القاموس القانوني لنظام روما',
-          explanationEn: lex.explanationEn,
-          explanationAr: lex.explanationAr,
+          en: isSourceArabic ? composedText : clean,
+          ar: isSourceArabic ? clean : composedText,
+          categoryEn: primaryExplanationMatch?.categoryEn || 'ICC Legal Phrase',
+          categoryAr: primaryExplanationMatch?.categoryAr || 'تعبير قانوني مركب',
+          explanationEn: primaryExplanationMatch?.explanationEn,
+          explanationAr: primaryExplanationMatch?.explanationAr,
         };
       }
     }
@@ -562,23 +922,26 @@ export function translateLegalTermOffline(
   if (match) {
     translation = isSourceArabic ? match.en : match.ar;
   } else {
-    // If not found in exact dictionary, leave translation empty so async translator provides target language
     // NEVER return the source word as its own translation!
     translation = '';
   }
 
   const explanation = buildAuthoritativeExplanation(clean, match, targetIsArabic);
+  const isCertified = !!match && !isCompositional;
 
   const result: LegalTranslationResult = {
     term: clean,
     translation,
     explanation,
-    isCertified: !!match,
+    isCertified,
     fromCache: false,
   };
 
-  // Cache in persistent storage
-  setCachedTranslation(result, targetLang);
+  // Only cache in persistent storage when we have a valid non-empty translation
+  if (translation) {
+    setCachedTranslation(result, targetLang);
+  }
 
   return result;
 }
+

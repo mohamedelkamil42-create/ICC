@@ -1,8 +1,8 @@
 import { LegalTranslationResult } from './types';
 import { safeStorage } from './storageUtils';
 
-const CACHE_STORAGE_KEY = 'icc_legal_dict_cache_v2';
-const MAX_CACHE_ENTRIES = 1200;
+const CACHE_STORAGE_KEY = 'icc_legal_dict_cache_v3';
+const MAX_CACHE_ENTRIES = 3000;
 
 export interface CachedTranslationItem extends LegalTranslationResult {
   timestamp: number;
@@ -19,10 +19,31 @@ let saveDebounceTimer: any = null;
 export function buildCacheKey(term: string, targetLang: 'ar' | 'en'): string {
   const clean = term
     .toLowerCase()
-    .replace(/[()[\]{}"'״”؛،,:.;?!]/g, '')
+    .replace(/[()[\]{}"'“”‘’«»״”؛،,:.;?!]/g, '')
     .replace(/[\u064B-\u065F\u0670\u0640]/g, '')
     .trim();
   return `${targetLang}::${clean}`;
+}
+
+/**
+ * Strictly validate that a translation is in the requested target language
+ * and is never identical to the source term.
+ */
+export function isValidTargetTranslation(
+  term: string,
+  translation: string,
+  targetLang: 'ar' | 'en'
+): boolean {
+  if (!translation || !translation.trim()) return false;
+  const cleanTerm = term.trim().toLowerCase();
+  const cleanTrans = translation.trim().toLowerCase();
+  if (cleanTerm === cleanTrans) return false;
+
+  if (targetLang === 'ar') {
+    return /[\u0600-\u06FF]/.test(translation);
+  } else {
+    return /[a-zA-Z]/.test(translation) && !/[\u0600-\u06FF]/.test(translation);
+  }
 }
 
 // Load cache from storage
@@ -36,7 +57,12 @@ function initCacheIfNeeded() {
       const parsed: Record<string, CachedTranslationItem> = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
         Object.entries(parsed).forEach(([key, item]) => {
-          if (item && item.term && item.translation) {
+          if (
+            item &&
+            item.term &&
+            item.translation &&
+            isValidTargetTranslation(item.term, item.translation, item.targetLang || (key.startsWith('ar::') ? 'ar' : 'en'))
+          ) {
             memoryCache.set(key, item);
           }
         });
@@ -87,12 +113,8 @@ export function getCachedTranslation(
   const item = memoryCache.get(key);
   if (!item) return null;
 
-  // Validation: Ensure translation matches expected language
-  const targetIsArabic = targetLang === 'ar';
-  const isValid = !targetIsArabic || (
-    /[\u0600-\u06FF]/.test(item.translation) && 
-    /[\u0600-\u06FF]/.test(item.explanation || '')
-  );
+  // Strict validation: Ensure translation matches expected target language
+  const isValid = isValidTargetTranslation(term, item.translation, targetLang);
 
   if (!isValid) {
     memoryCache.delete(key);
@@ -122,9 +144,8 @@ export function setCachedTranslation(
   initCacheIfNeeded();
   if (!result || !result.term || !result.translation) return;
 
-  const targetIsArabic = targetLang === 'ar';
-  // Don't cache invalid translations
-  if (targetIsArabic && !/[\u0600-\u06FF]/.test(result.translation)) return;
+  // Never cache invalid or untranslated source strings
+  if (!isValidTargetTranslation(result.term, result.translation, targetLang)) return;
 
   const key = buildCacheKey(result.term, targetLang);
   const cacheItem: CachedTranslationItem = {

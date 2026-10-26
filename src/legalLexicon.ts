@@ -595,40 +595,99 @@ export const legalLexicon: Record<string, LexiconEntry> = {
 export function normalizeWord(str: string): string {
   return str
     .toLowerCase()
-    .replace(/[()[\]{}"'״”؛،,:.;?!]/g, '')
+    .replace(/[()[\]{}"'“”‘’«»״”؛،,:.;?!]/g, '')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
-// Immediate guaranteed lexicon translation lookup
+function normalizeLexiconArabic(s: string): string {
+  return s
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, '') // remove tashkeel & tatweel
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/ؤ/g, 'و')
+    .replace(/ئ/g, 'ي')
+    .replace(/[()[\]{}"'“”‘’«»״”؛،,:.;?!]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+const enLexiconMap = new Map<string, LexiconEntry>();
+const arLexiconMap = new Map<string, LexiconEntry>();
+
+(function buildLexiconIndices() {
+  for (const [key, entry] of Object.entries(legalLexicon)) {
+    const normKey = normalizeWord(key);
+    const normEn = normalizeWord(entry.en);
+    if (normKey && !enLexiconMap.has(normKey)) enLexiconMap.set(normKey, entry);
+    if (normEn && !enLexiconMap.has(normEn)) enLexiconMap.set(normEn, entry);
+
+    const enOptions = entry.en.split(/\s*\/\s*/);
+    for (const opt of enOptions) {
+      const nOpt = normalizeWord(opt);
+      if (nOpt && !enLexiconMap.has(nOpt)) enLexiconMap.set(nOpt, entry);
+    }
+
+    const normAr = normalizeLexiconArabic(entry.ar);
+    if (normAr) {
+      if (!arLexiconMap.has(normAr)) arLexiconMap.set(normAr, entry);
+      if (normAr.startsWith('ال') && normAr.length > 3) {
+        const noAl = normAr.slice(2);
+        if (!arLexiconMap.has(noAl)) arLexiconMap.set(noAl, entry);
+      } else if (!normAr.startsWith('ال')) {
+        const withAl = 'ال' + normAr;
+        if (!arLexiconMap.has(withAl)) arLexiconMap.set(withAl, entry);
+      }
+    }
+
+    const arOptions = entry.ar.split(/\s*\/\s*/);
+    for (const opt of arOptions) {
+      const nOpt = normalizeLexiconArabic(opt);
+      if (nOpt) {
+        if (!arLexiconMap.has(nOpt)) arLexiconMap.set(nOpt, entry);
+        if (nOpt.startsWith('ال') && nOpt.length > 3) {
+          const noAl = nOpt.slice(2);
+          if (!arLexiconMap.has(noAl)) arLexiconMap.set(noAl, entry);
+        } else if (!nOpt.startsWith('ال')) {
+          const withAl = 'ال' + nOpt;
+          if (!arLexiconMap.has(withAl)) arLexiconMap.set(withAl, entry);
+        }
+      }
+    }
+  }
+})();
+
+// Immediate guaranteed lexicon translation lookup (O(1) Map lookup)
 export function lookupLexicon(word: string, targetIsArabic: boolean): LexiconEntry | null {
   const norm = normalizeWord(word);
   if (!norm) return null;
 
-  // 1. Direct match in core lexicon
-  if (legalLexicon[norm]) {
-    return legalLexicon[norm];
-  }
+  // 1. Direct O(1) match in English lexicon map
+  const directEn = enLexiconMap.get(norm);
+  if (directEn) return directEn;
 
-  // 2. Singular/plural match (strip trailing 's' or 'es')
+  // 2. Singular/plural match (strip trailing 's', 'es', 'ies')
   if (norm.endsWith('ies') && norm.length > 5) {
     const singular = norm.slice(0, -3) + 'y';
-    if (legalLexicon[singular]) return legalLexicon[singular];
+    if (enLexiconMap.has(singular)) return enLexiconMap.get(singular)!;
   } else if (norm.endsWith('es') && norm.length > 4) {
     const singular = norm.slice(0, -2);
-    if (legalLexicon[singular]) return legalLexicon[singular];
+    if (enLexiconMap.has(singular)) return enLexiconMap.get(singular)!;
   } else if (norm.endsWith('s') && !norm.endsWith('ss') && norm.length > 3) {
     const singular = norm.slice(0, -1);
-    if (legalLexicon[singular]) return legalLexicon[singular];
+    if (enLexiconMap.has(singular)) return enLexiconMap.get(singular)!;
   }
 
-  // 3. Search by English term in values
-  for (const entry of Object.values(legalLexicon)) {
-    if (entry.en.toLowerCase() === norm) {
-      return entry;
+  // 3. Direct O(1) match in Arabic lexicon map
+  if (!targetIsArabic) {
+    const cleanAr = normalizeLexiconArabic(word);
+    if (arLexiconMap.has(cleanAr)) {
+      return arLexiconMap.get(cleanAr)!;
     }
   }
 
-  // 4. Fallback to comprehensive legal & statutory vocabulary dictionary
+  // 4. Fallback to comprehensive legal & statutory vocabulary dictionary (also O(1) Map indexed)
   const vocabMatch = lookupComprehensiveVocab(word, targetIsArabic);
   if (vocabMatch) {
     return {
@@ -639,42 +698,7 @@ export function lookupLexicon(word: string, targetIsArabic: boolean): LexiconEnt
     };
   }
 
-  // 5. Search by Arabic term in values - exact whole term or option, with/without 'ال', or head-noun
-  if (!targetIsArabic) {
-    const normalizeAr = (s: string) => s
-      .replace(/[\u064B-\u065F\u0670\u0640]/g, '') // remove tashkeel
-      .replace(/[أإآٱ]/g, 'ا')
-      .replace(/ة/g, 'ه')
-      .replace(/ى/g, 'ي')
-      .replace(/ؤ/g, 'و')
-      .replace(/ئ/g, 'ي')
-      .trim();
-
-    const cleanAr = normalizeAr(word);
-    const withAl = cleanAr.startsWith('ال') ? cleanAr : 'ال' + cleanAr;
-    const withoutAl = cleanAr.startsWith('ال') && cleanAr.length > 3 ? cleanAr.slice(2) : cleanAr;
-
-    // Exact and option match
-    for (const entry of Object.values(legalLexicon)) {
-      const entryArClean = normalizeAr(entry.ar);
-      if (entryArClean === cleanAr || entryArClean === withAl || entryArClean === withoutAl) {
-        return entry;
-      }
-      const options = entry.ar.split(/\s*\/\s*/).map(p => normalizeAr(p.trim()));
-      if (options.includes(cleanAr) || options.includes(withAl) || options.includes(withoutAl)) {
-        return entry;
-      }
-    }
-
-    // Compound phrase head-noun match (e.g. 'الاختصاص القضائي' when query is 'الاختصاص')
-    for (const entry of Object.values(legalLexicon)) {
-      const entryArClean = normalizeAr(entry.ar);
-      if (entryArClean.startsWith(cleanAr + ' ') || entryArClean.startsWith(withAl + ' ')) {
-        return entry;
-      }
-    }
-  }
-
   return null;
 }
+
 

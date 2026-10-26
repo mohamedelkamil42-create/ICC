@@ -219,24 +219,26 @@ export async function fetchLegalTranslation(
   // This guarantees an accurate translation and ICC legal explanation in 0ms without any network request
   const offlineResult = translateLegalTermOffline(cleanTerm, isSourceArabic);
 
-  // If already certified or offline, return offline result immediately and cache it
+  // If already certified or offline, return offline result immediately
   const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : false;
-  if (!isOnline || offlineResult.isCertified) {
-    setCachedTranslation(offlineResult, targetLang);
+  if (!isOnline || (offlineResult.isCertified && offlineResult.translation)) {
+    if (offlineResult.translation) {
+      setCachedTranslation(offlineResult, targetLang);
+    }
     return offlineResult;
   }
 
-  // 3. Optional background enrichment if online with a fast 2.5s timeout
+  // 3. Optional background enrichment if online with a fast 3s timeout
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2500);
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
 
     const res = await fetch('/api/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         word: cleanTerm,
-        context: contextText || cleanTerm,
+        context: contextText ? contextText.slice(0, 400) : cleanTerm,
         language: targetIsArabic ? 'ar' : 'en',
       }),
       signal: controller.signal,
@@ -246,40 +248,53 @@ export async function fetchLegalTranslation(
 
     if (res.ok) {
       const data = await res.json();
-      let finalTranslation = data.translation;
-      
-      // Strict verification: When translating to Arabic, NEVER accept an English translation!
+      let finalTranslation = (data.translation || '').trim();
+
+      // Strict target language verification:
       if (targetIsArabic) {
-        if (!finalTranslation || !/[\u0600-\u06FF]/.test(finalTranslation)) {
+        if (!finalTranslation || !/[\u0600-\u06FF]/.test(finalTranslation) || finalTranslation.toLowerCase() === cleanTerm.toLowerCase()) {
           finalTranslation = offlineResult.translation;
         }
       } else {
-        finalTranslation = finalTranslation || offlineResult.translation;
+        if (
+          !finalTranslation ||
+          !/[a-zA-Z]/.test(finalTranslation) ||
+          /[\u0600-\u06FF]/.test(finalTranslation) ||
+          finalTranslation.toLowerCase() === cleanTerm.toLowerCase()
+        ) {
+          finalTranslation = offlineResult.translation;
+        }
       }
 
       let explanation = data.explanation && data.explanation.trim()
-        ? data.explanation
+        ? data.explanation.trim()
         : offlineResult.explanation;
 
       if (targetIsArabic && !/[\u0600-\u06FF]/.test(explanation)) {
         explanation = offlineResult.explanation;
+      } else if (!targetIsArabic && !/[a-zA-Z]/.test(explanation)) {
+        explanation = offlineResult.explanation;
       }
 
-      const enrichedResult: LegalTranslationResult = {
-        term: cleanTerm,
-        translation: finalTranslation,
-        explanation,
-        isCertified: true,
-      };
+      if (finalTranslation) {
+        const enrichedResult: LegalTranslationResult = {
+          term: cleanTerm,
+          translation: finalTranslation,
+          explanation,
+          isCertified: true,
+        };
 
-      setCachedTranslation(enrichedResult, targetLang);
-      return enrichedResult;
+        setCachedTranslation(enrichedResult, targetLang);
+        return enrichedResult;
+      }
     }
   } catch {
     // Network timed out or offline: cleanly fallback to the guaranteed offline result
   }
 
-  setCachedTranslation(offlineResult, targetLang);
+  if (offlineResult.translation) {
+    setCachedTranslation(offlineResult, targetLang);
+  }
   return offlineResult;
 }
 

@@ -9,7 +9,7 @@ import { Part } from './RomeStatuteViewer';
 export const regulationsOfTheCourtParts: Part[] = [
   {
     "id": "reg-chapter-1",
-    "labelAr": "الباب الأول",
+    "labelAr": "الفصل الأول",
     "labelEn": "CHAPTER 1",
     "titleAr": "أحكام عامة",
     "titleEn": "General provisions",
@@ -82,7 +82,7 @@ export const regulationsOfTheCourtParts: Part[] = [
   },
   {
     "id": "reg-chapter-2",
-    "labelAr": "الباب الثاني",
+    "labelAr": "الفصل الثاني",
     "labelEn": "CHAPTER 2",
     "titleAr": "تشكيل وإدارة المحكمة",
     "titleEn": "Composition and administration of the Court",
@@ -179,7 +179,7 @@ export const regulationsOfTheCourtParts: Part[] = [
   },
   {
     "id": "reg-chapter-3",
-    "labelAr": "الباب الثالث",
+    "labelAr": "الفصل الثالث",
     "labelEn": "CHAPTER 3",
     "titleAr": "الإجراءات أمام المحكمة",
     "titleEn": "Proceedings before the Court",
@@ -628,7 +628,7 @@ export const regulationsOfTheCourtParts: Part[] = [
   },
   {
     "id": "reg-chapter-4",
-    "labelAr": "الباب الرابع",
+    "labelAr": "الفصل الرابع",
     "labelEn": "CHAPTER 4",
     "titleAr": "شؤون المحامين والمساعدة القانونية",
     "titleEn": "Counsel issues and legal assistance",
@@ -789,7 +789,7 @@ export const regulationsOfTheCourtParts: Part[] = [
   },
   {
     "id": "reg-chapter-5",
-    "labelAr": "الباب الخامس",
+    "labelAr": "الفصل الخامس",
     "labelEn": "CHAPTER 5",
     "titleAr": "مشاركة الضحايا وجبر الضرر (التعويضات)",
     "titleEn": "Victims participation and reparations",
@@ -822,7 +822,7 @@ export const regulationsOfTheCourtParts: Part[] = [
   },
   {
     "id": "reg-chapter-6",
-    "labelAr": "الباب السادس",
+    "labelAr": "الفصل السادس",
     "labelEn": "CHAPTER 6",
     "titleAr": "شؤون الاحتجاز",
     "titleEn": "Detention matters",
@@ -975,7 +975,7 @@ export const regulationsOfTheCourtParts: Part[] = [
   },
   {
     "id": "reg-chapter-7",
-    "labelAr": "الباب السابع",
+    "labelAr": "الفصل السابع",
     "labelEn": "CHAPTER 7",
     "titleAr": "التعاون والتنفيذ",
     "titleEn": "Cooperation and enforcement",
@@ -1080,7 +1080,7 @@ export const regulationsOfTheCourtParts: Part[] = [
   },
   {
     "id": "reg-chapter-8",
-    "labelAr": "الباب الثامن",
+    "labelAr": "الفصل الثامن",
     "labelEn": "CHAPTER 8",
     "titleAr": "العزل من الوظيفة والتدابير التأديبية",
     "titleEn": "Removal from office and disciplinary measures",
@@ -1145,7 +1145,7 @@ export const regulationsOfTheCourtParts: Part[] = [
   },
   {
     "id": "reg-chapter-9",
-    "labelAr": "الباب التاسع",
+    "labelAr": "الفصل التاسع",
     "labelEn": "CHAPTER 9",
     "titleAr": "اعتماد مدونة السلوك القضائي",
     "titleEn": "Adoption of the Code of Judicial Ethics",
