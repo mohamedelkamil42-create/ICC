@@ -179,8 +179,12 @@ export async function playNaturalEnglishAudio(
           return () => {};
         }
         const url = URL.createObjectURL(blob);
-        const success = await tryPlayAudio(url);
-        if (success) return stop;
+        try {
+          const success = await tryPlayAudio(url);
+          if (success) return stop;
+        } finally {
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
       }
     } catch (e) {
       console.warn('Cache access error:', e);

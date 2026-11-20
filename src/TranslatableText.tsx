@@ -5,8 +5,6 @@ import { playNaturalEnglishAudio, stopNaturalSpeech } from './audioUtils';
 import { 
   fetchLegalTranslation, 
   lookupLocalGlossary, 
-  allPhrasesListEn, 
-  allPhrasesListAr,
   LegalTranslationResult 
 } from './legalTranslationService';
 import { lookupLexicon } from './legalLexicon';
@@ -37,9 +35,24 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
   const lastOpenTimeRef = useRef<number>(0);
   const requestIdRef = useRef<number>(0);
 
-  // Close popup gracefully on genuine outside click/pointerdown and stop active speech
+  // Close popup gracefully on outside click/pointerdown or Escape key and stop active speech
   useEffect(() => {
     if (!selectedTerm && !customSelection) return;
+
+    const closePopup = () => {
+      stopNaturalSpeech();
+      setPlayingTerm(null);
+      setSelectedTerm(null);
+      setCustomSelection(null);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closePopup();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
 
     let cleanupListener: (() => void) | null = null;
     const timer = setTimeout(() => {
@@ -62,10 +75,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
           return;
         }
 
-        stopNaturalSpeech();
-        setPlayingTerm(null);
-        setSelectedTerm(null);
-        setCustomSelection(null);
+        closePopup();
       };
 
       document.addEventListener('pointerdown', handleOutsidePointer, true);
@@ -76,6 +86,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
 
     return () => {
       clearTimeout(timer);
+      window.removeEventListener('keydown', handleKeyDown);
       if (cleanupListener) cleanupListener();
     };
   }, [selectedTerm, customSelection]);
@@ -228,6 +239,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
       const newNodes: (string | React.ReactNode)[] = [];
       const escaped = cleanHighlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp(`(${escaped})`, 'gi');
+      let firstHighlightAssigned = false;
 
       contentNodes.forEach((node) => {
         if (typeof node !== 'string') {
@@ -238,13 +250,16 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
         const parts = node.split(regex);
         parts.forEach((part) => {
           if (part.toLowerCase() === cleanHighlight.toLowerCase()) {
+            const isFirst = !firstHighlightAssigned;
+            firstHighlightAssigned = true;
             newNodes.push(
               <mark
                 key={`search-target-${keyCounter++}`}
-                id="search-highlight-target"
+                id={isFirst ? 'search-highlight-target' : undefined}
+                data-search-match="true"
                 data-translatable-term="true"
                 onClick={(e) => handleTermClick(e, part, '', !isEnglish)}
-                className="cursor-pointer bg-black text-white font-bold px-1.5 py-0.5 rounded shadow-sm inline-block mx-0.5 animate-pulse"
+                className="cursor-pointer bg-black text-white font-bold px-1.5 py-0.5 rounded shadow-sm inline-block mx-0.5"
                 title={isEnglish ? "Searched Term - Click for certified translation" : "المصطلح المبحوث عنه - انقر للترجمة القانونية"}
               >
                 {part}
@@ -431,44 +446,51 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
                 (e.nativeEvent as any).stopImmediatePropagation();
               }
             }}
-            className="fixed z-[100] bg-white text-black rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col gap-4 border border-neutral-200 animate-in fade-in zoom-in-95 max-h-[85vh] overflow-y-auto overscroll-contain inset-x-3 bottom-4 sm:inset-x-auto sm:bottom-auto w-auto sm:w-[380px]"
+            className="fixed z-[100] bg-white text-[#121212] rounded-t-[28px] sm:rounded-[28px] p-5 sm:p-6 shadow-2xl flex flex-col gap-4 border border-black/[0.08] animate-in fade-in zoom-in-95 max-h-[85vh] overflow-y-auto overscroll-contain inset-x-0 bottom-0 sm:inset-x-auto sm:bottom-auto w-auto sm:w-[390px]"
             dir="rtl"
             style={typeof window !== 'undefined' && window.innerWidth >= 640 ? {
               top: Math.max(16, Math.min(
-                selectedTerm.rect.bottom + 360 < window.innerHeight 
-                  ? selectedTerm.rect.bottom + 10 
-                  : selectedTerm.rect.top - 360,
-                window.innerHeight - 380
+                selectedTerm.rect.bottom + 340 < window.innerHeight
+                  ? selectedTerm.rect.bottom + 10
+                  : Math.max(16, selectedTerm.rect.top - 320),
+                Math.max(16, window.innerHeight - 360)
               )),
               left: Math.max(16, Math.min(
                 selectedTerm.rect.left - (isEnglish ? 0 : 180),
-                window.innerWidth - 400
+                Math.max(16, window.innerWidth - 410)
               ))
             } : undefined}
           >
+          {/* Mobile M3 Drag Handle */}
+          <div className="sm:hidden flex justify-center -mt-2 -mb-1">
+            <div className="w-9 h-1 rounded-full bg-black/20" />
+          </div>
+
           {/* Header */}
-          <div className="flex justify-between items-center border-b border-neutral-100 pb-3">
-            <div className="flex items-center gap-2 text-neutral-500">
-              <Book size={14} />
-              <span className="text-[10px] font-black uppercase tracking-widest">
+          <div className="flex justify-between items-center border-b border-black/[0.07] pb-3">
+            <div className="flex items-center gap-2 text-[#525252]">
+              <Book size={15} />
+              <span className="text-xs font-bold">
                 {selectedTerm.isArabic ? 'ICC Legal Lexicon' : 'القاموس القانوني للمحكمة'}
               </span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <button 
+                type="button"
                 onClick={handleCopy}
-                className="p-1.5 hover:bg-neutral-100 rounded-full transition-colors text-neutral-400 hover:text-black"
+                className="w-8 h-8 rounded-full bg-[#f0f0f0] hover:bg-[#e4e4e4] flex items-center justify-center transition-colors text-[#121212]"
                 title="نسخ"
               >
-                {copied ? <Check size={14} className="text-black" /> : <Copy size={14} />}
+                {copied ? <Check size={14} className="text-[#111111]" /> : <Copy size={14} />}
               </button>
               <button 
+                type="button"
                 onClick={() => {
                   stopNaturalSpeech();
                   setPlayingTerm(null);
                   setSelectedTerm(null);
                 }}
-                className="p-1.5 hover:bg-neutral-100 rounded-full transition-colors text-neutral-400 hover:text-black"
+                className="w-8 h-8 rounded-full bg-[#f0f0f0] hover:bg-[#e4e4e4] flex items-center justify-center transition-colors text-[#121212]"
                 title="إغلاق"
               >
                 <X size={15} />
@@ -499,7 +521,7 @@ export const TranslatableText: React.FC<TranslatableTextProps> = React.memo(({ t
           </div>
 
           {/* Translation Result Box */}
-          <div className={`p-4 rounded-2xl ${selectedTerm.isArabic ? 'bg-neutral-50 text-left' : 'bg-black text-white text-right'}`} dir={selectedTerm.isArabic ? 'ltr' : 'rtl'}>
+          <div className={`p-4 rounded-[22px] ${selectedTerm.isArabic ? 'bg-[#f2f2f2] text-left' : 'bg-[#111111] text-white text-right'}`} dir={selectedTerm.isArabic ? 'ltr' : 'rtl'}>
             
             {/* Translated Term display */}
             <div className="flex flex-col gap-2">

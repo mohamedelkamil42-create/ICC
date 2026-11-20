@@ -4,31 +4,171 @@
   --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
 }
 
+:root {
+  /* Google Material 3 Expressive (Android 17) — Monochrome Neutral Tonal System */
+  --md-sys-color-surface: #f5f5f5;
+  --md-sys-color-surface-dim: #ededed;
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f0f0f0;
+  --md-sys-color-surface-container: #e8e8e8;
+  --md-sys-color-surface-container-high: #dfdfdf;
+  --md-sys-color-surface-container-highest: #d6d6d6;
+
+  --md-sys-color-on-surface: #121212;
+  --md-sys-color-on-surface-variant: #595959;
+  --md-sys-color-primary: #111111;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-secondary-container: #e4e4e4;
+  --md-sys-color-on-secondary-container: #141414;
+  --md-sys-color-outline: #757575;
+  --md-sys-color-outline-variant: rgba(18, 18, 18, 0.08);
+
+  /* Expressive Spring Motion Timing */
+  --md-motion-expressive: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --md-motion-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
 @layer base {
-  html, body {
-    @apply bg-[#fafafa] text-neutral-900;
+  html,
+  body {
+    background-color: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
     overflow-x: hidden;
     width: 100%;
     min-height: 100%;
     -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
   }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  @apply bg-neutral-100;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-neutral-300 rounded-full border-2 border-neutral-100;
-}
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-neutral-400;
+/* Material 3 Expressive Interactive State Layers & Shape Morphing */
+.m3-surface-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 26px;
+  transition:
+    transform 180ms var(--md-motion-expressive),
+    background-color 180ms var(--md-motion-standard),
+    border-color 180ms var(--md-motion-standard),
+    box-shadow 180ms var(--md-motion-standard),
+    border-radius 200ms var(--md-motion-expressive);
 }
 
-/* 3D Flip Utilities */
+.m3-surface-card:hover {
+  border-color: rgba(18, 18, 18, 0.16);
+  box-shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.08);
+}
+
+.m3-surface-card-interactive:active {
+  transform: scale(0.985);
+  border-radius: 20px;
+}
+
+@layer components {
+  /* Material 3 Expressive Black Drawer Card */
+  .m3-drawer-card {
+    background-color: #111111;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    box-shadow: 0 2px 10px -4px rgba(0, 0, 0, 0.22);
+    transition:
+      transform 180ms var(--md-motion-expressive),
+      background-color 180ms var(--md-motion-standard),
+      border-color 180ms var(--md-motion-standard),
+      box-shadow 180ms var(--md-motion-standard),
+      border-radius 200ms var(--md-motion-expressive);
+  }
+
+  .m3-drawer-card:hover {
+    background-color: #1e1e1e;
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.35);
+  }
+
+  .m3-drawer-card:active {
+    transform: scale(0.98);
+    border-radius: 16px;
+  }
+}
+
+/* Android 17 / M3 Expressive Grouped List Items (outer 22px, inner 6px, 3px gaps) */
+.m3-list-group > .m3-list-item {
+  border-radius: 8px;
+  transition:
+    background-color 160ms var(--md-motion-standard),
+    border-radius 180ms var(--md-motion-expressive),
+    transform 160ms var(--md-motion-expressive);
+}
+
+.m3-list-group > .m3-list-item:first-child {
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+}
+
+.m3-list-group > .m3-list-item:last-child {
+  border-bottom-left-radius: 22px;
+  border-bottom-right-radius: 22px;
+}
+
+.m3-list-group > .m3-list-item:only-child {
+  border-radius: 22px;
+}
+
+.m3-list-group > .m3-list-item:active {
+  transform: scale(0.992);
+}
+
+/* Expressive Connected Segmented Button Track */
+.m3-segmented-track {
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: 9999px;
+  padding: 4px;
+}
+
+/* Custom Monochrome Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(18, 18, 18, 0.18);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(18, 18, 18, 0.34);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* 3D Flip Utilities for Glossary Cards */
 .perspective-1000 {
   perspective: 1000px;
 }
@@ -41,4 +181,47 @@
 }
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Clean Monochrome Publication Print Layout */
+@media print {
+  @page {
+    margin: 16mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  nav,
+  aside,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  article {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #d4d4d4 !important;
+  }
+
+  body.print-single-article article:not(.print-target-article) {
+    display: none !important;
+  }
+
+  body.print-single-article header,
+  body.print-single-article .print-hide-on-single {
+    display: none !important;
+  }
 }
